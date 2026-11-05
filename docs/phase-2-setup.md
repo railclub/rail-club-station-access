@@ -18,8 +18,8 @@ Supabase → your project → ⚙️ **Project Settings → General**. Region sh
 
 ## 2. Create the database (5 min)
 
-**Done (22 Oct 2026, via the Supabase connector):** the migration is applied. Only step 3 below,
-adding the admin email, is still to do.
+**Done (via the Supabase connector):** the migration is applied and `railclub.support@gmail.com` is the
+reviewer. Repeat step 3 to add more reviewers.
 
 1. Supabase → **SQL Editor → New query**.
 2. Paste the whole of [`supabase/migrations/20261022000000_phase2_visitor_reports.sql`](../supabase/migrations/20261022000000_phase2_visitor_reports.sql) and click **Run**. It should say "Success. No rows returned".
