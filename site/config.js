@@ -5,6 +5,6 @@ export const CONFIG = {
   supabaseKey: "sb_publishable_YKGqpqhf6TGIF-yYrKsR-A_-d7Fxak7",
   // Switch on once the backend is set up (docs/phase-2-setup.md). While false, station pages
   // look exactly as before and nothing is sent to Supabase.
-  visitorReports: false,
+  visitorReports: true,
   contactEmail: "railclub.support@gmail.com",
 };

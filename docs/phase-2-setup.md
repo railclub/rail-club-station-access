@@ -61,6 +61,8 @@ Repeat step 3 to add more reviewers.
 
 ## 4. Gemini key and spending cap (10 min)
 
+**Still to do.** Until the key is added, every video waits for a reviewer on `admin.html`.
+
 1. https://aistudio.google.com → **Get API key → Create API key** (choose the Rail Club Google Cloud project).
 2. **Set up billing** for that key (AI Studio → Billing). The paid tier is needed: on the free tier
    Google may use uploaded videos to improve its products, and the privacy notice promises it doesn't.
@@ -71,7 +73,6 @@ Repeat step 3 to add more reviewers.
    | Name | Value |
    |---|---|
    | `GEMINI_API_KEY` | the key from step 1 |
-   | `CRON_SECRET` | any long random text, e.g. from https://www.random.org/strings/ (save it for step 6) |
    | `GEMINI_MODEL` | optional, default `gemini-2.5-flash`; set this if Google has renamed or retired it |
 
 ## 5. Deploy the server functions (10 min)
@@ -93,13 +94,14 @@ Check: Supabase → **Edge Functions** lists `submit-report`, `review-report` an
 create each function and paste its `index.ts`, plus the files from `supabase/functions/_shared/`.
 For `cleanup`, turn off **Verify JWT** in its settings.)
 
-## 6. Daily clean-up (3 min)
+## 6. Daily clean-up
 
-Supabase → **Integrations → Cron** → enable → **Create job**:
-- Name: `cleanup-videos`
-- Schedule: `30 21 * * *` (03:00 India time, every day)
-- Type: **Supabase Edge Function** → `cleanup`, method POST
-- Header: `x-cron-secret` = the `CRON_SECRET` from step 4
+**Done, nothing to set up.** The migration
+[`20261105000000_cleanup_secret_in_vault.sql`](../supabase/migrations/20261105000000_cleanup_secret_in_vault.sql)
+creates a random secret in Supabase Vault and schedules the `cleanup-videos` job (`30 21 * * *`,
+03:00 India time) to call the `cleanup` function with it. Nobody needs to copy the secret anywhere.
+Check it under **Integrations → Cron → Jobs**. A `CRON_SECRET` in Edge Functions → Secrets is no
+longer used and can be deleted.
 
 ## 7. Switch it on and test
 
@@ -118,7 +120,7 @@ Supabase → **Integrations → Cron** → enable → **Create job**:
 | Back on the site but not signed in | Step 3.7: the page URL isn't in Supabase's Redirect URLs |
 | "Only reviewers can do this" on admin.html | Step 2.3: email in `admins` must match the Google account, in lowercase |
 | Every report goes to review with "Waiting for a reviewer" | `GEMINI_API_KEY` missing, Gemini error, or the monthly cap reached; see Edge Functions → submit-report → Logs |
-| Function logs say `SUPABASE_SERVICE_ROLE_KEY not set` | Add it as a secret: Project Settings → API Keys → Legacy → `service_role` (secret, never share) |
+| Function logs say `SUPABASE_SECRET_KEYS not set` | Project Settings → API Keys: create the publishable and secret keys (the functions use the `default` secret key, or the legacy `service_role` key until Supabase retires it) |
 | Uploads fail | Video over 12 MB, or the migration's storage policy didn't run (step 2) |
 
 ## Changing the rules later

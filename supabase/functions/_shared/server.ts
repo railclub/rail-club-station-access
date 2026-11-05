@@ -48,10 +48,22 @@ export function reply(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { ...cors(req), "content-type": "application/json" } });
 }
 
+// The new secret key (sb_secret_…) replaces the legacy service_role key, which Supabase retires at
+// the end of 2026. Supabase provides both to Edge Functions; prefer the new one.
+function serviceKey(): string | undefined {
+  try {
+    const keys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}");
+    if (typeof keys?.default === "string" && keys.default) return keys.default;
+  } catch {
+    // not set or not JSON: fall back to the legacy key
+  }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+}
+
 export function adminClient(): SupabaseClient {
   const url = Deno.env.get("SUPABASE_URL");
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set");
+  const key = serviceKey();
+  if (!url || !key) throw new Error("SUPABASE_URL / SUPABASE_SECRET_KEYS not set");
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 

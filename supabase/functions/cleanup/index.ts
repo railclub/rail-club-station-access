@@ -2,14 +2,15 @@
 // Deletes videos that should no longer exist:
 //   * reports still waiting for a reviewer after `pending_keep_days` → marked "expired"
 //   * uploads that never became a report (page closed mid-way) after a day
-// Protected by a shared secret header instead of a user login.
+// Protected by a shared secret header instead of a user login. The secret lives in Supabase Vault
+// (see the 20261105 migration); the cron job sends it and the database checks it.
 import { adminClient, BUCKET, loadLimits } from "../_shared/server.ts";
 
 Deno.serve(async (req) => {
-  const secret = Deno.env.get("CRON_SECRET");
-  if (!secret || req.headers.get("x-cron-secret") !== secret) return new Response("Forbidden", { status: 403 });
-
   const admin = adminClient();
+  const { data: ok } = await admin.rpc("cleanup_secret_ok", { p_secret: req.headers.get("x-cron-secret") ?? "" });
+  if (ok !== true) return new Response("Forbidden", { status: 403 });
+
   const limits = await loadLimits(admin);
   const cutoff = new Date(Date.now() - limits.pending_keep_days * 86_400_000).toISOString();
 
