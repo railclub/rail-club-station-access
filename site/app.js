@@ -14,6 +14,17 @@
     unknown: { mark: "?", text: "No data yet" },
   };
 
+  const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Well-known stations shown as quick picks on the home page, when they're in the data.
+  const POPULAR = ["CSMT", "NDLS", "HWH", "MAS", "SBC", "ADI", "PUNE", "LKO", "SC", "BCT", "KYN", "NGP"];
+  // Small hills and track under the station board.
+  const BANNER_ART = `<svg viewBox="0 0 800 90" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <path class="h-far" d="M0 56 L80 38 L140 42 L200 22 L300 24 L340 46 L440 40 L520 20 L640 24 L680 46 L800 36 V90 H0Z"/>
+    <path class="h-mid" d="M0 70 C120 52 240 62 360 58 S600 48 800 62 V90 H0Z"/>
+    <rect class="ballast" x="0" y="80" width="800" height="10"/>
+    <g class="mini-run"><g transform="translate(0 53.5) scale(.32)"><use href="#coach"/><use href="#coach" x="306"/><use href="#engine" x="612"/></g></g>
+    <rect class="rail" x="0" y="78" width="800" height="2.5"/></svg>`;
+
   let data = null;
   let labels = {};
   let divisions = {};
@@ -62,7 +73,7 @@
       : [];
     active = current.length ? 0 : -1;
     results.innerHTML = current.map((s, i) => `
-      <li role="option" id="opt-${i}" data-id="${esc(s.id)}" aria-selected="${i === active}">
+      <li role="option" id="opt-${i}" data-id="${esc(s.id)}" aria-selected="${i === active}" style="--i:${i}">
         <span><span class="r-name">${esc(s.name)}</span>${s.code ? ` <span class="r-meta">${esc(s.code)}</span>` : ""}
         <br><span class="r-meta">${esc(s.division)} division · ${esc(s.zone)}</span></span>
         <span class="r-score">${countYes(s)} facilities</span>
@@ -97,11 +108,19 @@
     const div = divisions[st.division] || {};
     const issue = `${REPO}/issues/new?title=${encodeURIComponent(`Correction: ${st.name}`)}&body=${encodeURIComponent(`Station: ${st.name}${st.code ? ` (${st.code})` : ""}\n\nWhat is wrong or missing?\n\n`)}`;
 
+    let row = 0;
     box.innerHTML = `
-      <div class="st-head">
-        <h1 tabindex="-1" id="st-title">${esc(st.name)}${st.code ? `<span class="st-code" aria-label="Station code ${esc(st.code)}">${esc(st.code)}</span>` : ""}</h1>
-        <p class="st-sub">${esc(st.division)} division · ${esc(st.zone)}</p>
+      <div class="st-banner">
+        <div class="board-wrap">
+          <div class="board">
+            <h1 tabindex="-1" id="st-title">${esc(st.name)}</h1>
+            ${st.code ? `<span class="st-code" aria-label="Station code ${esc(st.code)}">${esc(st.code)}</span>` : ""}
+          </div>
+          <div class="posts" aria-hidden="true"><i></i><i></i></div>
+        </div>
+        ${BANNER_ART}
       </div>
+      <p class="st-sub"><span>${esc(st.division)} division</span><span>${esc(st.zone)}</span></p>
       ${st.notes ? `<p class="st-note">${esc(st.notes)}</p>` : ""}
       ${div.method === "secondary" ? `<div class="caveat"><p><strong>Not from an official station list.</strong> ${esc(div.method_note || "")} Call 139 or the station before you travel.</p>
         <ul>${(div.sources || []).filter((x) => !st.sources || st.sources.includes(x.url)).map((x) => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`).join("")}</ul></div>` : ""}
@@ -117,7 +136,7 @@
             ${g.keys.map((k) => {
               const f = st.features[k] || { status: "unknown" };
               const s = STATUS[f.status];
-              return `<li>
+              return `<li style="--i:${row++}">
                 <span class="mark ${f.status}" aria-hidden="true">${s.mark}</span>
                 <div>
                   <div class="f-label">${esc(labels[k] || k)}</div>
@@ -133,8 +152,9 @@
       <p class="src">Source: <a href="${esc(div.source_url || "#")}" target="_blank" rel="noopener">${esc(div.source_title || "Indian Railways")}</a>, checked ${esc(div.retrieved || "")}.
       ${st.features && Object.values(st.features).some((f) => f.status === "unknown") ? "“No data yet” means this division hasn't published that detail by station." : ""}
       ${div.method !== "secondary" && div.method_note ? esc(div.method_note) : ""}</p>`;
-    document.title = `${st.name} accessibility · Station Access Guide`;
-    $("st-title").focus();
+    document.title = `${st.name} accessibility · Rail Club`;
+    box.querySelectorAll(".summary strong").forEach((el) => countUp(el, Number(el.textContent)));
+    $("st-title").focus({ preventScroll: true });
     // Visitor reports (report.js) fill #visitor-slot. It may load after this runs, so it also
     // reads window.stationShown when it starts.
     window.stationShown = { station: st, labels };
@@ -144,15 +164,57 @@
   function route() {
     if (!data) return; // the fetch below calls route() once stations have loaded
     const m = location.hash.match(/^#\/s\/([a-z0-9-]+)/);
+    const show = m ? $("view-station") : $("view-search");
+    const wasHidden = show.hidden;
     $("view-search").hidden = !!m;
     $("view-station").hidden = !m;
+    if (wasHidden && !REDUCED) { show.classList.remove("enter"); void show.offsetWidth; show.classList.add("enter"); }
     if (m) {
       renderStation(m[1]);
       window.scrollTo(0, 0);
     } else {
-      document.title = "Station Access Guide";
+      document.title = "Rail Club · Station Access Guide";
       renderResults();
     }
+  }
+
+  // Numbers count up from zero; skipped for people who prefer less motion.
+  function countUp(el, target) {
+    if (REDUCED || !target) { el.textContent = target.toLocaleString("en-IN"); return; }
+    const start = performance.now(), dur = 900;
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / dur);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3))).toLocaleString("en-IN");
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Fade sections in as they scroll into view; the stats count up when they appear.
+  function reveal() {
+    const items = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window) || REDUCED) { items.forEach((el) => el.classList.add("in")); return; }
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      e.target.querySelectorAll("[data-count]").forEach((el) => countUp(el, Number(el.dataset.target)));
+      io.unobserve(e.target);
+    }), { rootMargin: "0px 0px -8% 0px" });
+    items.forEach((el) => io.observe(el));
+  }
+
+  function renderHome() {
+    const picks = POPULAR.map((c) => data.stations.find((s) => s.code === c)).filter(Boolean);
+    for (const s of [...data.stations].sort((a, b) => countYes(b) - countYes(a))) {
+      if (picks.length >= 8) break;
+      if (!picks.includes(s)) picks.push(s);
+    }
+    $("quick").innerHTML = picks.slice(0, 8).map((s) =>
+      `<a class="chip" href="#/s/${esc(s.id)}">${esc(s.name)}${s.code ? ` <small>${esc(s.code)}</small>` : ""}</a>`).join("");
+    $("stat-stations").dataset.target = data.stations.length;
+    $("stat-divisions").dataset.target = data.divisions.length;
+    $("stat-features").dataset.target = data.features.length;
+    reveal();
   }
 
   function open(st) {
@@ -180,7 +242,8 @@
       d.divisions.forEach((v) => (divisions[v.division] = v));
       $("sources").innerHTML = "Data: " + d.divisions.map((v) =>
         `<a href="${esc(v.source_url)}" target="_blank" rel="noopener">${esc(v.division)} division</a> (checked ${esc(v.retrieved)})`).join(", ");
+      renderHome();
       route();
     })
-    .catch(() => { statusEl.textContent = "Couldn't load station data. Please refresh."; });
+    .catch(() => { statusEl.textContent = "Couldn't load station data. Please refresh."; reveal(); });
 })();
