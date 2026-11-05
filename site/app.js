@@ -111,6 +111,7 @@
     let row = 0;
     box.innerHTML = `
       <div class="st-banner">
+        <div class="toran" aria-hidden="true"></div>
         <div class="board-wrap">
           <div class="board">
             <h1 tabindex="-1" id="st-title">${esc(st.name)}</h1>
