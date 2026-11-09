@@ -107,8 +107,15 @@ Principles that don't change:
 pip install -r requirements.txt
 python -m pytest -q tests            # parser + build tests
 python scraper/build.py              # regenerate site/data/stations.json
-cd site && python -m http.server     # open http://localhost:8000
+cd web && npm install && npm run dev # open http://localhost:8000
 ```
+
+The home and station pages are a React app in `web/` (built with Vite; Preact stands in for
+React to keep the download small, and Motion does the animation). Everything in `site/`
+(station data, photos, the admin and privacy pages, the visitor-report script) is copied
+next to it when you run `npm run build`, which writes the finished site to `dist/`.
+Photos come from Wikimedia Commons under open licences; credits are in `web/src/photos.js`
+and in the site's footer.
 
 Add a division from its PDF:
 

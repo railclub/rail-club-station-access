@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rail Club · Station Access Guide</title>
+  <meta name="description" content="Search an Indian railway station and see its lifts, ramps, wheelchairs, battery cars and accessible toilets, mostly from official Indian Railways data.">
+  <meta name="theme-color" content="#14181d">
+  <meta property="og:title" content="Rail Club · Will this station work for you?">
+  <meta property="og:description" content="Lifts, ramps, wheelchairs and accessible toilets at Indian railway stations, checked by travellers.">
+  <meta property="og:image" content="img/sleeper-front.jpg">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" as="image" href="img/sleeper-front.jpg" imagesrcset="img/sleeper-front-960.jpg 960w, img/sleeper-front.jpg 1920w" imagesizes="100vw" fetchpriority="high">
+  <link rel="preload" as="fetch" href="data/stations.json" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Mukta:wght@500;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="root"></div>
+  <noscript><p style="padding:24px">Rail Club needs JavaScript to search stations. The station data is also on <a href="https://github.com/railclub/rail-club-station-access">GitHub</a>.</p></noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

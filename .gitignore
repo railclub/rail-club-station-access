@@ -7,3 +7,6 @@ raw/
 node_modules/
 
 .claude/settings.local.json
+
+web/node_modules/
+dist/
