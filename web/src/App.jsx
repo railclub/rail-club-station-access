@@ -3,7 +3,7 @@ import { AnimatePresence, LazyMotion, MotionConfig, m } from "motion/react";
 import { useRoute, useStations } from "./hooks.js";
 import Header from "./components/Header.jsx";
 import Hero from "./components/Hero.jsx";
-import Led from "./components/Led.jsx";
+import Highlights from "./components/Highlights.jsx";
 import Home from "./components/Home.jsx";
 import Station from "./components/Station.jsx";
 import Footer from "./components/Footer.jsx";
@@ -51,7 +51,7 @@ export default function App() {
             ) : (
               <m.section key="home" className="view" {...page}>
                 <Hero stations={data?.stations} />
-                <Led count={data?.stations.length} />
+                <Highlights />
                 <Home data={data} />
               </m.section>
             )}
