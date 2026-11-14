@@ -62,7 +62,7 @@ function Account() {
   );
 }
 
-export default function Header() {
+export default function Header({ page }) {
   return (
     <header className="top">
       <div className="wrap top-in">
@@ -79,8 +79,8 @@ export default function Header() {
         </a>
         <div className="top-right">
           <nav className="nav" aria-label="Sections">
-            <a href="#/" className="nav-on">Stations</a>
-            <span className="nav-soon" title="Coming soon">Journeys <i>soon</i></span>
+            <a href="#/" className={page === "home" || page === "station" ? "nav-on" : undefined} aria-current={page === "home" ? "page" : undefined}>Stations</a>
+            <a href="#/journeys" className={`nav-soon${page === "journeys" ? " nav-on" : ""}`} aria-current={page === "journeys" ? "page" : undefined}>Journeys <i>soon</i></a>
           </nav>
           <Account />
         </div>

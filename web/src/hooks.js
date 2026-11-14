@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { REDUCED } from "./util.js";
 
-// Hash routes: "#/" is home, "#/s/<station id>" is a station page, "#/me" is the signed-in profile. Hash links keep old URLs working.
+// Hash routes: "#/" is home, "#/s/<station id>" is a station page, "#/me" is the signed-in profile, "#/journeys" and "#/contribute" explain those features. Hash links keep old URLs working.
 const subscribe = (cb) => { addEventListener("hashchange", cb); return () => removeEventListener("hashchange", cb); };
 export function useRoute() {
   const hash = useSyncExternalStore(subscribe, () => location.hash);
   const m = hash.match(/^#\/s\/([a-z0-9-]+)/);
   if (m) return { page: "station", id: m[1] };
-  return hash === "#/me" ? { page: "me" } : { page: "home" };
+  const page = { "#/me": "me", "#/journeys": "journeys", "#/contribute": "contribute" }[hash];
+  return { page: page || "home" };
 }
 
 export function useStations() {

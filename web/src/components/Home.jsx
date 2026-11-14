@@ -19,6 +19,14 @@ const spot = (e) => {
   e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
 };
 
+// The station card goes to the search box at the top of the page.
+const toSearch = (e) => {
+  e.preventDefault();
+  const q = document.getElementById("q");
+  q?.scrollIntoView({ block: "center", behavior: "smooth" });
+  q?.focus({ preventScroll: true });
+};
+
 function Stat({ value, children }) {
   const [ref, v] = useCountUp(value);
   return <div className="stat" ref={ref} onPointerMove={spot}><strong>{v.toLocaleString("en-IN")}</strong><span>{children}</span></div>;
@@ -111,34 +119,36 @@ export default function Home({ data }) {
         <m.p className="kicker hi" lang="hi" {...inView()}>रेल क्लब क्या करता है</m.p>
         <m.h2 id="what-title" className="block-title" {...inView(0.05)}>What Rail Club does</m.h2>
         <div className="bento">
-          <m.article className="pcard big" onPointerMove={spot} {...inView(0)}>
+          <m.a className="pcard big" href="#/" onClick={toSearch} onPointerMove={spot} {...inView(0)} whileTap={{ scale: 0.985 }}>
             <div className="pcard-img"><img src={CARDS.station.small} alt="" loading="lazy" decoding="async" style={{ objectPosition: CARDS.station.pos }} /></div>
             <div className="pcard-body">
               <span className="tag live">Live</span>
               <p className="kicker hi" lang="hi">स्टेशन सुविधाएँ</p>
               <h3>Station access, before you leave home</h3>
               <p>Lifts, ramps, wheelchairs and accessible toilets for every station we cover, with the official source for each fact and the date we checked it.</p>
-              <a className="pcard-cta" href="#q">Search a station →</a>
+              <span className="pcard-cta">Search a station <span aria-hidden="true">→</span></span>
             </div>
-          </m.article>
-          <m.article className="pcard" onPointerMove={spot} {...inView(0.08)}>
+          </m.a>
+          <m.a className="pcard" href="#/journeys" onPointerMove={spot} {...inView(0.08)} whileTap={{ scale: 0.985 }}>
             <div className="pcard-img"><img src={CARDS.journey.small} alt="" loading="lazy" decoding="async" style={{ objectPosition: CARDS.journey.pos }} /></div>
             <div className="pcard-body">
               <span className="tag soon">Coming soon</span>
               <p className="kicker hi" lang="hi">यात्रा साथी</p>
               <h3>Journey Partner</h3>
               <p>Enter your train and see waterfalls, rivers and forts on the way, with the time and which side to look.</p>
+              <span className="pcard-cta">See what's coming <span aria-hidden="true">→</span></span>
             </div>
-          </m.article>
-          <m.article className="pcard" onPointerMove={spot} {...inView(0.16)}>
+          </m.a>
+          <m.a className="pcard" href="#/contribute" onPointerMove={spot} {...inView(0.16)} whileTap={{ scale: 0.985 }}>
             <div className="pcard-img"><img src={CARDS.travellers.small} alt="" loading="lazy" decoding="async" style={{ objectPosition: CARDS.travellers.pos }} /></div>
             <div className="pcard-body">
               <span className="tag new">New</span>
               <p className="kicker hi" lang="hi">यात्रियों की नज़र से</p>
               <h3>Seen by travellers</h3>
               <p>Film a lift or ramp at your station. Every video is checked before it adds a "Seen by a visitor" mark.</p>
+              <span className="pcard-cta">How it works <span aria-hidden="true">→</span></span>
             </div>
-          </m.article>
+          </m.a>
         </div>
       </section>
     </div>

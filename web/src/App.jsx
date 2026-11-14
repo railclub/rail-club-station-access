@@ -8,6 +8,8 @@ import Home from "./components/Home.jsx";
 import Station from "./components/Station.jsx";
 import Footer from "./components/Footer.jsx";
 import Me from "./components/Me.jsx";
+import Journeys from "./components/Journeys.jsx";
+import Contribute from "./components/Contribute.jsx";
 import { startAuth } from "./auth.js";
 
 const loadFeatures = () => import("./motion-features.js").then((r) => r.default);
@@ -28,13 +30,13 @@ export default function App() {
       const typing = /^(input|textarea|select)$/i.test(e.target.tagName) || e.target.isContentEditable;
       if ((e.key === "/" && !typing) || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
-        if (location.hash.startsWith("#/s/") || location.hash === "#/me") location.hash = "#/";
+        if (route.page !== "home") location.hash = "#/";
         setTimeout(() => { const q = document.getElementById("q"); q?.focus(); q?.scrollIntoView({ block: "center", behavior: "smooth" }); }, 60);
       }
     };
     addEventListener("keydown", onKey);
     return () => removeEventListener("keydown", onKey);
-  }, []);
+  }, [route.page]);
 
   useEffect(() => { startAuth(); }, []);
   useEffect(() => { if (route.page === "home") document.title = "Rail Club · Station Access Guide"; }, [route.page]);
@@ -43,7 +45,7 @@ export default function App() {
     <LazyMotion features={loadFeatures} strict>
       <MotionConfig reducedMotion="user">
         <a className="skip" href="#main">Skip to content</a>
-        <Header />
+        <Header page={route.page} />
         <main id="main" className="full" tabIndex={-1}>
           {error && <p className="wrap hint">Couldn't load station data. Please refresh.</p>}
           <AnimatePresence mode="wait" initial={false}>
@@ -55,6 +57,10 @@ export default function App() {
               <m.section key="me" className="view" {...page}>
                 <Me data={data} />
               </m.section>
+            ) : route.page === "journeys" ? (
+              <m.section key="journeys" className="view" {...page}><Journeys /></m.section>
+            ) : route.page === "contribute" ? (
+              <m.section key="contribute" className="view" {...page}><Contribute /></m.section>
             ) : (
               <m.section key="home" className="view" {...page}>
                 <Hero stations={data?.stations} />
