@@ -27,9 +27,13 @@ const toSearch = (e) => {
   q?.focus({ preventScroll: true });
 };
 
-function Stat({ value, children }) {
+function Stat({ value, href, children }) {
   const [ref, v] = useCountUp(value);
-  return <div className="stat" ref={ref} onPointerMove={spot}><strong>{v.toLocaleString("en-IN")}</strong><span>{children}</span></div>;
+  return (
+    <a className="stat" href={href} ref={ref} onPointerMove={spot}>
+      <strong>{v.toLocaleString("en-IN")}</strong><span>{children}</span><i className="stat-go" aria-hidden="true">→</i>
+    </a>
+  );
 }
 
 export function Board({ st, big = false }) {
@@ -84,13 +88,6 @@ export default function Home({ data }) {
 
   return (
     <div className="wrap">
-      <m.div className="legend" aria-label="What the marks mean" {...inView()}>
-        <span className="pill yes"><b aria-hidden="true">✓</b> Available</span>
-        <span className="pill no"><b aria-hidden="true">✕</b> Not available</span>
-        <span className="pill not_listed"><b aria-hidden="true">–</b> Not in official list</span>
-        <span className="pill unknown"><b aria-hidden="true">?</b> No data yet</span>
-      </m.div>
-
       {user && data && <ForYou user={user} stations={stations} />}
 
       <section className="block" aria-labelledby="quick-title">
@@ -109,9 +106,9 @@ export default function Home({ data }) {
 
       {data && (
         <m.section className="stats" aria-label="Coverage so far" {...inView()}>
-          <Stat value={data.stations.length}>stations covered</Stat>
-          <Stat value={data.divisions.length}>railway divisions <span className="hi" lang="hi">मंडल</span></Stat>
-          <Stat value={data.features.length}>facilities tracked</Stat>
+          <Stat value={data.stations.length} href="#/browse">stations covered</Stat>
+          <Stat value={data.divisions.length} href="#/browse">railway divisions <span className="hi" lang="hi">मंडल</span></Stat>
+          <Stat value={data.features.length} href="#/facilities">facilities tracked</Stat>
         </m.section>
       )}
 

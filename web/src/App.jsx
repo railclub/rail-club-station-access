@@ -10,6 +10,8 @@ import Footer from "./components/Footer.jsx";
 import Me from "./components/Me.jsx";
 import Journeys from "./components/Journeys.jsx";
 import Contribute from "./components/Contribute.jsx";
+import Browse from "./components/Browse.jsx";
+import Facilities from "./components/Facilities.jsx";
 import { startAuth } from "./auth.js";
 
 const loadFeatures = () => import("./motion-features.js").then((r) => r.default);
@@ -57,6 +59,10 @@ export default function App() {
               <m.section key="me" className="view" {...page}>
                 <Me data={data} />
               </m.section>
+            ) : route.page === "browse" && data ? (
+              <m.section key={`browse-${route.feature || ""}`} className="view" {...page}><Browse data={data} focus={route.focus} feature={route.feature} /></m.section>
+            ) : route.page === "facilities" && data ? (
+              <m.section key="facilities" className="view" {...page}><Facilities data={data} /></m.section>
             ) : route.page === "journeys" ? (
               <m.section key="journeys" className="view" {...page}><Journeys /></m.section>
             ) : route.page === "contribute" ? (

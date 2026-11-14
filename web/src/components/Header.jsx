@@ -79,7 +79,7 @@ export default function Header({ page }) {
         </a>
         <div className="top-right">
           <nav className="nav" aria-label="Sections">
-            <a href="#/" className={page === "home" || page === "station" ? "nav-on" : undefined} aria-current={page === "home" ? "page" : undefined}>Stations</a>
+            <a href="#/" className={["home", "station", "browse", "facilities"].includes(page) ? "nav-on" : undefined} aria-current={page === "home" ? "page" : undefined}>Stations</a>
             <a href="#/journeys" className={`nav-soon${page === "journeys" ? " nav-on" : ""}`} aria-current={page === "journeys" ? "page" : undefined}>Journeys <i>soon</i></a>
           </nav>
           <Account />

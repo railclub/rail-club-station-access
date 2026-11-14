@@ -7,6 +7,10 @@ export function useRoute() {
   const hash = useSyncExternalStore(subscribe, () => location.hash);
   const m = hash.match(/^#\/s\/([a-z0-9-]+)/);
   if (m) return { page: "station", id: m[1] };
+  const b = hash.match(/^#\/browse(?:\/([a-z0-9-]+))?$/);
+  if (b) return { page: "browse", focus: b[1] };
+  const f = hash.match(/^#\/facilities(?:\/([a-z_]+))?$/);
+  if (f) return f[1] ? { page: "browse", feature: f[1] } : { page: "facilities" };
   const page = { "#/me": "me", "#/journeys": "journeys", "#/contribute": "contribute" }[hash];
   return { page: page || "home" };
 }

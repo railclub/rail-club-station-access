@@ -2,20 +2,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { m } from "motion/react";
 import { BANNER, creditLine } from "../photos.js";
 import { pushRecent, useAuth } from "../auth.js";
+import { GROUPS, Legend, STATUS, slug } from "../facilities.jsx";
 
 const REPO = "https://github.com/railclub/rail-club-station-access";
-const GROUPS = [
-  { title: "Getting around", keys: ["lift", "escalator", "ramp_entry", "ramp_second", "ramp_fob", "battery_car", "boarding_ramp"] },
-  { title: "Help on hand", keys: ["wheelchair", "wheelchair_booking", "human_assistance", "help_booth"] },
-  { title: "Facilities", keys: ["accessible_toilet", "water_booth", "parking", "low_counter", "tactile_path", "braille_signage", "braille_map"] },
-];
-const STATUS = {
-  yes: { mark: "✓", text: "Available" },
-  no: { mark: "✕", text: "Not available, according to official data" },
-  not_listed: { mark: "–", text: "Not in the official list for this division" },
-  unknown: { mark: "?", text: "No data yet" },
-};
-
 // Phone numbers in notes become tap-to-call links.
 function Note({ text }) {
   const parts = text.split(/\b([6-9]\d{9})\b/);
@@ -61,7 +50,10 @@ export default function Station({ data, id }) {
         </m.div>
         <p className="credit"><a href={BANNER.page} target="_blank" rel="noopener">{creditLine(BANNER)}</a></p>
       </div>
-      <p className="st-sub"><span>{st.division} division</span><span>{st.zone}</span></p>
+      <p className="st-sub">
+        <a href={`#/browse/${slug(st.division)}`}>{st.division} division</a>
+        <a href={`#/browse/${slug(st.zone)}`}>{st.zone}</a>
+      </p>
       {st.notes && <p className="st-note">{st.notes}</p>}
       {div.method === "secondary" && (
         <div className="caveat">
@@ -76,6 +68,7 @@ export default function Station({ data, id }) {
           </m.div>
         ))}
       </div>
+      <Legend />
       {GROUPS.map((g) => (
         <section className="group" aria-labelledby={`g-${g.keys[0]}`} key={g.title}>
           <h2 id={`g-${g.keys[0]}`}>{g.title}</h2>
