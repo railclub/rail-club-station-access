@@ -100,10 +100,59 @@ main.full { max-width: none; padding: 0; }
 .brand-text b { font-size: 1.08rem; letter-spacing: -.01em; }
 .brand-text b .hi { color: var(--vb-orange); font-size: .95rem; margin-left: 2px; }
 .brand-text small { color: var(--muted); font-size: .78rem; }
+.top-right { display: flex; align-items: center; gap: 10px; }
 .nav { display: flex; align-items: center; gap: 6px; font-size: .95rem; }
 .nav a, .nav-soon { padding: 8px 12px; border-radius: 999px; text-decoration: none; color: var(--muted); }
 .nav a.nav-on { background: color-mix(in srgb, var(--vb-orange) 14%, transparent); color: color-mix(in srgb, var(--vb-orange) 70%, var(--ink)); font-weight: 700; }
 .nav-soon i { font-style: normal; font-size: .72rem; padding: 1px 6px; margin-left: 4px; border-radius: 999px; background: var(--no-bg); color: var(--no); }
+
+/* ---------- account: sign-in button, profile menu ---------- */
+.signin {
+  display: inline-flex; align-items: center; gap: 9px; min-height: 40px; padding: 8px 14px; border-radius: 999px; cursor: pointer;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); font: 700 .92rem/1 "Atkinson Hyperlegible", system-ui, sans-serif;
+  box-shadow: var(--shadow); transition: transform .2s var(--ease), border-color .2s, box-shadow .2s;
+}
+.signin:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--vb-orange); box-shadow: var(--shadow-lg); }
+.signin:disabled { opacity: .6; cursor: default; }
+.g-mark { width: 18px; height: 18px; flex: none; }
+.avatar { display: block; flex: none; border-radius: 50%; object-fit: cover; background: var(--line); }
+.avatar-initial { display: grid; place-items: center; background: linear-gradient(135deg, var(--vb-orange), #e0581a); color: #fff; font-family: Poppins, sans-serif; font-weight: 700; }
+.avatar-wait { width: 36px; height: 36px; opacity: .6; }
+.account { position: relative; }
+.account-btn { display: block; padding: 2px; border: 2px solid transparent; border-radius: 50%; background: none; cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
+.account-btn:hover, .account-btn[aria-expanded="true"] { border-color: var(--vb-orange); transform: scale(1.04); }
+.menu {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 40; width: min(300px, 88vw); padding: 8px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg); transform-origin: 100% 0;
+}
+.menu-who { display: flex; align-items: center; gap: 12px; padding: 10px 10px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+.menu-who div { display: grid; min-width: 0; line-height: 1.3; }
+.menu-who div span { color: var(--muted); font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu a, .menu button[role="menuitem"] {
+  display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 10px; background: none; cursor: pointer;
+  color: var(--ink); font: inherit; font-size: .95rem; text-align: left; text-decoration: none;
+}
+.menu a:hover, .menu button[role="menuitem"]:hover { background: color-mix(in srgb, var(--vb-orange) 12%, transparent); }
+
+/* ---------- "For you" on the home page, and the profile page ---------- */
+.foryou { margin: 36px 0 0; padding: 22px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.foryou-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 20px; margin-bottom: 18px; }
+.foryou .block-title { margin: 0; }
+.foryou-link { padding: 8px 14px; border-radius: 999px; text-decoration: none; color: var(--ink); font-size: .92rem; background: color-mix(in srgb, var(--vb-orange) 12%, transparent); transition: background .2s; }
+.foryou-link:hover { background: color-mix(in srgb, var(--vb-orange) 22%, transparent); }
+.foryou-empty { margin: 0; color: var(--muted); }
+.me { max-width: 812px; padding-top: 26px; }
+.me-card { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding: 22px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.me-id { flex: 1; min-width: 200px; }
+.me-id h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); letter-spacing: -.015em; }
+.me-email { margin: 2px 0 0; color: var(--muted); font-size: .92rem; overflow-wrap: anywhere; }
+.me-out { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--ink); font: inherit; font-size: .92rem; cursor: pointer; transition: border-color .2s; }
+.me-out:hover { border-color: var(--vb-orange); }
+.me-stats { margin-top: 16px; }
+.me-list .pill { margin-left: 6px; padding: 1px 10px; font-size: .78rem; font-weight: 400; vertical-align: 2px; }
+.me-list .f-label a { color: inherit; }
+.me-empty { padding: 20px; border-radius: var(--radius); background: var(--surface); border: 1px dashed var(--line); }
+.me-empty p { margin: 0 0 14px; }
 
 /* ---------- hero: real photos, slow cinematic motion ---------- */
 .hero { position: relative; isolation: isolate; min-height: min(92vh, 860px); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background: #14181d; color: #fff; }
@@ -368,7 +417,9 @@ main.full { max-width: none; padding: 0; }
 #st-title:focus, main:focus { outline: none; }
 
 @media (max-width: 640px) {
-  .nav-soon { display: none; }
+  .nav { display: none; }
+  .signin-long { display: none; }
+  .brand-text small { display: none; }
   .hero { min-height: 0; }
   .hero-in { padding-top: 64px; }
   .hero-shade { background: linear-gradient(0deg, rgb(10 12 15 / 92%) 0%, rgb(10 12 15 / 55%) 55%, rgb(10 12 15 / 35%) 100%); }

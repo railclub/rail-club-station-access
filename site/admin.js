@@ -1,15 +1,11 @@
 // Review queue for admins. The page itself holds no secrets: every action goes through the
 // review-report Edge Function, which checks the signed-in account is in the admins table.
-import { CONFIG } from "./config.js";
+import { client } from "./supa.js";
 
-const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const $ = (id) => document.getElementById(id);
 
-const { createClient } = await import(SUPABASE_JS);
-const sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, {
-  auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true },
-});
+const sb = await client();
 
 async function call(body) {
   const { data, error } = await sb.functions.invoke("review-report", { body });

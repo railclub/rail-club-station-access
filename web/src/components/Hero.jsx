@@ -3,6 +3,7 @@ import { m, useScroll, useTransform } from "motion/react";
 import { SLIDES, creditLine } from "../photos.js";
 import { REDUCED } from "../util.js";
 import Search from "./Search.jsx";
+import { profile, useAuth } from "../auth.js";
 
 const rise = (d) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0, transition: { duration: 0.8, delay: d, ease: [0.22, 0.8, 0.24, 1] } } });
 
@@ -15,6 +16,7 @@ export default function Hero({ stations }) {
     return () => clearInterval(t);
   }, [paused]);
   const cur = SLIDES[i];
+  const { user } = useAuth();
   // Gentle parallax: the photo drifts down and the text fades as you scroll past the hero.
   const { scrollY } = useScroll();
   const photoY = useTransform(scrollY, [0, 900], [0, REDUCED ? 0 : 160]);
@@ -33,7 +35,7 @@ export default function Hero({ stations }) {
       <div className="hero-shade" aria-hidden="true" />
 
       <m.div className="wrap hero-in" style={{ opacity: textOpacity }}>
-        <m.p className="eyebrow" {...rise(0)}><span className="hi" lang="hi">नमस्ते</span> · Unofficial · by travellers, for travellers</m.p>
+        <m.p className="eyebrow" {...rise(0)}><span className="hi" lang="hi">नमस्ते</span>{user ? <>, {profile(user).first} · welcome back</> : <> · Unofficial · by travellers, for travellers</>}</m.p>
         <m.h1 className="hero-title" {...rise(0.08)}>Will this station<br /><span>work for you?</span></m.h1>
         <m.p className="lede" {...rise(0.16)}>Lifts, ramps, wheelchairs, battery cars and accessible toilets at Indian railway stations, mostly from official Indian Railways data, checked by people who travel.</m.p>
         <m.div {...rise(0.24)}><Search stations={stations} /></m.div>

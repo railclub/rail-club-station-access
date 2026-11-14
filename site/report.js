@@ -2,8 +2,8 @@
 // visitor record a short video at the station. All checks that matter happen again on the
 // server (supabase/functions/submit-report); the ones here just save people wasted effort.
 import { CONFIG } from "./config.js";
+import { client, takeReturnHash } from "./supa.js";
 
-const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/+esm";
 const BUCKET = "report-videos";
 const CONSENT_VERSION = "2026-10-22";
 const MIN_S = 15, MAX_S = 60, MAX_BYTES = 12 * 1024 * 1024, GOOD_ACCURACY_M = 100;
@@ -16,17 +16,6 @@ const VIDEO_FEATURES = ["lift", "escalator", "ramp_entry", "ramp_second", "ramp_
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtDate = (d) => new Date(`${d}T00:00:00`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-
-let sb = null;
-async function client() {
-  if (!sb) {
-    const { createClient } = await import(SUPABASE_JS);
-    sb = createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, {
-      auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true },
-    });
-  }
-  return sb;
-}
 
 async function loadFacts(stationId) {
   const url = `${CONFIG.supabaseUrl}/rest/v1/facts?station_id=eq.${encodeURIComponent(stationId)}` +
@@ -49,15 +38,16 @@ function stillNeeded(station, facts) {
 
 // ---------- coming back from Google sign-in ----------
 // Google returns to the plain page URL with ?code=…; finish signing in, tidy the URL and go back
-// to the station the visitor was reporting on.
+// to the station the visitor was reporting on, or to the page where they pressed "Sign in".
 (async () => {
-  if (!CONFIG.visitorReports || !new URLSearchParams(location.search).has("code")) return;
+  if (!new URLSearchParams(location.search).has("code")) return;
   const c = await client();
   await c.auth.getSession(); // exchanges the code for a session
   let saved = null;
   try { saved = JSON.parse(sessionStorage.getItem(RESUME_KEY) || "null"); } catch { /* ignore */ }
-  history.replaceState(null, "", location.pathname + (saved ? `#/s/${saved.station}` : location.hash));
-  if (saved) window.dispatchEvent(new HashChangeEvent("hashchange"));
+  const back = takeReturnHash();
+  history.replaceState(null, "", location.pathname + (saved ? `#/s/${saved.station}` : back || location.hash));
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
 })();
 
 // ---------- station page section ----------

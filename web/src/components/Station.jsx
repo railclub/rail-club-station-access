@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { m } from "motion/react";
 import { BANNER, creditLine } from "../photos.js";
+import { pushRecent, useAuth } from "../auth.js";
 
 const REPO = "https://github.com/railclub/rail-club-station-access";
 const GROUPS = [
@@ -26,6 +27,8 @@ export default function Station({ data, id }) {
   const labels = useMemo(() => Object.fromEntries(data.features.map((f) => [f.key, f.label])), [data]);
   const div = useMemo(() => data.divisions.find((d) => d.division === st?.division) || {}, [data, st]);
   const title = useRef(null);
+  const { user } = useAuth();
+  useEffect(() => { if (user && st) pushRecent(user.id, st.id); }, [user?.id, st?.id]);
 
   useEffect(() => {
     if (!st) return;

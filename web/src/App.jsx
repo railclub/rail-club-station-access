@@ -7,6 +7,8 @@ import Highlights from "./components/Highlights.jsx";
 import Home from "./components/Home.jsx";
 import Station from "./components/Station.jsx";
 import Footer from "./components/Footer.jsx";
+import Me from "./components/Me.jsx";
+import { startAuth } from "./auth.js";
 
 const loadFeatures = () => import("./motion-features.js").then((r) => r.default);
 
@@ -26,7 +28,7 @@ export default function App() {
       const typing = /^(input|textarea|select)$/i.test(e.target.tagName) || e.target.isContentEditable;
       if ((e.key === "/" && !typing) || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
-        if (location.hash.startsWith("#/s/")) location.hash = "#/";
+        if (location.hash.startsWith("#/s/") || location.hash === "#/me") location.hash = "#/";
         setTimeout(() => { const q = document.getElementById("q"); q?.focus(); q?.scrollIntoView({ block: "center", behavior: "smooth" }); }, 60);
       }
     };
@@ -34,6 +36,7 @@ export default function App() {
     return () => removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => { startAuth(); }, []);
   useEffect(() => { if (route.page === "home") document.title = "Rail Club · Station Access Guide"; }, [route.page]);
 
   return (
@@ -47,6 +50,10 @@ export default function App() {
             {route.page === "station" && data ? (
               <m.section key={`s-${route.id}`} className="view" {...page}>
                 <Station data={data} id={route.id} />
+              </m.section>
+            ) : route.page === "me" ? (
+              <m.section key="me" className="view" {...page}>
+                <Me data={data} />
               </m.section>
             ) : (
               <m.section key="home" className="view" {...page}>

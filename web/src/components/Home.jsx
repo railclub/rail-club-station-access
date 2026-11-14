@@ -2,6 +2,7 @@ import { m } from "motion/react";
 import { CARDS } from "../photos.js";
 import { countYes } from "../util.js";
 import { useCountUp } from "../hooks.js";
+import { getRecent, profile, useAuth, useMyReports } from "../auth.js";
 
 // Well-known stations shown as quick picks, when they're in the data.
 const POPULAR = ["CSMT", "NDLS", "HWH", "MAS", "SBC", "ADI", "PUNE", "LKO", "SC", "BCT", "KYN", "NGP"];
@@ -32,7 +33,40 @@ export function Board({ st, big = false }) {
   );
 }
 
+// Shown only when signed in: the person's recent stations and a way into their contributions.
+function ForYou({ user, stations }) {
+  const { rows } = useMyReports(user);
+  const who = profile(user);
+  const recent = getRecent(user.id).map((id) => stations.find((s) => s.id === id)).filter(Boolean).slice(0, 3);
+  const published = (rows || []).filter((r) => r.status === "published").length;
+  return (
+    <m.section className="foryou" aria-labelledby="foryou-title" {...inView()}>
+      <div className="foryou-head">
+        <div>
+          <p className="kicker hi" lang="hi">आपके लिए</p>
+          <h2 id="foryou-title" className="block-title">For you, {who.first}</h2>
+        </div>
+        <a className="foryou-link" href="#/me">
+          <b>{rows ? rows.length : "–"}</b> video{rows?.length === 1 ? "" : "s"} sent · <b>{rows ? published : "–"}</b> published<span aria-hidden="true"> →</span>
+        </a>
+      </div>
+      {recent.length > 0 ? (
+        <div className="boards">
+          {recent.map((s) => (
+            <m.a key={s.id} className="irboard" href={`#/s/${s.id}`} whileHover={{ y: -6 }} whileTap={{ scale: 0.97 }}>
+              <Board st={s} /><span className="irb-posts" aria-hidden="true"><i /><i /></span>
+            </m.a>
+          ))}
+        </div>
+      ) : (
+        <p className="foryou-empty">Stations you open will appear here, so the ones you use are always one tap away.</p>
+      )}
+    </m.section>
+  );
+}
+
 export default function Home({ data }) {
+  const { user } = useAuth();
   const stations = data?.stations || [];
   const picks = POPULAR.map((c) => stations.find((s) => s.code === c)).filter(Boolean);
   for (const s of [...stations].sort((a, b) => countYes(b) - countYes(a))) {
@@ -48,6 +82,8 @@ export default function Home({ data }) {
         <span className="pill not_listed"><b aria-hidden="true">–</b> Not in official list</span>
         <span className="pill unknown"><b aria-hidden="true">?</b> No data yet</span>
       </m.div>
+
+      {user && data && <ForYou user={user} stations={stations} />}
 
       <section className="block" aria-labelledby="quick-title">
         <m.p className="kicker hi" lang="hi" {...inView()}>लोकप्रिय स्टेशन</m.p>
