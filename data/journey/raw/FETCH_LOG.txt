@@ -1,0 +1,14 @@
+Fetched 2026-11-15 13:06 UTC, box S18.45 W72.78 N19.3 E73.95
+FAIL  routes: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
+FAIL  tracks: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
+FAIL  stations: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
+FAIL  sights: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
+OK    wikidata_00: 187 items, 144 KB
+OK    wikidata_01: 152 items, 122 KB
+OK    wikidata_02: 1956 items, 1649 KB
+OK    wikidata_10: 1246 items, 1046 KB
+OK    wikidata_11: 275 items, 225 KB
+OK    wikidata_12: 161 items, 134 KB
+OK    wikidata_20: 2371 items, 1949 KB
+OK    wikidata_21: 98 items, 81 KB
+OK    wikidata_22: 92 items, 75 KB
