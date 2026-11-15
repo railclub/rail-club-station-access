@@ -59,21 +59,33 @@ Repeat step 3 to add more reviewers.
      - `https://railclub.github.io/rail-club-station-access/admin.html`
      - `http://localhost:8000/**` (for testing on your computer)
 
-## 4. Gemini key and spending cap (10 min)
+## 4. Gemini key (5 min)
 
-**Still to do.** Until the key is added, every video waits for a reviewer on `admin.html`.
+**Rail Club uses Gemini's free tier** (decided 15 November 2026). On the free tier Google may keep
+the videos it checks and use them to improve its products; the privacy notice, the consent box
+before filming (`site/report.js`, consent version `2026-11-15`) and the "How it works" page say so.
 
-1. https://aistudio.google.com → **Get API key → Create API key** (choose the Rail Club Google Cloud project).
-2. **Set up billing** for that key (AI Studio → Billing). The paid tier is needed: on the free tier
-   Google may use uploaded videos to improve its products, and the privacy notice promises it doesn't.
-3. **Spending cap:** Google Cloud → **Billing → Budgets & alerts → Create budget** for the Rail Club
-   project, e.g. ₹500/month with email alerts at 50% and 90%. (Rail Club also stops calling Gemini
-   after 300 videos a month; change `monthly_gemini_calls` in the `settings` table.)
-4. Supabase → **Edge Functions → Secrets**, add:
+1. Go to https://aistudio.google.com and sign in. Any Google account works; prefer the one that
+   owns the Rail Club Google Cloud project.
+2. **Get API key → Create API key**, and pick an existing project you own (not a temporary
+   "qwiklabs" training project, which gets deleted).
+3. Copy the key (starts with `AIza`). Don't paste it into chat, code or GitHub.
+4. Supabase → **Edge Functions → Secrets** → add:
    | Name | Value |
    |---|---|
-   | `GEMINI_API_KEY` | the key from step 1 |
+   | `GEMINI_API_KEY` | the key from step 3 |
    | `GEMINI_MODEL` | optional, default `gemini-2.5-flash`; set this if Google has renamed or retired it |
+5. Send one test video; Edge Functions → `submit-report` → Logs should show no Gemini error.
+
+Free-tier rate limits are shown in AI Studio next to the key. If a call is refused, the video
+simply waits for a reviewer. Rail Club also stops calling Gemini after 300 videos a month
+(`monthly_gemini_calls` in the `settings` table).
+
+**Switching to the paid tier later** (so Google doesn't use the videos): turn on billing for the
+key's project (AI Studio → Billing), set a budget alert in Google Cloud → Billing → Budgets &
+alerts, then change the privacy notice, the consent text in `site/report.js` (and bump
+`CONSENT_VERSION`) and the "How it works" steps in `web/src/components/Contribute.jsx` back to
+"Google does not use the videos to improve its products".
 
 ## 5. Deploy the server functions (10 min)
 

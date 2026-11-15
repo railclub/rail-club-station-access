@@ -9,8 +9,8 @@ const STEPS = [
   ["Tick what you can film", "A lift, a ramp, an accessible toilet, tactile paving and similar. We only ask for what isn't confirmed yet."],
   ["Sign in and allow location", "Google sign-in stops spam. Your location is checked once, only to confirm you're at the station."],
   ["Record 15 to 60 seconds", "Film the facility, not people. No sound is recorded."],
-  ["We check it", "Every video is checked before anything is published. A new contributor's first videos are checked by a person."],
-  ["It shows as “Seen by a visitor”", "Only the fact and the date are published. The video is deleted after it has been checked."],
+  ["We check it", "Google's Gemini AI checks it first, on its free service, so Google may keep the video to improve its products. A new contributor's first videos are also checked by a person."],
+  ["It shows as “Seen by a visitor”", "Only the fact and the date are published. Rail Club deletes its copy after the check."],
 ];
 
 export default function Contribute() {

@@ -5,7 +5,7 @@ import { CONFIG } from "./config.js";
 import { client, takeReturnHash } from "./supa.js";
 
 const BUCKET = "report-videos";
-const CONSENT_VERSION = "2026-10-22";
+const CONSENT_VERSION = "2026-11-15"; // free Gemini service: Google may keep and use videos
 const MIN_S = 15, MAX_S = 60, MAX_BYTES = 12 * 1024 * 1024, GOOD_ACCURACY_M = 100;
 const RECENT_DAYS = 90, CONFIRMATIONS = 2;
 const RESUME_KEY = "railclub-report-resume";
@@ -168,7 +168,8 @@ function stepConsent(user) {
       <li>Film only the facility (lift, ramp, toilet sign…). <strong>Don't film people's faces.</strong></li>
       <li>Stay safe: keep away from the platform edge and never lean out of a train.</li>
       <li>No sound is recorded. We use your location only to check you're at the station.</li>
-      <li>The video is deleted once it's checked. Only the facts are published, without your name.</li>
+      <li>The video is checked by Google's Gemini AI on its <strong>free service, so Google may keep it and use it to improve its products</strong>. Keep other people out of the frame.</li>
+      <li>We delete our copy once it's checked. Only the facts are published, without your name.</li>
     </ul>
     <label class="consent"><input type="checkbox" id="c-ok"> I agree to the <a href="privacy.html" target="_blank" rel="noopener">privacy notice</a> and that the facts from my video can be published.</label>
     <p class="hint">Signed in as ${esc(user.email || "")}. <button type="button" class="link" id="sign-out">Sign out</button></p>
