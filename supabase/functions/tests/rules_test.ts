@@ -99,6 +99,11 @@ Deno.test("decide: first reports, missing coordinates and medium confidence go t
   assertEquals(decide(good, ["accessible_toilet"], { ...ctx, rejected: 3 }).status, "pending");
   const medium = { ...good, features: [{ ...good.features[0], confidence: "medium" as const }] };
   assertEquals(decide(medium, ["accessible_toilet"], ctx).status, "pending");
+  // Location already proved the station; a board naming another one only asks a person to look
+  const thane = decide({ ...good, station_board_visible: true, board_matches_station: "no", station_board_text: "THANE" },
+    ["accessible_toilet"], ctx);
+  assertEquals(thane.status, "pending");
+  assertEquals(thane.reasons, ['A sign in the video reads "THANE"']);
 });
 
 Deno.test("decide: rejections", () => {
@@ -108,7 +113,6 @@ Deno.test("decide: rejections", () => {
   assertEquals(no({ is_screen_or_recording_of_screen: true }), "rejected");
   assertEquals(no({ looks_edited: true }), "rejected");
   assertEquals(no({ unsafe_or_inappropriate: true }), "rejected");
-  assertEquals(no({ board_matches_station: "no", station_board_text: "THANE" }), "rejected");
   assertEquals(no({ features: [{ ...good.features[0], seen: false }] }), "rejected");
   assertEquals(no({ features: [{ ...good.features[0], confidence: "low" }] }), "rejected");
   // Gemini "seeing" something the visitor didn't claim, or that isn't needed, is ignored

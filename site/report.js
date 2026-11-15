@@ -239,7 +239,7 @@ async function stepRecord() {
     return show(`<h3 tabindex="-1">Recording isn't supported here</h3><p>Please try in Chrome or Safari on your phone.</p>`);
   }
   show(`<h3 tabindex="-1">5. Record ${MIN_S}–${MAX_S} seconds</h3>
-    <p class="hint">Tip: if you can, start with a platform sign or the station name board. It helps your report get approved faster.</p>
+    <p class="hint">Your location already confirms the station, so there's no need to film the name board. Just show each facility you ticked, clearly and up close.</p>
     <video id="cam" class="cam" autoplay muted playsinline></video>
     <p id="rec-time" class="rec-time" aria-live="off">0 s</p>
     <button type="button" class="btn" id="rec">● Start recording</button> <button type="button" class="link" id="f-cancel">Cancel</button>`);

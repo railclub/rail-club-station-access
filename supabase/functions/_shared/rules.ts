@@ -230,9 +230,6 @@ export function decide(g: GeminiResult, needed: string[], ctx: {
   if (g.unsafe_or_inappropriate) return reject("This video can't be accepted");
   if (!g.is_railway_station) return reject("This doesn't look like a railway station");
   if (!g.inside_station_premises) return reject("This seems to be filmed outside the station");
-  if (g.board_matches_station === "no") {
-    return reject(`The station board shows a different station${g.station_board_text ? ` (${g.station_board_text})` : ""}`);
-  }
 
   // Only facilities the visitor ticked, that are still needed, that Gemini saw with some confidence
   const byKey = new Map<string, GeminiFeature>();
@@ -243,6 +240,11 @@ export function decide(g: GeminiResult, needed: string[], ctx: {
   if (!confirmed.length) return reject("We couldn't see the facilities you ticked in the video");
 
   const review: string[] = [];
+  // The visitor's location is what proves the station; a name board is never required. A board
+  // naming another station (often a direction or "next station" sign) only asks a person to look.
+  if (g.board_matches_station === "no") {
+    review.push(`A sign in the video reads ${g.station_board_text ? `"${g.station_board_text}"` : "another station's name"}`);
+  }
   if (!ctx.has_coords) review.push(`We can't check locations at ${ctx.stationName} automatically yet`);
   if (ctx.approved < ctx.limits.trust_after_approved) review.push("New contributors' reports are checked by a person");
   if (ctx.rejected >= ctx.limits.distrust_after_rejected) review.push("Checked by a person");
