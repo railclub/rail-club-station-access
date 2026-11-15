@@ -164,7 +164,7 @@ def timed_stops(stops, station_m):
     Raises ValueError saying what is wrong, so a typing mistake can't reach the site."""
     if len(stops) < 2:
         raise ValueError("A train needs at least two stops")
-    out, last_time, last_m = [], -1, -1.0
+    out, last_time, last_m = [], -1, -math.inf
     for i, stop in enumerate(stops):
         code = stop.get("code", "")
         if code not in station_m:
