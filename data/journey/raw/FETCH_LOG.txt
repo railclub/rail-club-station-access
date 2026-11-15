@@ -1,8 +1,8 @@
-Fetched 2026-11-15 13:06 UTC, box S18.45 W72.78 N19.3 E73.95
-FAIL  routes: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
-FAIL  tracks: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
-FAIL  stations: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
-FAIL  sights: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer
+Fetched 2026-11-15 13:50 UTC, box S18.45 W72.78 N19.3 E73.95
+OK    routes: 80 items, 35 KB
+FAIL  tracks: overpass.private.coffee: HTTP Error 504: Gateway Timeout; curl: curl: (28) Operation timed out after 300000 milliseconds with 0 bytes received | overpass-api.de: <urlopen error [Errno 104] Connection reset by peer>; curl: curl: (35) Recv failure: Connection reset by peer | overpass.kumi.systems: HTTP Error 504: Gateway Timeout; curl: curl: (28) Operation timed out after 300002 milliseconds with 0 bytes received
+OK    stations: 382 items, 183 KB
+OK    sights: 1138 items, 237 KB
 OK    wikidata_00: 187 items, 144 KB
 OK    wikidata_01: 152 items, 122 KB
 OK    wikidata_02: 1956 items, 1649 KB
