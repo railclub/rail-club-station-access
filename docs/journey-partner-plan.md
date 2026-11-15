@@ -16,10 +16,15 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
 
 ## Steps, in order
 
-1. **Lock the pilot** (owner: you). Route Mumbai CSMT → Pune through the Bhor Ghat; 5–8 trains
-   starting with 11007 Deccan Express; one direction first (the reverse just swaps sides).
+1. **Lock the pilot.** **Done, 15 November 2026.** Route Mumbai CSMT → Pune through the Bhor
+   Ghat, one direction first (the reverse just swaps sides). Trains: 11007 Deccan Express first,
+   then 12123 Deccan Queen, 22105 Indrayani Express, 12127 Intercity Express and 11009 Sinhagad
+   Express (numbers and stops to be checked against the official timetable in step 3).
 2. **Track shape** (Claude). Extract the CSMT–Pune line from OpenStreetMap as a path with
    distance markers; check it against the station coordinates in `data/station_coords.json`.
+   `scraper/journey_fetch.py` downloads the raw map data (and the step 4 sight candidates) into
+   `data/journey/raw/`. It needs the `rail-club` cloud environment, which allows OpenStreetMap
+   and Wikidata.
 3. **Timetables** (you + Claude). Enter the pilot trains' stops and times by hand from the
    official published timetable. Do not scrape NTES or IRCTC. A timetable source at scale is
    the biggest open question.
@@ -30,8 +35,14 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
    position along the route, its side, minutes after the previous stop and whether it passes in
    daylight for each train. Unit tests, especially for left/right. Output a small JSON file the
    site loads; no database for the pilot.
-6. **Ride the route to check it** (you, one trip). A "ride mode" page: tap "seen it, left/right"
-   on the train; it records GPS and time on the phone. Use the recording to correct the data.
+6. **Check it against the real view.** The owner may not be able to ride the route, so the
+   pilot must not depend on one trip:
+   - Claude checks every sight's side against the map and satellite view before launch, and
+     marks each one "checked on the map" or "seen from the train".
+   - A "ride mode" page still gets built: tap "seen it, left/right" on the train and it records
+     GPS and time on the phone. Anyone can use it (the owner if a trip happens, a friend, or
+     early travellers), and each recording corrects the data.
+   - Until a sight is seen from a train, the page says the side is worked out from the map.
 7. **The Journey page** (Claude). Train number, then from/to limited to that train's stops.
    Animated vertical timeline: photo, time relative to the last stop, a big LEFT/RIGHT badge,
    season tag, "passes in the dark" flag. Summary card ("Sit on the LEFT: 7 of 9 sights").
@@ -53,8 +64,8 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
 - Times are approximate; show them relative to the last stop.
 - Credit OpenStreetMap (ODbL) on the page.
 
-## Waiting on you
+## Decided
 
-- Confirm the pilot route and trains.
-- Whether you can do the checking ride (step 6).
-- OK to credit OpenStreetMap on the page.
+- Pilot route and first train confirmed (15 November 2026).
+- OpenStreetMap will be credited on the page.
+- A checking ride by the owner is not certain; see step 6.
