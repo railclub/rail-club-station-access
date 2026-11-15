@@ -146,11 +146,65 @@ def locate(path, lat, lon):
     return best[1], best[0], best[2]
 
 
-def minutes_after(chain_m, timed_marks):
-    """timed_marks: [(metres_from_start, minutes_from_start)] for the train's stops, in order.
-    Estimates when the train passes chain_m by assuming steady speed between two stops.
-    Returns (minutes_from_start, index_of_previous_stop), or None if outside the journey."""
-    for i, ((m0, t0), (m1, t1)) in enumerate(zip(timed_marks, timed_marks[1:])):
-        if m0 <= chain_m <= m1 and m1 > m0:
-            return t0 + (t1 - t0) * (chain_m - m0) / (m1 - m0), i
+def clock(text):
+    """"07:05" -> 425 minutes after midnight. Raises ValueError on anything else."""
+    hours, _, minutes = text.partition(":")
+    if not (hours.isdigit() and minutes.isdigit() and len(minutes) == 2 and int(hours) < 24 and int(minutes) < 60):
+        raise ValueError(f"Not a time: {text!r}")
+    return int(hours) * 60 + int(minutes)
+
+
+def timed_stops(stops, station_m):
+    """Check one train's timetable against the route and put it on a single clock.
+
+    stops: [{"code", "arr", "dep"}] in order; the first needs "dep", the last "arr", the rest both.
+    station_m: {code: metres_from_start} for the stations on the route.
+    Returns [(code, metres_from_start, arrive_min, depart_min)], with minutes counted from the
+    midnight before the first departure, so a train that runs past midnight keeps going up.
+    Raises ValueError saying what is wrong, so a typing mistake can't reach the site."""
+    if len(stops) < 2:
+        raise ValueError("A train needs at least two stops")
+    out, last_time, last_m = [], -1, -1.0
+    for i, stop in enumerate(stops):
+        code = stop.get("code", "")
+        if code not in station_m:
+            raise ValueError(f"{code or 'A stop'} is not a station on this route")
+        if station_m[code] <= last_m:
+            raise ValueError(f"{code} comes before the previous stop on this route")
+        times = []
+        for key, needed in (("arr", i > 0), ("dep", i < len(stops) - 1)):
+            if needed and not stop.get(key):
+                raise ValueError(f"{code} needs a {'departure' if key == 'dep' else 'arrival'} time")
+            if stop.get(key):
+                minute = clock(stop[key])
+                while minute < last_time:  # past midnight
+                    minute += 1440
+                if minute - max(last_time, 0) > 720 and last_time >= 0:
+                    raise ValueError(f"{code}: {stop[key]} is more than 12 hours after the previous time")
+                last_time = minute
+                times.append(minute)
+        out.append((code, station_m[code], times[0], times[-1]))
+        last_m = station_m[code]
+    return out
+
+
+def passing_time(chain_m, timed):
+    """When a train passes a point: (minutes_on_the_clock, index_of_previous_stop,
+    minutes_since_leaving_it), assuming steady speed between two stops. None if the point is
+    outside the train's journey. timed comes from timed_stops()."""
+    for i, ((_, m0, _, dep), (_, m1, arr, _)) in enumerate(zip(timed, timed[1:])):
+        if m0 <= chain_m <= m1:
+            after = (arr - dep) * (chain_m - m0) / (m1 - m0)
+            return dep + after, i, after
     return None
+
+
+def daylight(minute):
+    """Rough light for western India, where sunrise is 06:00-07:10 and sunset 18:00-19:20 over
+    the year: "day", "dark", or "twilight" when it depends on the season."""
+    minute %= 1440
+    if 7 * 60 + 15 <= minute <= 17 * 60 + 45:
+        return "day"
+    if minute < 5 * 60 + 45 or minute > 19 * 60 + 30:
+        return "dark"
+    return "twilight"

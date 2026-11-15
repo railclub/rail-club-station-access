@@ -30,9 +30,16 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
    - `scraper/journey_build.py` builds the route and the candidates from that raw data.
    - `scraper/journey_geo.py` holds the maths (route following, distance along it, left/right),
      with tests in `tests/test_journey.py`.
-3. **Timetables** (you + Claude). Enter the pilot trains' stops and times by hand from the
-   official published timetable. Do not scrape NTES or IRCTC. A timetable source at scale is
-   the biggest open question.
+3. **Timetables** (you + Claude). **Tooling done, times still needed.** Each train's stops and
+   times go into `data/journey/csmt-pune/timetables.json`, by hand from the official published
+   timetable. Do not scrape NTES or IRCTC. `scraper/journey_build.py` refuses a timetable that
+   doesn't fit the route (unknown station, stops out of order, a missing or mistyped time) and
+   writes `trains.json`: each train's stops and when it passes every candidate, with "minutes
+   after the last stop" and whether it is daylight.
+   - **Waiting on the owner:** the stops and times for 11007 Deccan Express (a screenshot of the
+     official timetable is enough), then the other four trains. The official sites could not be
+     reached from the cloud workspace.
+   - A timetable source at scale is the biggest open question.
 4. **Sights** (Claude + you). **Candidates done:** `data/journey/csmt-pune/candidates.json` has
    192 places near the track from OpenStreetMap and Wikidata, plus the 20 tunnels and 3 long
    bridges the route goes through, each with distance along the route, distance from the track

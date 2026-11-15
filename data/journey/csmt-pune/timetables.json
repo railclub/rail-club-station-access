@@ -1,0 +1,49 @@
+{
+ "route": "csmt-pune",
+ "how_to_add": "Copy the stops and times from the official timetable, never from NTES/IRCTC scraping. Use the station codes in route.json. The first stop needs dep, the last arr, the others both, as HH:MM. Move the train from wanted to trains, fill source and checked, then run python3 scraper/journey_build.py: it refuses a timetable that doesn't fit the route.",
+ "example": {
+  "number": "00000",
+  "name": "Example Express",
+  "runs": "daily",
+  "source": "where the times came from",
+  "checked": "2026-11-15",
+  "stops": [
+   {
+    "code": "CSMT",
+    "dep": "07:00"
+   },
+   {
+    "code": "DR",
+    "arr": "07:12",
+    "dep": "07:14"
+   },
+   {
+    "code": "PUNE",
+    "arr": "11:05"
+   }
+  ]
+ },
+ "trains": [],
+ "wanted": [
+  {
+   "number": "11007",
+   "name": "Deccan Express"
+  },
+  {
+   "number": "12123",
+   "name": "Deccan Queen"
+  },
+  {
+   "number": "22105",
+   "name": "Indrayani Express"
+  },
+  {
+   "number": "12127",
+   "name": "Intercity Express"
+  },
+  {
+   "number": "11009",
+   "name": "Sinhagad Express"
+  }
+ ]
+}

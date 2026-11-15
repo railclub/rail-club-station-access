@@ -4,8 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scraper"))
 
-from journey_build import merge, on_route, osm_kind  # noqa: E402
-from journey_geo import distance_m, locate, minutes_after, route_path  # noqa: E402
+from journey_build import merge, on_route, osm_kind, train_view  # noqa: E402
+from journey_geo import clock, daylight, distance_m, locate, passing_time, route_path, timed_stops  # noqa: E402
 
 
 def way(*pts):
@@ -73,11 +73,47 @@ def test_the_return_journey_swaps_the_sides():
     assert locate(back, 18.11, 73.05)[2] == "right"
 
 
-def test_minutes_between_stops():
-    marks = [(0, 0), (10_000, 20), (30_000, 40)]  # 20 min for 10 km, then 20 min for 20 km
-    assert minutes_after(5_000, marks) == (10, 0)
-    assert minutes_after(20_000, marks) == (30, 1)
-    assert minutes_after(40_000, marks) is None
+STATION_M = {"A": 0, "B": 10_000, "C": 30_000, "D": 50_000}
+
+
+def test_timetable_is_put_on_one_clock_and_times_are_estimated():
+    timed = timed_stops([{"code": "A", "dep": "07:00"}, {"code": "B", "arr": "07:20", "dep": "07:25"},
+                         {"code": "D", "arr": "08:05"}], STATION_M)
+    assert timed == [("A", 0, 420, 420), ("B", 10_000, 440, 445), ("D", 50_000, 485, 485)]
+    assert passing_time(5_000, timed) == (430, 0, 10)       # halfway to B: 07:10, 10 min after A
+    assert passing_time(30_000, timed) == (465, 1, 20)      # C is passed without stopping, 20 min after B
+    assert passing_time(60_000, timed) is None
+
+
+def test_timetable_past_midnight_keeps_counting_up():
+    timed = timed_stops([{"code": "A", "dep": "23:40"}, {"code": "B", "arr": "00:10", "dep": "00:15"},
+                         {"code": "C", "arr": "01:00"}], STATION_M)
+    assert [t[2] for t in timed] == [1420, 1450, 1500]
+    assert daylight(passing_time(20_000, timed)[0]) == "dark"
+
+
+def test_timetable_mistakes_are_refused_with_a_reason():
+    bad = [
+        ([{"code": "A", "dep": "07:00"}], "at least two"),
+        ([{"code": "A", "dep": "07:00"}, {"code": "Z", "arr": "08:00"}], "Z is not a station"),
+        ([{"code": "B", "dep": "07:00"}, {"code": "A", "arr": "08:00"}], "A comes before"),
+        ([{"code": "A"}, {"code": "B", "arr": "08:00"}], "A needs a departure"),
+        ([{"code": "A", "dep": "07:00"}, {"code": "B", "arr": "07:20"}, {"code": "C", "arr": "08:00"}], "B needs a departure"),
+        ([{"code": "A", "dep": "7.00"}, {"code": "B", "arr": "08:00"}], "Not a time"),
+        ([{"code": "A", "dep": "07:00"}, {"code": "B", "arr": "06:00"}], "more than 12 hours"),  # 08:00 mistyped
+    ]
+    for stops, word in bad:
+        try:
+            timed_stops(stops, STATION_M)
+            raise AssertionError(f"expected a refusal: {word}")
+        except ValueError as e:
+            assert word in str(e), str(e)
+    assert clock("23:59") == 1439
+
+
+def test_light_at_the_edges_of_the_day():
+    assert [daylight(clock(t)) for t in ("05:00", "06:30", "07:15", "12:00", "17:45", "18:30", "20:00")] == \
+        ["dark", "twilight", "day", "day", "day", "twilight", "dark"]
 
 
 def test_places_from_two_sources_are_listed_once():
@@ -104,3 +140,15 @@ def test_kinds_and_tunnels_on_the_route():
     found = on_route(path, [tunnel, elsewhere, {**way(A, C), "tags": {}}], "tunnel")
     assert len(found) == 1 and found[0][0] == "Tunnel 1"
     assert abs(found[0][2] - distance_m(18.05, 73.00, 18.10, 73.00)) < 1
+
+
+def test_a_trains_view_lists_what_it_passes_and_when():
+    route = {"stations": [{"code": c, "name": f"{c} Town", "m": m} for c, m in STATION_M.items()]}
+    sights = [{"name": "Falls", "kind": "waterfall", "side": "left", "m": 20_000},
+              {"name": "Beyond", "kind": "fort", "side": "right", "m": 45_000}]
+    train = {"number": "1", "name": "Test Express",
+             "stops": [{"code": "A", "dep": "17:00"}, {"code": "B", "arr": "17:20", "dep": "17:25"}, {"code": "C", "arr": "17:55"}]}
+    view = train_view(train, route, sights)
+    assert [s["name"] for s in view["stops"]] == ["A Town", "B Town", "C Town"]
+    assert view["passes"] == [{"name": "Falls", "kind": "waterfall", "side": "left", "m": 20_000, "time": "17:40",
+                               "after_stop": "B Town", "after_min": 15, "light": "day"}]  # "Beyond" is after the last stop

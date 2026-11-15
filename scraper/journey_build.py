@@ -15,7 +15,7 @@ import json
 import pathlib
 import re
 
-from journey_geo import distance_m, locate, route_path
+from journey_geo import daylight, distance_m, locate, passing_time, route_path, timed_stops
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "journey" / "raw"
@@ -146,19 +146,25 @@ def build(pilot=PILOT):
     coords = json.loads((ROOT / "data" / "station_coords.json").read_text())
     stops = [s if isinstance(s, tuple) else (s, *coords[s]) for s in pilot["stops"]]
     tracks = load("tracks")["elements"]
-    path, _ = route_path(tracks, stops)
+    path, marks = route_path(tracks, stops)
 
-    stations, names = [], set()
+    # Stations with a code only: the map also has uncoded duplicates ("Akurdi Railway Station").
+    stations, codes = [], set()
     for e in load("stations")["elements"]:
         tags = e.get("tags", {})
         lat, lon = (e["lat"], e["lon"]) if "lat" in e else (e["center"]["lat"], e["center"]["lon"])
-        name = tags.get("name:en") or tags.get("name")
-        if not name or tags.get("station") in ("subway", "monorail", "light_rail") or name in names:
+        name, code = tags.get("name:en") or tags.get("name"), tags.get("ref", "")
+        if not name or not code or code in codes or tags.get("station") in ("subway", "monorail", "light_rail"):
             continue
         m, off, _ = locate(path, lat, lon)
         if off <= 250:
-            names.add(name)
-            stations.append({"name": name, "code": tags.get("ref", ""), "m": round(m)})
+            codes.add(code)
+            stations.append({"name": name, "code": code, "m": round(m)})
+    by_code = {e["tags"]["ref"]: e["tags"].get("name:en") or e["tags"].get("name")
+               for e in load("stations")["elements"] if e.get("tags", {}).get("ref")}
+    for (code, lat, lon), (_, m) in zip(stops, marks):  # the route's own stops are always listed
+        if code not in codes:
+            stations.append({"name": by_code.get(code, code), "code": code, "m": round(m)})
     stations.sort(key=lambda s: s["m"])
 
     def between(m):
@@ -189,6 +195,28 @@ def build(pilot=PILOT):
     return route, candidates
 
 
+def hhmm(minute):
+    return f"{int(minute) // 60 % 24:02d}:{int(minute) % 60:02d}"
+
+
+def train_view(train, route, candidates):
+    """One train's journey: its stops on the clock, and when it passes each candidate.
+    Raises ValueError if the timetable doesn't fit the route."""
+    names = {s["code"]: s["name"] for s in route["stations"]}
+    timed = timed_stops(train["stops"], {s["code"]: s["m"] for s in route["stations"]})
+    passes = []
+    for c in candidates:
+        when = passing_time(c["m"], timed)
+        if when:
+            minute, i, after = when
+            passes.append({"name": c["name"], "kind": c["kind"], "side": c["side"], "m": c["m"], "time": hhmm(minute),
+                           "after_stop": names[timed[i][0]], "after_min": round(after), "light": daylight(minute)})
+    return {"number": train["number"], "name": train["name"],
+            "stops": [{"code": code, "name": names[code], "m": m, "arr": hhmm(arr), "dep": hhmm(dep)}
+                      for code, m, arr, dep in timed],
+            "passes": passes}
+
+
 def main():
     route, candidates = build()
     out = ROOT / "data" / "journey" / route["id"]
@@ -200,6 +228,21 @@ def main():
         kinds[c["kind"]] = kinds.get(c["kind"], 0) + 1
     print(f"{route['name']}: {route['length_m'] / 1000:.1f} km, {len(route['path'])} points, "
           f"{len(route['stations'])} stations, {len(candidates)} candidates {kinds}")
+
+    timetables = json.loads((out / "timetables.json").read_text())
+    views = []
+    for train in timetables["trains"]:
+        try:
+            views.append(train_view(train, route, candidates))
+        except ValueError as e:
+            raise SystemExit(f"Timetable for {train.get('number')} {train.get('name')}: {e}")
+        v = views[-1]
+        print(f"  {v['number']} {v['name']}: {v['stops'][0]['dep']} {v['stops'][0]['name']} → "
+              f"{v['stops'][-1]['arr']} {v['stops'][-1]['name']}, {len(v['stops'])} stops, "
+              f"{len(v['passes'])} candidates passed ({sum(p['light'] == 'day' for p in v['passes'])} in daylight)")
+    (out / "trains.json").write_text(json.dumps(views, ensure_ascii=False, indent=1) + "\n")
+    if timetables.get("wanted"):
+        print("  No timetable yet for:", ", ".join(f"{w['number']} {w['name']}" for w in timetables["wanted"]))
 
 
 if __name__ == "__main__":

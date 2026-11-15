@@ -1232,7 +1232,7 @@
   "off_m": 212,
   "side": "right",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1242,7 +1242,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Waterfall (unnamed)",
@@ -1254,7 +1254,7 @@
   "off_m": 1249,
   "side": "right",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1264,7 +1264,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Songiri",
@@ -1276,7 +1276,7 @@
   "off_m": 1035,
   "side": "left",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Songiri Fort",
@@ -1288,7 +1288,7 @@
   "off_m": 1084,
   "side": "left",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1298,7 +1298,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Bhairi Cha Dongar",
@@ -1310,7 +1310,7 @@
   "off_m": 2194,
   "side": "right",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Sabai Fort",
@@ -1322,7 +1322,7 @@
   "off_m": 3712,
   "side": "right",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1332,7 +1332,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1342,7 +1342,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1352,7 +1352,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1362,7 +1362,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1372,7 +1372,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1382,7 +1382,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Palasdhari",
-  "before": "Palasdhari Station"
+  "before": "Khandala"
  },
  {
   "name": "Mumbai-Pune Railway",
@@ -1391,7 +1391,7 @@
   "length_m": 616,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1401,7 +1401,7 @@
   "length_m": 98,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1413,7 +1413,7 @@
   "m": 110202,
   "off_m": 946,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1427,7 +1427,7 @@
   "m": 111327,
   "off_m": 2058,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1439,7 +1439,7 @@
   "m": 111327,
   "off_m": 2053,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1451,7 +1451,7 @@
   "m": 111690,
   "off_m": 2769,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1464,7 +1464,7 @@
   "m": 112439,
   "off_m": 2767,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1476,7 +1476,7 @@
   "m": 112495,
   "off_m": 3133,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1490,7 +1490,7 @@
   "m": 112495,
   "off_m": 3101,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1500,7 +1500,7 @@
   "length_m": 156,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1510,7 +1510,7 @@
   "length_m": 36,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1522,7 +1522,7 @@
   "m": 114717,
   "off_m": 1753,
   "side": "right",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1532,7 +1532,7 @@
   "length_m": 260,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1544,7 +1544,7 @@
   "m": 115833,
   "off_m": 1399,
   "side": "right",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1554,7 +1554,7 @@
   "length_m": 141,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1564,7 +1564,7 @@
   "length_m": 69,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1574,7 +1574,7 @@
   "length_m": 345,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1586,7 +1586,7 @@
   "m": 118443,
   "off_m": 224,
   "side": "right",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1596,7 +1596,7 @@
   "length_m": 2110,
   "off_m": 0,
   "side": "both",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1608,7 +1608,7 @@
   "m": 118904,
   "off_m": 49,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1620,7 +1620,7 @@
   "m": 120379,
   "off_m": 1711,
   "side": "right",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1632,7 +1632,7 @@
   "m": 120379,
   "off_m": 1045,
   "side": "right",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1644,7 +1644,7 @@
   "m": 120902,
   "off_m": 147,
   "side": "left",
-  "after": "Palasdhari Station",
+  "after": "Palasdhari",
   "before": "Khandala"
  },
  {
@@ -1924,7 +1924,7 @@
   "m": 171658,
   "off_m": 1010,
   "side": "left",
-  "after": "Akurdi Railway Station",
+  "after": "Akurdi",
   "before": "Chinchwad"
  },
  {
@@ -2038,7 +2038,7 @@
   "off_m": 491,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Jangli Maharaj Mandir",
@@ -2052,7 +2052,7 @@
   "off_m": 552,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Rokdoba Mandir Complex",
@@ -2065,7 +2065,7 @@
   "off_m": 753,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Parvati Hill",
@@ -2078,7 +2078,7 @@
   "off_m": 3643,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Shivaji Bridge",
@@ -2091,7 +2091,7 @@
   "off_m": 738,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Shaniwar Wada",
@@ -2105,7 +2105,7 @@
   "off_m": 1033,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Shaniwarwada",
@@ -2118,7 +2118,7 @@
   "off_m": 1033,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Lal Mahal",
@@ -2130,7 +2130,7 @@
   "off_m": 1091,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Baloba Munja Mandir",
@@ -2143,7 +2143,7 @@
   "off_m": 757,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Sapindya Mahadeo Mandir",
@@ -2156,7 +2156,7 @@
   "off_m": 653,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Kumbharves Dam",
@@ -2169,7 +2169,7 @@
   "off_m": 414,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Puneshwar",
@@ -2181,7 +2181,7 @@
   "off_m": 608,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Twashta Kasar Kali Temple",
@@ -2194,7 +2194,7 @@
   "off_m": 779,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Narayaneshwar temple",
@@ -2206,7 +2206,7 @@
   "off_m": 714,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Mumbai–Pune Railway",
@@ -2216,7 +2216,7 @@
   "off_m": 0,
   "side": "both",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Sangam Bridge",
@@ -2229,7 +2229,7 @@
   "off_m": 131,
   "side": "left",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Mutha River",
@@ -2242,7 +2242,7 @@
   "off_m": 246,
   "side": "left",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Ahilyabai Holkar Ghat and Temple Complex",
@@ -2255,7 +2255,7 @@
   "off_m": 170,
   "side": "left",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Trishund Ganpati Mandir",
@@ -2268,7 +2268,7 @@
   "off_m": 774,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Siddheshwar Mandir",
@@ -2281,7 +2281,7 @@
   "off_m": 672,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Narpatgir Vishnu Mandir",
@@ -2294,7 +2294,7 @@
   "off_m": 790,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Gosavipura Chatri - Ramji Gosavi Mandir",
@@ -2307,7 +2307,7 @@
   "off_m": 717,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  },
  {
   "name": "Dashnam Gosavi Samstha Math and Temple",
@@ -2320,6 +2320,6 @@
   "off_m": 679,
   "side": "right",
   "after": "Shivajinagar",
-  "before": "Pune Railway Station"
+  "before": "Pune Junction"
  }
 ]
