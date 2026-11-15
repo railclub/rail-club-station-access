@@ -14,6 +14,7 @@ import gzip
 import json
 import pathlib
 import re
+import sys
 
 from journey_geo import daylight, distance_m, locate, passing_time, route_path, timed_stops
 
@@ -28,6 +29,9 @@ PILOT = {
     "stops": [("CSMT", 18.9398, 72.8355), "BY", "DR", "CLA", "GC", "TNA", ("DI", 19.2184, 73.0867), "KYN",
               "ULNR", "BUD", "VGI", "NRL", "BVS", "KJT", "KAD", "LNL", "MVL", "KMST", "VDN", "TGN", "DEHR",
               "AKRD", "CCH", "PMP", "KK", "SVJR", "PUNE"],
+    # Stretches where trains run slower than elsewhere: (from, to, how many times slower).
+    # In the 2016 timetable trains average 34 km/h up the Bhor Ghat and 63 km/h on the plains.
+    "slow": [("KJT", "LNL", 1.9)],
 }
 
 # kind: how far from the track (metres) a place of that kind is still worth a person's look.
@@ -191,6 +195,8 @@ def build(pilot=PILOT):
 
     route = {"id": pilot["id"], "name": pilot["name"], "length_m": round(path[-1][2]),
              "credit": "Track and stations © OpenStreetMap contributors (ODbL)",
+             "slow": [[next(x["m"] for x in stations if x["code"] == a), next(x["m"] for x in stations if x["code"] == b), f]
+                      for a, b, f in pilot.get("slow", [])],
              "stations": stations, "path": [[round(lat, 5), round(lon, 5), round(m)] for lat, lon, m in path]}
     return route, candidates
 
@@ -206,7 +212,7 @@ def train_view(train, route, candidates):
     timed = timed_stops(train["stops"], {s["code"]: s["m"] for s in route["stations"]})
     passes = []
     for c in candidates:
-        when = passing_time(c["m"], timed)
+        when = passing_time(c["m"], timed, route.get("slow", ()))
         if when:
             minute, i, after = when
             passes.append({"name": c["name"], "kind": c["kind"], "side": c["side"], "m": c["m"], "time": hhmm(minute),
@@ -229,21 +235,37 @@ def main():
     print(f"{route['name']}: {route['length_m'] / 1000:.1f} km, {len(route['path'])} points, "
           f"{len(route['stations'])} stations, {len(candidates)} candidates {kinds}")
 
-    timetables = json.loads((out / "timetables.json").read_text())
+    # Timetables: the open-data feed, with hand-made fixes replacing a train of the same number.
+    fixes = json.loads((out / "timetable-fixes.json").read_text())
+    feed = json.loads((out / "timetables.json").read_text())
+    fixed = {t["number"]: t for t in fixes["trains"]}
+    trains = [fixed.pop(t["number"], t) for t in feed["trains"]] + list(fixed.values())
+    for train in trains:  # numbers that changed since the feed was made
+        train["number"] = fixes.get("renumbered", {}).get(train["number"], train["number"])
     views = []
-    for train in timetables["trains"]:
+    for train in sorted(trains, key=lambda t: t["number"]):
         try:
-            views.append(train_view(train, route, candidates))
+            view = train_view(train, route, candidates)
         except ValueError as e:
             raise SystemExit(f"Timetable for {train.get('number')} {train.get('name')}: {e}")
-        v = views[-1]
-        print(f"  {v['number']} {v['name']}: {v['stops'][0]['dep']} {v['stops'][0]['name']} → "
-              f"{v['stops'][-1]['arr']} {v['stops'][-1]['name']}, {len(v['stops'])} stops, "
-              f"{len(v['passes'])} candidates passed ({sum(p['light'] == 'day' for p in v['passes'])} in daylight)")
-    (out / "trains.json").write_text(json.dumps(views, ensure_ascii=False, indent=1) + "\n")
-    if timetables.get("wanted"):
-        print("  No timetable yet for:", ", ".join(f"{w['number']} {w['name']}" for w in timetables["wanted"]))
+        views.append({"number": view["number"], "name": view["name"], "stops": view["stops"],
+                      "source": train.get("source", feed["source"])})
+    (out / "trains.json").write_text(json.dumps(views, ensure_ascii=False, separators=(",", ":")) + "\n")
+    print(f"  {len(views)} trains with timetables ({len(fixes['trains'])} fixed by hand)")
+
+
+def preview(number):
+    """Print what one train passes, for checking by eye: python3 scraper/journey_build.py 11007"""
+    out = ROOT / "data" / "journey" / PILOT["id"]
+    route = json.loads((out / "route.json").read_text())
+    candidates = json.loads((out / "candidates.json").read_text())
+    train = next(t for t in json.loads((out / "trains.json").read_text()) if t["number"] == number)
+    stops = [{"code": s["code"], "arr": s["arr"], "dep": s["dep"]} for s in train["stops"]]
+    view = train_view({**train, "stops": stops}, route, candidates)
+    print(f"{view['number']} {view['name']}: " + ", ".join(f"{s['name']} {s['dep']}" for s in view["stops"]))
+    for p in view["passes"]:
+        print(f"  {p['time']}  {p['side']:5}  {p['kind']:9} {p['name'][:36]:36} {p['after_min']:3} min after {p['after_stop']} ({p['light']})")
 
 
 if __name__ == "__main__":
-    main()
+    preview(sys.argv[1]) if len(sys.argv) > 1 else main()

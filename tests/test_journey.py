@@ -5,7 +5,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scraper"))
 
 from journey_build import merge, on_route, osm_kind, train_view  # noqa: E402
-from journey_geo import clock, daylight, distance_m, locate, passing_time, route_path, timed_stops  # noqa: E402
+from journey_geo import clock, daylight, distance_m, effort, locate, passing_time, route_path, timed_stops
+from journey_timetables import trains_on_route  # noqa: E402  # noqa: E402
 
 
 def way(*pts):
@@ -152,3 +153,38 @@ def test_a_trains_view_lists_what_it_passes_and_when():
     assert [s["name"] for s in view["stops"]] == ["A Town", "B Town", "C Town"]
     assert view["passes"] == [{"name": "Falls", "kind": "waterfall", "side": "left", "m": 20_000, "time": "17:40",
                                "after_stop": "B Town", "after_min": 15, "light": "day"}]  # "Beyond" is after the last stop
+
+
+def test_slow_stretches_take_their_share_of_the_time():
+    # 30 km in 40 minutes, but the last 10 km is a climb taken at half speed: 20 km flat + 10 km
+    # counted double = 40 units, so one minute per unit.
+    timed = timed_stops([{"code": "A", "dep": "07:00"}, {"code": "C", "arr": "07:40"}], STATION_M)
+    slow = [(20_000, 30_000, 2)]
+    assert effort(25_000, slow) == 30_000
+    assert passing_time(20_000, timed, slow)[0] == 440   # reaches the foot of the climb at 07:20, not 07:27
+    assert passing_time(25_000, timed, slow)[0] == 450
+    assert round(passing_time(20_000, timed)[0]) == 447  # without the climb: steady speed all the way
+
+
+def row(i, number, code, arr, dep, name="Test Express"):
+    return {"id": i, "train_number": number, "train_name": name, "station_code": code,
+            "arrival": arr, "departure": dep, "day": 1}
+
+
+def test_trains_are_picked_from_open_data_for_this_route():
+    schedules = [
+        # Starts before the route, halts at A and C, runs through B, ends beyond the route.
+        row(1, "100", "X", "None", "06:00:00"), row(2, "100", "A", "07:00:00", "07:05:00"),
+        row(3, "100", "B", "07:20:00", "07:20:00"), row(4, "100", "C", "07:50:00", "07:55:00"),
+        row(5, "100", "Y", "09:00:00", "None"),
+        # The return train, a train with one stop here, and slip coaches: none belong.
+        row(6, "101", "C", "None", "10:00:00"), row(7, "101", "A", "11:00:00", "None"),
+        row(8, "102", "A", "None", "12:00:00"), row(9, "102", "Y", "13:00:00", "None"),
+        row(10, "100-Slip", "A", "None", "07:05:00"), row(11, "100-Slip", "C", "07:50:00", "None"),
+        # An old station code is mapped to today's.
+        row(12, "103", "CSTM", "None", "08:00:00"), row(13, "103", "D", "09:30:00", "None"),
+    ]
+    found = trains_on_route(schedules, {**STATION_M, "CSMT": -5_000})
+    assert [t["number"] for t in found] == ["100", "103"]
+    assert found[0]["stops"] == [{"code": "A", "dep": "07:05"}, {"code": "C", "arr": "07:50"}]
+    assert found[1]["stops"][0] == {"code": "CSMT", "dep": "08:00"}

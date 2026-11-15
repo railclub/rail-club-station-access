@@ -30,16 +30,25 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
    - `scraper/journey_build.py` builds the route and the candidates from that raw data.
    - `scraper/journey_geo.py` holds the maths (route following, distance along it, left/right),
      with tests in `tests/test_journey.py`.
-3. **Timetables** (you + Claude). **Tooling done, times still needed.** Each train's stops and
-   times go into `data/journey/csmt-pune/timetables.json`, by hand from the official published
-   timetable. Do not scrape NTES or IRCTC. `scraper/journey_build.py` refuses a timetable that
-   doesn't fit the route (unknown station, stops out of order, a missing or mistyped time) and
-   writes `trains.json`: each train's stops and when it passes every candidate, with "minutes
-   after the last stop" and whether it is daylight.
-   - **Waiting on the owner:** the stops and times for 11007 Deccan Express (a screenshot of the
-     official timetable is enough), then the other four trains. The official sites could not be
-     reached from the cloud workspace.
-   - A timetable source at scale is the biggest open question.
+3. **Timetables.** **Done for the pilot, 15 November 2026, with one known weakness.** The owner
+   will not type or screenshot timetables, so they come from open data with no typing:
+   - `scraper/journey_timetables.py` reads the Indian Railways timetable published as
+     [datameet/railways](https://github.com/datameet/railways) (CC0, 5,208 trains) and picks
+     every train that halts at two or more stations of the route, in its direction: **92 trains**
+     for CSMT → Pune, in `data/journey/csmt-pune/timetables.json`.
+   - **Weakness: that data is from 2016.** Clock times have shifted (11007 left at 07:10 then,
+     07:00 now by third-party sites) and a few numbers changed (Indrayani was 12525, now 22105).
+     Running times between stops change far less. So the page must show "minutes after the last
+     stop" first, treat the clock time as approximate, and say the timetable's age.
+   - `timetable-fixes.json` overrides any train by hand and holds renumberings. Later,
+     travellers' ride recordings (step 6) and corrections can feed it.
+   - `scraper/journey_build.py` refuses a timetable that doesn't fit the route and writes
+     `trains.json`. `python3 scraper/journey_build.py 11007` prints what a train passes and when.
+   - Trains climb the Bhor Ghat at about 34 km/h against 63 km/h on the plains (measured from
+     the timetable), so Karjat → Lonavala counts 1.9 times its length when estimating times.
+   - **Open:** a newer official source. data.gov.in publishes the Indian Railways timetable
+     under the Government Open Data Licence; it is blocked from the cloud workspace until the
+     host is allowed. Do not scrape NTES or IRCTC.
 4. **Sights** (Claude + you). **Candidates done:** `data/journey/csmt-pune/candidates.json` has
    192 places near the track from OpenStreetMap and Wikidata, plus the 20 tunnels and 3 long
    bridges the route goes through, each with distance along the route, distance from the track

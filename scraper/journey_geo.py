@@ -188,14 +188,22 @@ def timed_stops(stops, station_m):
     return out
 
 
-def passing_time(chain_m, timed):
+def effort(chain_m, slow=()):
+    """Distance along the route with slow stretches counted longer. slow: [(from_m, to_m, factor)],
+    e.g. a ghat climb where trains run at about half their usual speed has factor 2."""
+    extra = sum((factor - 1) * max(0.0, min(chain_m, end) - start) for start, end, factor in slow)
+    return chain_m + extra
+
+
+def passing_time(chain_m, timed, slow=()):
     """When a train passes a point: (minutes_on_the_clock, index_of_previous_stop,
-    minutes_since_leaving_it), assuming steady speed between two stops. None if the point is
-    outside the train's journey. timed comes from timed_stops()."""
+    minutes_since_leaving_it). Between two stops the train is assumed to run at a steady speed,
+    except on the slow stretches (see effort). None if the point is outside the train's journey.
+    timed comes from timed_stops()."""
     for i, ((_, m0, _, dep), (_, m1, arr, _)) in enumerate(zip(timed, timed[1:])):
         if m0 <= chain_m <= m1:
-            after = (arr - dep) * (chain_m - m0) / (m1 - m0)
-            return dep + after, i, after
+            share = (effort(chain_m, slow) - effort(m0, slow)) / (effort(m1, slow) - effort(m0, slow))
+            return dep + (arr - dep) * share, i, (arr - dep) * share
     return None
 
 

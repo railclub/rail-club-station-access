@@ -1,0 +1,7 @@
+{
+ "how_to": "Hand-made corrections to the open-data timetables. A train listed here replaces the one with the same number in timetables.json. Use station codes from route.json; the first stop needs dep, the last arr, the others both, as HH:MM. Say where the times came from in source. Then run python3 scraper/journey_build.py, which refuses a timetable that doesn't fit the route.",
+ "example": {"number": "00000", "name": "Example Express", "source": "where the times came from, and the date",
+  "stops": [{"code": "CSMT", "dep": "07:00"}, {"code": "DR", "arr": "07:12", "dep": "07:14"}, {"code": "PUNE", "arr": "11:05"}]},
+ "renumbered": {"12525": "22105"},
+ "trains": []
+}

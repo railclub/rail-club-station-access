@@ -1,49 +1,2564 @@
 {
  "route": "csmt-pune",
- "how_to_add": "Copy the stops and times from the official timetable, never from NTES/IRCTC scraping. Use the station codes in route.json. The first stop needs dep, the last arr, the others both, as HH:MM. Move the train from wanted to trains, fill source and checked, then run python3 scraper/journey_build.py: it refuses a timetable that doesn't fit the route.",
- "example": {
-  "number": "00000",
-  "name": "Example Express",
-  "runs": "daily",
-  "source": "where the times came from",
-  "checked": "2026-11-15",
-  "stops": [
-   {
-    "code": "CSMT",
-    "dep": "07:00"
-   },
-   {
-    "code": "DR",
-    "arr": "07:12",
-    "dep": "07:14"
-   },
-   {
-    "code": "PUNE",
-    "arr": "11:05"
-   }
-  ]
- },
- "trains": [],
- "wanted": [
+ "source": "github.com/datameet/railways (CC0), Indian Railways timetable of 2016",
+ "trains": [
+  {
+   "number": "06502",
+   "name": "Ahmedabad -Yesvantpur Garib Rath Special",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "04:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "06:07",
+     "dep": "06:10"
+    },
+    {
+     "code": "PUNE",
+     "arr": "07:20"
+    }
+   ]
+  },
+  {
+   "number": "09221",
+   "name": "Porbandar Secunderabad Weekly Special",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "19:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "22:25"
+    }
+   ]
+  },
+  {
+   "number": "09405",
+   "name": "Ahmedabad Yesvantpur (Weekly) Special",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "04:50"
+    },
+    {
+     "code": "PUNE",
+     "arr": "07:20"
+    }
+   ]
+  },
+  {
+   "number": "10103",
+   "name": "MUMBAI CST - MADGAON Mandovi Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "06:55"
+    },
+    {
+     "code": "DR",
+     "arr": "07:07",
+     "dep": "07:10"
+    },
+    {
+     "code": "TNA",
+     "arr": "07:42"
+    }
+   ]
+  },
+  {
+   "number": "10111",
+   "name": "MUMBAI CST - MADGAON Konkan Knaya Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "23:05"
+    },
+    {
+     "code": "DR",
+     "arr": "23:18",
+     "dep": "23:20"
+    },
+    {
+     "code": "TNA",
+     "arr": "23:48"
+    }
+   ]
+  },
+  {
+   "number": "11003",
+   "name": "DADAR - SAWANTWADI RD Rajya Rani Exp",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "23:55"
+    },
+    {
+     "code": "TNA",
+     "arr": "00:18"
+    }
+   ]
+  },
   {
    "number": "11007",
-   "name": "Deccan Express"
-  },
-  {
-   "number": "12123",
-   "name": "Deccan Queen"
-  },
-  {
-   "number": "22105",
-   "name": "Indrayani Express"
-  },
-  {
-   "number": "12127",
-   "name": "Intercity Express"
+   "name": "Deccan Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "07:10"
+    },
+    {
+     "code": "DR",
+     "arr": "07:23",
+     "dep": "07:25"
+    },
+    {
+     "code": "TNA",
+     "arr": "07:48",
+     "dep": "07:50"
+    },
+    {
+     "code": "KYN",
+     "arr": "08:08",
+     "dep": "08:10"
+    },
+    {
+     "code": "NRL",
+     "arr": "08:38",
+     "dep": "08:40"
+    },
+    {
+     "code": "KJT",
+     "arr": "08:58",
+     "dep": "09:00"
+    },
+    {
+     "code": "KAD",
+     "arr": "09:40",
+     "dep": "09:42"
+    },
+    {
+     "code": "LNL",
+     "arr": "09:48",
+     "dep": "09:50"
+    },
+    {
+     "code": "TGN",
+     "arr": "10:13",
+     "dep": "10:15"
+    },
+    {
+     "code": "KK",
+     "arr": "10:41",
+     "dep": "10:43"
+    },
+    {
+     "code": "SVJR",
+     "arr": "10:48",
+     "dep": "10:50"
+    },
+    {
+     "code": "PUNE",
+     "arr": "11:10"
+    }
+   ]
   },
   {
    "number": "11009",
-   "name": "Sinhagad Express"
+   "name": "Sinhagad Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "14:30"
+    },
+    {
+     "code": "DR",
+     "arr": "14:43",
+     "dep": "14:45"
+    },
+    {
+     "code": "TNA",
+     "arr": "15:08",
+     "dep": "15:10"
+    },
+    {
+     "code": "KYN",
+     "arr": "15:28",
+     "dep": "15:30"
+    },
+    {
+     "code": "KJT",
+     "arr": "16:08",
+     "dep": "16:10"
+    },
+    {
+     "code": "KAD",
+     "arr": "16:53",
+     "dep": "16:55"
+    },
+    {
+     "code": "LNL",
+     "arr": "17:08",
+     "dep": "17:10"
+    },
+    {
+     "code": "CCH",
+     "arr": "17:45",
+     "dep": "17:47"
+    },
+    {
+     "code": "PMP",
+     "arr": "17:50",
+     "dep": "17:52"
+    },
+    {
+     "code": "KK",
+     "arr": "18:03",
+     "dep": "18:05"
+    },
+    {
+     "code": "SVJR",
+     "arr": "18:13",
+     "dep": "18:15"
+    },
+    {
+     "code": "PUNE",
+     "arr": "18:40"
+    }
+   ]
+  },
+  {
+   "number": "11011",
+   "name": "Mahalaxmi Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "20:23"
+    },
+    {
+     "code": "DR",
+     "arr": "20:33",
+     "dep": "20:35"
+    },
+    {
+     "code": "TNA",
+     "arr": "20:58",
+     "dep": "21:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "21:23",
+     "dep": "21:25"
+    },
+    {
+     "code": "KJT",
+     "arr": "22:13",
+     "dep": "22:15"
+    },
+    {
+     "code": "LNL",
+     "arr": "22:58",
+     "dep": "23:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "00:10"
+    }
+   ]
+  },
+  {
+   "number": "11013",
+   "name": "Mumbai LTT-Coimbatore Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "22:55"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:13",
+     "dep": "23:18"
+    },
+    {
+     "code": "PUNE",
+     "arr": "01:50"
+    }
+   ]
+  },
+  {
+   "number": "11015",
+   "name": "Kushinagar Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "23:05"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:25"
+    }
+   ]
+  },
+  {
+   "number": "11017",
+   "name": "Chalukya Express",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "21:30"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:13",
+     "dep": "22:15"
+    },
+    {
+     "code": "KJT",
+     "arr": "23:08",
+     "dep": "23:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "23:53",
+     "dep": "23:55"
+    },
+    {
+     "code": "PUNE",
+     "arr": "01:00"
+    }
+   ]
+  },
+  {
+   "number": "11019",
+   "name": "Konark Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "15:10"
+    },
+    {
+     "code": "DR",
+     "arr": "15:23",
+     "dep": "15:25"
+    },
+    {
+     "code": "KYN",
+     "arr": "16:05",
+     "dep": "16:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "16:53",
+     "dep": "16:55"
+    },
+    {
+     "code": "LNL",
+     "arr": "17:43",
+     "dep": "17:45"
+    },
+    {
+     "code": "PUNE",
+     "arr": "19:00"
+    }
+   ]
+  },
+  {
+   "number": "11023",
+   "name": "Sahyadri Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "17:50"
+    },
+    {
+     "code": "DR",
+     "arr": "18:02",
+     "dep": "18:04"
+    },
+    {
+     "code": "KYN",
+     "arr": "18:48",
+     "dep": "18:50"
+    },
+    {
+     "code": "KJT",
+     "arr": "19:38",
+     "dep": "19:40"
+    },
+    {
+     "code": "KAD",
+     "arr": "20:14",
+     "dep": "20:16"
+    },
+    {
+     "code": "LNL",
+     "arr": "20:23",
+     "dep": "20:25"
+    },
+    {
+     "code": "TGN",
+     "arr": "20:50",
+     "dep": "20:52"
+    },
+    {
+     "code": "DEHR",
+     "arr": "21:03",
+     "dep": "21:05"
+    },
+    {
+     "code": "PMP",
+     "arr": "21:16",
+     "dep": "21:18"
+    },
+    {
+     "code": "KK",
+     "arr": "21:26",
+     "dep": "21:28"
+    },
+    {
+     "code": "SVJR",
+     "arr": "21:33",
+     "dep": "21:35"
+    },
+    {
+     "code": "PUNE",
+     "arr": "21:55"
+    }
+   ]
+  },
+  {
+   "number": "11025",
+   "name": "Manmad Pune Express(Via Nasik)",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "08:05"
+    },
+    {
+     "code": "KJT",
+     "arr": "09:58",
+     "dep": "10:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "10:53",
+     "dep": "10:55"
+    },
+    {
+     "code": "CCH",
+     "arr": "11:28",
+     "dep": "11:30"
+    },
+    {
+     "code": "PUNE",
+     "arr": "12:05"
+    }
+   ]
+  },
+  {
+   "number": "11027",
+   "name": "Mumbai CST-Chennai Mail",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "23:45"
+    },
+    {
+     "code": "DR",
+     "arr": "23:53",
+     "dep": "23:55"
+    },
+    {
+     "code": "KYN",
+     "arr": "00:38",
+     "dep": "00:40"
+    },
+    {
+     "code": "KJT",
+     "arr": "01:23",
+     "dep": "01:25"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:13",
+     "dep": "02:15"
+    },
+    {
+     "code": "KK",
+     "arr": "03:00",
+     "dep": "03:02"
+    },
+    {
+     "code": "PUNE",
+     "arr": "03:25"
+    }
+   ]
+  },
+  {
+   "number": "11029",
+   "name": "Koyna Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "08:40"
+    },
+    {
+     "code": "DR",
+     "arr": "08:53",
+     "dep": "08:55"
+    },
+    {
+     "code": "TNA",
+     "arr": "09:13",
+     "dep": "09:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "09:33",
+     "dep": "09:35"
+    },
+    {
+     "code": "NRL",
+     "arr": "10:03",
+     "dep": "10:05"
+    },
+    {
+     "code": "KJT",
+     "arr": "10:18",
+     "dep": "10:20"
+    },
+    {
+     "code": "KAD",
+     "arr": "10:58",
+     "dep": "11:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "11:13",
+     "dep": "11:15"
+    },
+    {
+     "code": "TGN",
+     "arr": "11:38",
+     "dep": "11:40"
+    },
+    {
+     "code": "CCH",
+     "arr": "11:58",
+     "dep": "12:00"
+    },
+    {
+     "code": "KK",
+     "arr": "12:10",
+     "dep": "12:12"
+    },
+    {
+     "code": "SVJR",
+     "arr": "12:18",
+     "dep": "12:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "12:40"
+    }
+   ]
+  },
+  {
+   "number": "11035",
+   "name": "Dadar-Mysore Sharavati Express",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "21:30"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:13",
+     "dep": "22:15"
+    },
+    {
+     "code": "KJT",
+     "arr": "23:08",
+     "dep": "23:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "23:53",
+     "dep": "23:55"
+    },
+    {
+     "code": "PUNE",
+     "arr": "01:00"
+    }
+   ]
+  },
+  {
+   "number": "11041",
+   "name": "Mumbai - Chennai Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "14:00"
+    },
+    {
+     "code": "DR",
+     "arr": "14:12",
+     "dep": "14:15"
+    },
+    {
+     "code": "TNA",
+     "arr": "14:38",
+     "dep": "14:40"
+    },
+    {
+     "code": "KYN",
+     "arr": "15:00",
+     "dep": "15:05"
+    },
+    {
+     "code": "KJT",
+     "arr": "15:48",
+     "dep": "15:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "16:38",
+     "dep": "16:40"
+    },
+    {
+     "code": "KK",
+     "arr": "17:26",
+     "dep": "17:28"
+    },
+    {
+     "code": "PUNE",
+     "arr": "18:00"
+    }
+   ]
+  },
+  {
+   "number": "11043",
+   "name": "MUMBAI LTT - MADURAI Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "00:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "00:58",
+     "dep": "01:00"
+    },
+    {
+     "code": "KJT",
+     "arr": "01:58",
+     "dep": "02:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:43",
+     "dep": "02:45"
+    },
+    {
+     "code": "PUNE",
+     "arr": "03:55"
+    }
+   ]
+  },
+  {
+   "number": "11049",
+   "name": "Ahmedabad-Kolhapur Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "05:20"
+    },
+    {
+     "code": "KJT",
+     "arr": "06:03",
+     "dep": "06:05"
+    },
+    {
+     "code": "LNL",
+     "arr": "06:53",
+     "dep": "06:55"
+    },
+    {
+     "code": "PUNE",
+     "arr": "08:00"
+    }
+   ]
+  },
+  {
+   "number": "11055",
+   "name": "MUMBAI LTT - GORAKHPUR Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "11:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "11:35"
+    }
+   ]
+  },
+  {
+   "number": "11057",
+   "name": "Dadar Amritsar Express",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "23:45"
+    },
+    {
+     "code": "TNA",
+     "arr": "00:08",
+     "dep": "00:10"
+    },
+    {
+     "code": "KYN",
+     "arr": "00:30"
+    }
+   ]
+  },
+  {
+   "number": "11059",
+   "name": "MUMBAI LTT - CHHAPRA Godan Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "11:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "11:35"
+    }
+   ]
+  },
+  {
+   "number": "11061",
+   "name": "MUMBAI LTT - DARBHANGA Pawan Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "12:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "12:55"
+    }
+   ]
+  },
+  {
+   "number": "11065",
+   "name": "MUMBAI LTT - DARBHANGA Pawan Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "12:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "12:55"
+    }
+   ]
+  },
+  {
+   "number": "11067",
+   "name": "MUMBAI LTT - FAIZABAD Saket Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "05:40"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:05"
+    }
+   ]
+  },
+  {
+   "number": "11069",
+   "name": "Tulsi Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "05:40"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:05"
+    }
+   ]
+  },
+  {
+   "number": "11071",
+   "name": "Kamayani Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "13:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "13:25"
+    }
+   ]
+  },
+  {
+   "number": "11087",
+   "name": "Veraval Pune Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:50"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:28",
+     "dep": "02:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "04:18",
+     "dep": "04:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:45"
+    }
+   ]
+  },
+  {
+   "number": "11089",
+   "name": "BHAGAT KI KOTHI - PUNE Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:50"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:28",
+     "dep": "02:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "04:18",
+     "dep": "04:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:45"
+    }
+   ]
+  },
+  {
+   "number": "11091",
+   "name": "BHUJ - PUNE Ahimsa Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:50"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:28",
+     "dep": "02:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "04:18",
+     "dep": "04:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:45"
+    }
+   ]
+  },
+  {
+   "number": "11093",
+   "name": "MUMBAI CST - VARANASI Mahanagari Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "00:10"
+    },
+    {
+     "code": "DR",
+     "arr": "00:23",
+     "dep": "00:25"
+    },
+    {
+     "code": "TNA",
+     "arr": "00:48",
+     "dep": "00:50"
+    },
+    {
+     "code": "KYN",
+     "arr": "01:10"
+    }
+   ]
+  },
+  {
+   "number": "11095",
+   "name": "Ahimsa Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:50"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:28",
+     "dep": "02:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "04:18",
+     "dep": "04:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:45"
+    }
+   ]
+  },
+  {
+   "number": "11401",
+   "name": "Nandigram Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "16:35"
+    },
+    {
+     "code": "DR",
+     "arr": "16:48",
+     "dep": "16:50"
+    },
+    {
+     "code": "TNA",
+     "arr": "17:13",
+     "dep": "17:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "17:30"
+    }
+   ]
+  },
+  {
+   "number": "12051",
+   "name": "DADAR - MADGAON Jan Shatabdi Exp",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "05:25"
+    },
+    {
+     "code": "TNA",
+     "arr": "05:47"
+    }
+   ]
+  },
+  {
+   "number": "12071",
+   "name": "Mumbai Aurangabad Jan Shatabdi",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "13:50"
+    },
+    {
+     "code": "DR",
+     "arr": "13:58",
+     "dep": "14:00"
+    },
+    {
+     "code": "TNA",
+     "arr": "14:23",
+     "dep": "14:25"
+    },
+    {
+     "code": "KYN",
+     "arr": "14:44"
+    }
+   ]
+  },
+  {
+   "number": "12105",
+   "name": "Vidarbha Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "19:10"
+    },
+    {
+     "code": "DR",
+     "arr": "19:23",
+     "dep": "19:25"
+    },
+    {
+     "code": "KYN",
+     "arr": "20:05"
+    }
+   ]
+  },
+  {
+   "number": "12107",
+   "name": "Mumbai LTT Lucknow Superfast Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "16:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "17:05"
+    }
+   ]
+  },
+  {
+   "number": "12109",
+   "name": "Panchavati Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "18:15"
+    },
+    {
+     "code": "DR",
+     "arr": "18:27",
+     "dep": "18:29"
+    },
+    {
+     "code": "KYN",
+     "arr": "19:12"
+    }
+   ]
+  },
+  {
+   "number": "12111",
+   "name": "Mumbai CST-Amaravati SF Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "20:05"
+    },
+    {
+     "code": "DR",
+     "arr": "20:13",
+     "dep": "20:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "21:00"
+    }
+   ]
+  },
+  {
+   "number": "12115",
+   "name": "Siddheshwar Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "22:42"
+    },
+    {
+     "code": "DR",
+     "arr": "22:53",
+     "dep": "22:55"
+    },
+    {
+     "code": "TNA",
+     "arr": "23:18",
+     "dep": "23:20"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:38",
+     "dep": "23:40"
+    },
+    {
+     "code": "KJT",
+     "arr": "00:18",
+     "dep": "00:20"
+    },
+    {
+     "code": "KAD",
+     "arr": "00:58",
+     "dep": "01:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "01:08",
+     "dep": "01:10"
+    },
+    {
+     "code": "PUNE",
+     "arr": "02:15"
+    }
+   ]
+  },
+  {
+   "number": "12117",
+   "name": "Mumbai LTT- Manmad Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "15:25"
+    },
+    {
+     "code": "KYN",
+     "arr": "15:40"
+    }
+   ]
+  },
+  {
+   "number": "12123",
+   "name": "Deccan Queen SF Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "17:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "18:33",
+     "dep": "18:35"
+    },
+    {
+     "code": "LNL",
+     "arr": "19:18",
+     "dep": "19:20"
+    },
+    {
+     "code": "SVJR",
+     "arr": "20:08",
+     "dep": "20:10"
+    },
+    {
+     "code": "PUNE",
+     "arr": "20:25"
+    }
+   ]
+  },
+  {
+   "number": "12125",
+   "name": "Pragati Superfast Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "16:25"
+    },
+    {
+     "code": "DR",
+     "arr": "16:37",
+     "dep": "16:39"
+    },
+    {
+     "code": "KJT",
+     "arr": "17:53",
+     "dep": "17:55"
+    },
+    {
+     "code": "LNL",
+     "arr": "18:40",
+     "dep": "18:42"
+    },
+    {
+     "code": "SVJR",
+     "arr": "19:36",
+     "dep": "19:38"
+    },
+    {
+     "code": "PUNE",
+     "arr": "19:53"
+    }
+   ]
+  },
+  {
+   "number": "12127",
+   "name": "MumbaiCST-Pune SF InterCity",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "06:45"
+    },
+    {
+     "code": "DR",
+     "arr": "06:56",
+     "dep": "06:58"
+    },
+    {
+     "code": "TNA",
+     "arr": "07:15",
+     "dep": "07:17"
+    },
+    {
+     "code": "LNL",
+     "arr": "08:50",
+     "dep": "08:52"
+    },
+    {
+     "code": "PUNE",
+     "arr": "09:52"
+    }
+   ]
+  },
+  {
+   "number": "12131",
+   "name": "Mumbai Dadar-Sainagar Shirdi Express",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "21:45"
+    },
+    {
+     "code": "TNA",
+     "arr": "22:03",
+     "dep": "22:05"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:22"
+    }
+   ]
+  },
+  {
+   "number": "12133",
+   "name": "MUMBAI CST - MANGALORE Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "22:15"
+    },
+    {
+     "code": "TNA",
+     "arr": "22:43"
+    }
+   ]
+  },
+  {
+   "number": "12137",
+   "name": "Punjab Mail",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "19:40"
+    },
+    {
+     "code": "DR",
+     "arr": "19:53",
+     "dep": "19:55"
+    },
+    {
+     "code": "KYN",
+     "arr": "20:35"
+    }
+   ]
+  },
+  {
+   "number": "12139",
+   "name": "Sevagram Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "15:00"
+    },
+    {
+     "code": "DR",
+     "arr": "15:08",
+     "dep": "15:10"
+    },
+    {
+     "code": "TNA",
+     "arr": "15:33",
+     "dep": "15:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "15:55"
+    }
+   ]
+  },
+  {
+   "number": "12153",
+   "name": "Lokmanya Tilak (T) Habibganj Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "16:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "17:05"
+    }
+   ]
+  },
+  {
+   "number": "12161",
+   "name": "Lashkar Superfast Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "16:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "17:05"
+    }
+   ]
+  },
+  {
+   "number": "12163",
+   "name": "DADAR - CHENNAI EGMORE SF Exp",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "20:30"
+    },
+    {
+     "code": "KYN",
+     "arr": "21:10",
+     "dep": "21:15"
+    },
+    {
+     "code": "LNL",
+     "arr": "22:48",
+     "dep": "22:50"
+    },
+    {
+     "code": "PUNE",
+     "arr": "00:05"
+    }
+   ]
+  },
+  {
+   "number": "12165",
+   "name": "MUMBAI LTT - VARANASI Ratnagiri Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "05:40"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:05"
+    }
+   ]
+  },
+  {
+   "number": "12173",
+   "name": "Udyog Nagri Express",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "16:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "17:05"
+    }
+   ]
+  },
+  {
+   "number": "12188",
+   "name": "Mumbai-Jabalpur Garib Rath Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "13:30"
+    },
+    {
+     "code": "DR",
+     "arr": "13:43",
+     "dep": "13:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "14:22"
+    }
+   ]
+  },
+  {
+   "number": "12322",
+   "name": "MUMBAI CST - HOWRAH Mail (via Allahabad)",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "21:25"
+    },
+    {
+     "code": "DR",
+     "arr": "21:38",
+     "dep": "21:40"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:15"
+    }
+   ]
+  },
+  {
+   "number": "12362",
+   "name": "MUMBAI CST - ASANSOL SF Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "11:05"
+    },
+    {
+     "code": "DR",
+     "arr": "11:18",
+     "dep": "11:20"
+    },
+    {
+     "code": "KYN",
+     "arr": "11:55"
+    }
+   ]
+  },
+  {
+   "number": "12525",
+   "name": "Indrayani SF Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "05:40"
+    },
+    {
+     "code": "DR",
+     "arr": "05:51",
+     "dep": "05:53"
+    },
+    {
+     "code": "TNA",
+     "arr": "06:14",
+     "dep": "06:16"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:35",
+     "dep": "06:37"
+    },
+    {
+     "code": "KJT",
+     "arr": "07:15",
+     "dep": "07:17"
+    },
+    {
+     "code": "LNL",
+     "arr": "08:00",
+     "dep": "08:02"
+    },
+    {
+     "code": "SVJR",
+     "arr": "08:50",
+     "dep": "08:52"
+    },
+    {
+     "code": "PUNE",
+     "arr": "09:08"
+    }
+   ]
+  },
+  {
+   "number": "12527",
+   "name": "Mumbai CST-Latur Superfast Express.",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "21:00"
+    },
+    {
+     "code": "DR",
+     "arr": "21:13",
+     "dep": "21:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "21:51",
+     "dep": "21:53"
+    },
+    {
+     "code": "KJT",
+     "arr": "22:38",
+     "dep": "22:40"
+    },
+    {
+     "code": "LNL",
+     "arr": "23:28",
+     "dep": "23:30"
+    },
+    {
+     "code": "PUNE",
+     "arr": "00:30"
+    }
+   ]
+  },
+  {
+   "number": "12534",
+   "name": "Pushpak Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "08:20"
+    },
+    {
+     "code": "KYN",
+     "arr": "09:10"
+    }
+   ]
+  },
+  {
+   "number": "12701",
+   "name": "Hussain Sagar Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "21:50"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:43",
+     "dep": "22:45"
+    },
+    {
+     "code": "PUNE",
+     "arr": "01:20"
+    }
+   ]
+  },
+  {
+   "number": "12809",
+   "name": "MUMBAI CST - HOWRAH SF Mail (via NAGPUR)",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "20:35"
+    },
+    {
+     "code": "DR",
+     "arr": "20:48",
+     "dep": "20:50"
+    },
+    {
+     "code": "TNA",
+     "arr": "21:13",
+     "dep": "21:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "21:35"
+    }
+   ]
+  },
+  {
+   "number": "12859",
+   "name": "MUMBAI CST - HOWRAH Gitanjali Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "06:00"
+    },
+    {
+     "code": "DR",
+     "arr": "06:13",
+     "dep": "06:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:55"
+    }
+   ]
+  },
+  {
+   "number": "12869",
+   "name": "MUMBAI CST - HOWRAH SF Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "11:05"
+    },
+    {
+     "code": "DR",
+     "arr": "11:18",
+     "dep": "11:20"
+    },
+    {
+     "code": "KYN",
+     "arr": "11:55"
+    }
+   ]
+  },
+  {
+   "number": "12940",
+   "name": "Jaipur-Pune SF Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "05:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "08:05"
+    }
+   ]
+  },
+  {
+   "number": "15017",
+   "name": "MUMBAI LTT - GORAKHPUR Kashi Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "07:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "07:18"
+    }
+   ]
+  },
+  {
+   "number": "16209",
+   "name": "Ajmer-Mysore Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:08",
+     "dep": "02:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "16331",
+   "name": "MUMBAI CST - TRIVANDRUM Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "12:05"
+    },
+    {
+     "code": "DR",
+     "arr": "12:18",
+     "dep": "12:20"
+    },
+    {
+     "code": "TNA",
+     "arr": "12:42",
+     "dep": "12:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "13:05",
+     "dep": "13:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "13:48",
+     "dep": "13:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "14:38",
+     "dep": "14:40"
+    },
+    {
+     "code": "PUNE",
+     "arr": "15:45"
+    }
+   ]
+  },
+  {
+   "number": "16339",
+   "name": "MUMBAI CST - NAGERCOIL Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "12:05"
+    },
+    {
+     "code": "DR",
+     "arr": "12:18",
+     "dep": "12:20"
+    },
+    {
+     "code": "TNA",
+     "arr": "12:43",
+     "dep": "12:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "13:05",
+     "dep": "13:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "13:48",
+     "dep": "13:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "14:38",
+     "dep": "14:40"
+    },
+    {
+     "code": "PUNE",
+     "arr": "15:45"
+    }
+   ]
+  },
+  {
+   "number": "16351",
+   "name": "MUMBAI CST - NAGERCOIL Balaji Exp",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "12:05"
+    },
+    {
+     "code": "DR",
+     "arr": "12:18",
+     "dep": "12:20"
+    },
+    {
+     "code": "TNA",
+     "arr": "12:42",
+     "dep": "12:45"
+    },
+    {
+     "code": "KYN",
+     "arr": "13:05",
+     "dep": "13:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "13:48",
+     "dep": "13:50"
+    },
+    {
+     "code": "LNL",
+     "arr": "14:38",
+     "dep": "14:40"
+    },
+    {
+     "code": "PUNE",
+     "arr": "15:45"
+    }
+   ]
+  },
+  {
+   "number": "16381",
+   "name": "Mumbai CST - Kanyakumari Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "15:45"
+    },
+    {
+     "code": "DR",
+     "arr": "15:58",
+     "dep": "16:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "16:38",
+     "dep": "16:40"
+    },
+    {
+     "code": "KJT",
+     "arr": "17:18",
+     "dep": "17:20"
+    },
+    {
+     "code": "LNL",
+     "arr": "18:08",
+     "dep": "18:10"
+    },
+    {
+     "code": "PUNE",
+     "arr": "19:15"
+    }
+   ]
+  },
+  {
+   "number": "16505",
+   "name": "GANDHIDHAM - BANGALORE Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:08",
+     "dep": "02:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "16507",
+   "name": "BHAGAT KI KOTHI - BANGALORE Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:08",
+     "dep": "02:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "16529",
+   "name": "Udyan Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "08:05"
+    },
+    {
+     "code": "DR",
+     "arr": "08:18",
+     "dep": "08:20"
+    },
+    {
+     "code": "KYN",
+     "arr": "08:58",
+     "dep": "09:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "10:33",
+     "dep": "10:35"
+    },
+    {
+     "code": "PUNE",
+     "arr": "11:40"
+    }
+   ]
+  },
+  {
+   "number": "16531",
+   "name": "Garib Nawaz Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:10"
+    },
+    {
+     "code": "KJT",
+     "arr": "02:08",
+     "dep": "02:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "16533",
+   "name": "BHAGAT KI KOTHI - BANGALORE CITY Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "01:10"
+    },
+    {
+     "code": "LNL",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "16613",
+   "name": "RAJKOT - COIMBATORE Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "19:45"
+    },
+    {
+     "code": "KJT",
+     "arr": "20:28",
+     "dep": "20:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "22:25"
+    }
+   ]
+  },
+  {
+   "number": "17017",
+   "name": "Rajkot Secunderabad Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "19:45"
+    },
+    {
+     "code": "KJT",
+     "arr": "20:28",
+     "dep": "20:30"
+    },
+    {
+     "code": "LNL",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "22:25"
+    }
+   ]
+  },
+  {
+   "number": "17031",
+   "name": "Mumbai CST-Hyderabad Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "12:45"
+    },
+    {
+     "code": "DR",
+     "arr": "12:58",
+     "dep": "13:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "13:40",
+     "dep": "13:45"
+    },
+    {
+     "code": "KJT",
+     "arr": "14:23",
+     "dep": "14:25"
+    },
+    {
+     "code": "LNL",
+     "arr": "15:13",
+     "dep": "15:15"
+    },
+    {
+     "code": "PUNE",
+     "arr": "16:30"
+    }
+   ]
+  },
+  {
+   "number": "17057",
+   "name": "Mumbai-Secunderabad Devagiri Expres",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "21:05"
+    },
+    {
+     "code": "DR",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "TNA",
+     "arr": "21:42",
+     "dep": "21:44"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:05"
+    }
+   ]
+  },
+  {
+   "number": "17203",
+   "name": "Bhavnagar(T)-Kakinada Town Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "19:45"
+    },
+    {
+     "code": "LNL",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "22:25"
+    }
+   ]
+  },
+  {
+   "number": "17617",
+   "name": "Tapovan Express",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "06:10"
+    },
+    {
+     "code": "DR",
+     "arr": "06:23",
+     "dep": "06:25"
+    },
+    {
+     "code": "TNA",
+     "arr": "06:48",
+     "dep": "06:50"
+    },
+    {
+     "code": "KYN",
+     "arr": "07:05"
+    }
+   ]
+  },
+  {
+   "number": "18029",
+   "name": "MUMBAI LTT [Kurla] - KOLKATA SALIMAR Exp",
+   "stops": [
+    {
+     "code": "TNA",
+     "dep": "22:15"
+    },
+    {
+     "code": "KYN",
+     "arr": "22:35"
+    }
+   ]
+  },
+  {
+   "number": "19312",
+   "name": "Indore Pune Express",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "05:20"
+    },
+    {
+     "code": "KJT",
+     "arr": "06:03",
+     "dep": "06:05"
+    },
+    {
+     "code": "LNL",
+     "arr": "06:53",
+     "dep": "06:55"
+    },
+    {
+     "code": "PUNE",
+     "arr": "08:10"
+    }
+   ]
+  },
+  {
+   "number": "19568",
+   "name": "OKHA - TUTICORIN Exp",
+   "stops": [
+    {
+     "code": "KYN",
+     "dep": "19:45"
+    },
+    {
+     "code": "LNL",
+     "arr": "21:18",
+     "dep": "21:20"
+    },
+    {
+     "code": "PUNE",
+     "arr": "22:25"
+    }
+   ]
+  },
+  {
+   "number": "50103",
+   "name": "Dadar Ratnagiri Passenger",
+   "stops": [
+    {
+     "code": "DR",
+     "dep": "15:35"
+    },
+    {
+     "code": "TNA",
+     "arr": "16:01",
+     "dep": "16:03"
+    },
+    {
+     "code": "DIVA",
+     "arr": "16:15"
+    }
+   ]
+  },
+  {
+   "number": "51027",
+   "name": "MumbaiCST-Pandharpur Fast Passenger",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "22:55"
+    },
+    {
+     "code": "DR",
+     "arr": "23:08",
+     "dep": "23:10"
+    },
+    {
+     "code": "TNA",
+     "arr": "23:33",
+     "dep": "23:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:50",
+     "dep": "23:55"
+    },
+    {
+     "code": "ULNR",
+     "arr": "00:08",
+     "dep": "00:10"
+    },
+    {
+     "code": "ABH",
+     "arr": "00:16",
+     "dep": "00:18"
+    },
+    {
+     "code": "BUD",
+     "arr": "00:24",
+     "dep": "00:26"
+    },
+    {
+     "code": "KJT",
+     "arr": "00:53",
+     "dep": "00:55"
+    },
+    {
+     "code": "KAD",
+     "arr": "01:38",
+     "dep": "01:40"
+    },
+    {
+     "code": "LNL",
+     "arr": "01:53",
+     "dep": "01:55"
+    },
+    {
+     "code": "KMST",
+     "arr": "02:11",
+     "dep": "02:13"
+    },
+    {
+     "code": "TGN",
+     "arr": "02:23",
+     "dep": "02:25"
+    },
+    {
+     "code": "DEHR",
+     "arr": "02:38",
+     "dep": "02:40"
+    },
+    {
+     "code": "CCH",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PMP",
+     "arr": "03:03",
+     "dep": "03:05"
+    },
+    {
+     "code": "KK",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "03:28",
+     "dep": "03:30"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "51029",
+   "name": "Bijapur Fast Passenger",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "22:55"
+    },
+    {
+     "code": "DR",
+     "arr": "23:08",
+     "dep": "23:10"
+    },
+    {
+     "code": "TNA",
+     "arr": "23:33",
+     "dep": "23:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:50",
+     "dep": "23:55"
+    },
+    {
+     "code": "ULNR",
+     "arr": "00:08",
+     "dep": "00:10"
+    },
+    {
+     "code": "ABH",
+     "arr": "00:16",
+     "dep": "00:18"
+    },
+    {
+     "code": "BUD",
+     "arr": "00:24",
+     "dep": "00:26"
+    },
+    {
+     "code": "KJT",
+     "arr": "00:53",
+     "dep": "00:55"
+    },
+    {
+     "code": "KAD",
+     "arr": "01:38",
+     "dep": "01:40"
+    },
+    {
+     "code": "LNL",
+     "arr": "01:53",
+     "dep": "01:55"
+    },
+    {
+     "code": "KMST",
+     "arr": "02:11",
+     "dep": "02:13"
+    },
+    {
+     "code": "TGN",
+     "arr": "02:23",
+     "dep": "02:25"
+    },
+    {
+     "code": "DEHR",
+     "arr": "02:38",
+     "dep": "02:40"
+    },
+    {
+     "code": "CCH",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PMP",
+     "arr": "03:03",
+     "dep": "03:05"
+    },
+    {
+     "code": "KK",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "03:28",
+     "dep": "03:30"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "51033",
+   "name": "Mumbai Sainagar Shirdi Fast Pass(Via Daund)",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "22:55"
+    },
+    {
+     "code": "DR",
+     "arr": "23:08",
+     "dep": "23:10"
+    },
+    {
+     "code": "TNA",
+     "arr": "23:33",
+     "dep": "23:35"
+    },
+    {
+     "code": "KYN",
+     "arr": "23:50",
+     "dep": "23:55"
+    },
+    {
+     "code": "ULNR",
+     "arr": "00:08",
+     "dep": "00:10"
+    },
+    {
+     "code": "ABH",
+     "arr": "00:16",
+     "dep": "00:18"
+    },
+    {
+     "code": "BUD",
+     "arr": "00:24",
+     "dep": "00:26"
+    },
+    {
+     "code": "KJT",
+     "arr": "00:53",
+     "dep": "00:55"
+    },
+    {
+     "code": "KAD",
+     "arr": "01:38",
+     "dep": "01:40"
+    },
+    {
+     "code": "LNL",
+     "arr": "01:53",
+     "dep": "01:55"
+    },
+    {
+     "code": "KMST",
+     "arr": "02:11",
+     "dep": "02:13"
+    },
+    {
+     "code": "TGN",
+     "arr": "02:23",
+     "dep": "02:25"
+    },
+    {
+     "code": "DEHR",
+     "arr": "02:38",
+     "dep": "02:40"
+    },
+    {
+     "code": "CCH",
+     "arr": "02:58",
+     "dep": "03:00"
+    },
+    {
+     "code": "PMP",
+     "arr": "03:03",
+     "dep": "03:05"
+    },
+    {
+     "code": "KK",
+     "arr": "03:23",
+     "dep": "03:25"
+    },
+    {
+     "code": "SVJR",
+     "arr": "03:28",
+     "dep": "03:30"
+    },
+    {
+     "code": "PUNE",
+     "arr": "04:10"
+    }
+   ]
+  },
+  {
+   "number": "51153",
+   "name": "Mumbai Bhusaval Passenger",
+   "stops": [
+    {
+     "code": "CSMT",
+     "dep": "05:20"
+    },
+    {
+     "code": "DR",
+     "arr": "05:28",
+     "dep": "05:30"
+    },
+    {
+     "code": "TNA",
+     "arr": "05:58",
+     "dep": "06:00"
+    },
+    {
+     "code": "KYN",
+     "arr": "06:20"
+    }
+   ]
+  },
+  {
+   "number": "51417",
+   "name": "Karjat Pune Passenger",
+   "stops": [
+    {
+     "code": "KJT",
+     "dep": "15:25"
+    },
+    {
+     "code": "KAD",
+     "arr": "15:59",
+     "dep": "16:00"
+    },
+    {
+     "code": "LNL",
+     "arr": "16:09",
+     "dep": "16:10"
+    },
+    {
+     "code": "MVL",
+     "arr": "16:18",
+     "dep": "16:19"
+    },
+    {
+     "code": "KMST",
+     "arr": "16:26",
+     "dep": "16:27"
+    },
+    {
+     "code": "VDN",
+     "arr": "16:38",
+     "dep": "16:39"
+    },
+    {
+     "code": "TGN",
+     "arr": "16:43",
+     "dep": "16:44"
+    },
+    {
+     "code": "GRWD",
+     "arr": "16:49",
+     "dep": "16:50"
+    },
+    {
+     "code": "DEHR",
+     "arr": "16:59",
+     "dep": "17:00"
+    },
+    {
+     "code": "AKRD",
+     "arr": "17:06",
+     "dep": "17:07"
+    },
+    {
+     "code": "CCH",
+     "arr": "17:16",
+     "dep": "17:17"
+    },
+    {
+     "code": "PMP",
+     "arr": "17:20",
+     "dep": "17:21"
+    },
+    {
+     "code": "DAPD",
+     "arr": "17:27",
+     "dep": "17:28"
+    },
+    {
+     "code": "KK",
+     "arr": "17:32",
+     "dep": "17:33"
+    },
+    {
+     "code": "SVJR",
+     "arr": "17:52",
+     "dep": "17:53"
+    },
+    {
+     "code": "PUNE",
+     "arr": "18:15"
+    }
+   ]
   }
  ]
 }
