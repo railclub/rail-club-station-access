@@ -2,6 +2,10 @@
 import type { GeminiFeature, GeminiResult, Station } from "./rules.ts";
 import { VIDEO_FEATURES } from "./rules.ts";
 
+// Used unless the GEMINI_MODEL secret says otherwise. gemini-2.5-flash stopped accepting new keys in
+// November 2026; gemini-check lists what a key can use.
+export const DEFAULT_MODEL = "gemini-3.5-flash";
+
 // Bump when the prompt or schema changes, so results can be compared across versions.
 export const PROMPT_VERSION = "2026-10-22.1";
 
@@ -133,7 +137,9 @@ export async function checkVideo(opts: {
       temperature: 0,
       responseMimeType: "application/json",
       responseSchema: responseSchema(opts.claimed),
-      maxOutputTokens: 2048,
+      // Newer models count their thinking against this limit; too low and the JSON gets cut off,
+      // which sends every video to a reviewer.
+      maxOutputTokens: 8192,
     },
   };
   try {

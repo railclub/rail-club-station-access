@@ -6,12 +6,12 @@ import {
   decide, gateBudget, gateContributor, gateDuplicate, gateFile, gateLimits, gateLocation, gateNeeded,
   gateRecording, type Outcome, parseInput, stillNeeded,
 } from "../_shared/rules.ts";
-import { checkVideo, PROMPT_VERSION } from "../_shared/gemini.ts";
+import { checkVideo, DEFAULT_MODEL, PROMPT_VERSION } from "../_shared/gemini.ts";
 import {
   adminClient, BUCKET, currentUser, istDate, istStartOf, loadLimits, loadStations, preflight, reply,
 } from "../_shared/server.ts";
 
-const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
+const MODEL = Deno.env.get("GEMINI_MODEL") ?? DEFAULT_MODEL;
 
 Deno.serve(async (req) => {
   const early = preflight(req);

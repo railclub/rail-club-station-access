@@ -74,8 +74,20 @@ before filming (`site/report.js`, consent version `2026-11-15`) and the "How it 
    | Name | Value |
    |---|---|
    | `GEMINI_API_KEY` | the key from step 3 |
-   | `GEMINI_MODEL` | optional, default `gemini-2.5-flash`; set this if Google has renamed or retired it |
-5. Send one test video; Edge Functions → `submit-report` → Logs should show no Gemini error.
+   | `GEMINI_MODEL` | optional, default `gemini-3.5-flash`; set this if Google has renamed or retired it |
+5. Check the key without a video: the `gemini-check` function (protected by the cleanup job's
+   Vault secret) answers whether the key is set and works. Call it from the SQL Editor:
+   ```sql
+   select net.http_post(
+     url := 'https://szhspqlvgiuqgbavfuhz.supabase.co/functions/v1/gemini-check',
+     headers := jsonb_build_object('content-type', 'application/json', 'x-cron-secret',
+       (select decrypted_secret from vault.decrypted_secrets where name = 'cleanup_cron_secret')),
+     body := '{"schema": true}'::jsonb, timeout_milliseconds := 60000);
+   -- a few seconds later:
+   select status_code, content from net._http_response order by id desc limit 1;
+   ```
+   `{"list": true}` lists the models the key can use; `{"model": "..."}` tests another one.
+6. Send one test video; Edge Functions → `submit-report` → Logs should show no Gemini error.
 
 Free-tier rate limits are shown in AI Studio next to the key. If a call is refused, the video
 simply waits for a reviewer. Rail Club also stops calling Gemini after 300 videos a month
