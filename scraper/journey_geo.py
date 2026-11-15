@@ -39,28 +39,26 @@ def build_graph(ways):
     return adj, coords
 
 
-def nearest_node(coords, lat, lon, max_m=400.0):
-    """The track point closest to a station, or None if no track is within max_m."""
-    best, best_d = None, max_m
+def nodes_near(coords, lat, lon, radius_m):
+    """Track points within radius_m of a station: {node: metres}."""
+    out = {}
     for node, (nlat, nlon) in coords.items():
         if abs(nlat - lat) > 0.01 or abs(nlon - lon) > 0.01:  # ~1 km: skip the far ones cheaply
             continue
         d = distance_m(lat, lon, nlat, nlon)
-        if d <= best_d:
-            best, best_d = node, d
-    return best
+        if d <= radius_m:
+            out[node] = d
+    return out
 
 
-def shortest_path(adj, start, goal):
-    """Node ids from start to goal along the tracks (Dijkstra), or None if they aren't joined."""
-    dist, prev, heap = {start: 0.0}, {}, [(0.0, start)]
+def spread(adj, start_costs):
+    """Shortest distance along the tracks from a set of starting points, each with a head start
+    cost (Dijkstra). Returns (distance, previous point) for every point that can be reached."""
+    dist, prev = dict(start_costs), {}
+    heap = [(d, node) for node, d in start_costs.items()]
+    heapq.heapify(heap)
     while heap:
         d, node = heapq.heappop(heap)
-        if node == goal:
-            path = [goal]
-            while path[-1] != start:
-                path.append(prev[path[-1]])
-            return path[::-1]
         if d > dist.get(node, math.inf):
             continue
         for nxt, w in adj.get(node, ()):
@@ -68,32 +66,60 @@ def shortest_path(adj, start, goal):
             if nd < dist.get(nxt, math.inf):
                 dist[nxt], prev[nxt] = nd, node
                 heapq.heappush(heap, (nd, nxt))
-    return None
+    return dist, prev
 
 
-def route_path(ways, stops):
+def route_path(ways, stops, radius_m=250.0):
     """stops: [(name, lat, lon), ...] in travel order. Follows the tracks from each stop to the
     next (so the route can't take a shorter line through other stations) and returns
     (path, marks): path is [(lat, lon, metres_from_start)], marks is [(name, metres_from_start)].
+
+    A station has several tracks side by side, and the map doesn't always join them. So at each
+    stop the route may step across to any track within radius_m, paying only the few metres
+    between them, instead of going a long way round to find where the tracks meet.
     Raises ValueError naming the stop that can't be reached."""
     adj, coords = build_graph(ways)
-    nodes = []
+    near = []
     for name, lat, lon in stops:
-        node = nearest_node(coords, lat, lon)
-        if node is None:
+        found = nodes_near(coords, lat, lon, radius_m)
+        if not found:
             raise ValueError(f"No track near {name}")
-        nodes.append(node)
-    path, marks, total = [], [(stops[0][0], 0.0)], 0.0
-    for (name, _, _), a, b in zip(stops[1:], nodes, nodes[1:]):
-        leg = shortest_path(adj, a, b)
-        if leg is None:
+        near.append(found)
+
+    # legs[i] = (previous-point map for the run into stop i+1, {start point: where we stepped from})
+    costs, stepped, legs = {n: 0.0 for n in near[0]}, {}, []
+    for (name, _, _), here in zip(stops[1:], near[1:]):
+        dist, prev = spread(adj, costs)
+        arrived = {n: dist[n] for n in here if n in dist}
+        if not arrived:
             raise ValueError(f"Tracks don't connect to {name}")
-        for node in leg if not path else leg[1:]:
-            lat, lon = coords[node]
-            if path:
-                total += distance_m(path[-1][0], path[-1][1], lat, lon)
-            path.append((lat, lon, total))
-        marks.append((name, total))
+        legs.append((prev, stepped))
+        costs, stepped = {}, {}
+        for n in here:
+            frm = min(arrived, key=lambda r: arrived[r] + distance_m(*coords[r], *coords[n]))
+            costs[n], stepped[n] = arrived[frm] + distance_m(*coords[frm], *coords[n]), frm
+        last_arrived = arrived
+
+    # Walk back from the cheapest arrival at the final stop.
+    node, nodes = min(last_arrived, key=last_arrived.get), []
+    for prev, stepped_here in reversed(legs):
+        while True:
+            nodes.append(node)
+            if node not in prev:
+                break
+            node = prev[node]
+        node = stepped_here.get(node, node)  # the step across at the stop this run started from
+    nodes.reverse()
+
+    path, total = [], 0.0
+    for node in nodes:
+        lat, lon = coords[node]
+        if path:
+            if (lat, lon) == (path[-1][0], path[-1][1]):
+                continue
+            total += distance_m(path[-1][0], path[-1][1], lat, lon)
+        path.append((lat, lon, total))
+    marks = [(name, locate(path, lat, lon)[0]) for name, lat, lon in stops]
     return path, marks
 
 

@@ -35,8 +35,8 @@ WIKIDATA = "https://query.wikidata.org/sparql"
 
 OSM = {
     "routes": f'relation["type"="route"]["route"~"^(train|tracks|railway)$"]{BBOX};out tags;',
-    # Running lines only: sidings, yards and spurs all carry a "service" tag.
-    "tracks": f'way["railway"="rail"][!"service"]{BBOX};out geom;',
+    # Running lines and the crossovers that join them; not sidings, yards or spurs.
+    "tracks": f'way["railway"="rail"]["service"!~"^(yard|siding|spur)$"]{BBOX};out geom;',
     "stations": f'nwr["railway"~"^(station|halt)$"]{BBOX};out center;',
     "sights": f"""(
       nwr["waterway"="waterfall"]{BBOX}; nwr["natural"="waterfall"]{BBOX};

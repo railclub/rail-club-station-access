@@ -20,17 +20,24 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
    Ghat, one direction first (the reverse just swaps sides). Trains: 11007 Deccan Express first,
    then 12123 Deccan Queen, 22105 Indrayani Express, 12127 Intercity Express and 11009 Sinhagad
    Express (numbers and stops to be checked against the official timetable in step 3).
-2. **Track shape** (Claude). Extract the CSMT–Pune line from OpenStreetMap as a path with
-   distance markers; check it against the station coordinates in `data/station_coords.json`.
-   `scraper/journey_fetch.py` downloads the raw map data (and the step 4 sight candidates) into
-   `data/journey/raw/`. It needs the `rail-club` cloud environment, which allows OpenStreetMap
-   and Wikidata.
+2. **Track shape.** **Done, 15 November 2026.** The CSMT–Pune line is a path of 1,542 points,
+   188.5 km long, with all 58 stations on it: `data/journey/csmt-pune/route.json`
+   ([map](journey-pilot-route.png)). It follows the fast line through the Parsik tunnel, as
+   express trains do.
+   - `scraper/journey_fetch.py` downloads the raw map data into `data/journey/raw/` (not kept on
+     `main`; a copy is on the `journey-pilot` branch). It needs the `rail-club` cloud
+     environment, which allows the OpenStreetMap mirror servers and Wikidata.
+   - `scraper/journey_build.py` builds the route and the candidates from that raw data.
+   - `scraper/journey_geo.py` holds the maths (route following, distance along it, left/right),
+     with tests in `tests/test_journey.py`.
 3. **Timetables** (you + Claude). Enter the pilot trains' stops and times by hand from the
    official published timetable. Do not scrape NTES or IRCTC. A timetable source at scale is
    the biggest open question.
-4. **Sights** (Claude + you). Candidates near the track from OpenStreetMap and Wikidata; you prune
-   to what is actually visible from a train. Tag each with a season (most ghat waterfalls flow
-   only June to September).
+4. **Sights** (Claude + you). **Candidates done:** `data/journey/csmt-pune/candidates.json` has
+   192 places near the track from OpenStreetMap and Wikidata, plus the 20 tunnels and 3 long
+   bridges the route goes through, each with distance along the route, distance from the track
+   and side. **Still to do:** prune to what is actually visible from a train, remove duplicate
+   names, and tag each with a season (most ghat waterfalls flow only June to September).
 5. **Side and time** (Claude). A Python script like `scraper/build.py` that gives each sight its
    position along the route, its side, minutes after the previous stop and whether it passes in
    daylight for each train. Unit tests, especially for left/right. Output a small JSON file the
