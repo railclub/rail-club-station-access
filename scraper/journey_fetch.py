@@ -25,7 +25,12 @@ S, W, N, E = 18.45, 72.78, 19.30, 73.95
 BBOX = f"({S},{W},{N},{E})"
 UA = "RailClub-JourneyPartner/0.1 (railclub.support@gmail.com)"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "journey" / "raw"
-OVERPASS = "https://overpass-api.de/api/interpreter"
+# Tried in order. The main server refuses some cloud networks, so two public mirrors follow it.
+OVERPASS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+]
 WIKIDATA = "https://query.wikidata.org/sparql"
 
 OSM = {
@@ -71,6 +76,22 @@ def get(url: str, data: bytes | None, accept: str) -> bytes:
         return done.stdout
 
 
+def get_osm(body: bytes) -> bytes:
+    """Ask each server in turn; the first one that answers moves to the front for the next query."""
+    errors = []
+    for url in list(OVERPASS):
+        try:
+            answer = get(url, body, "application/json")
+            json.loads(answer)
+            OVERPASS.remove(url)
+            OVERPASS.insert(0, url)
+            return answer
+        except Exception as e:
+            errors.append(f"{url.split('/')[2]}: {str(e)[:150]}")
+            time.sleep(5)
+    raise RuntimeError(" | ".join(errors))
+
+
 def save(name: str, fetch) -> str:
     try:
         body = fetch()
@@ -80,7 +101,7 @@ def save(name: str, fetch) -> str:
             f.write(body)
         return f"OK    {name}: {count} items, {len(body) // 1024} KB"
     except Exception as e:
-        return f"FAIL  {name}: {str(e)[:300]}"
+        return f"FAIL  {name}: {str(e)[:600]}"
 
 
 def main() -> int:
@@ -88,7 +109,7 @@ def main() -> int:
     log = [f"Fetched {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())}, box S{S} W{W} N{N} E{E}"]
     for name, q in OSM.items():
         body = urllib.parse.urlencode({"data": f"[out:json][timeout:240];{q}"}).encode()
-        log.append(save(name, lambda: get(OVERPASS, body, "application/json")))
+        log.append(save(name, lambda: get_osm(body)))
         print(log[-1], flush=True)
         time.sleep(15)
     # Wikidata in a 3 x 3 grid so the dense Mumbai squares can't time the whole query out.
