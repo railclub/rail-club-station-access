@@ -82,7 +82,7 @@ Rail Club
 |---|---|---|
 | Now | 🚉 **Stations**: accessibility from official lists | Live: 688 stations, 16 divisions |
 | Next | 🚉 **Stations**: visitor video reports, checked by Gemini ([plan](docs/phase-2-video-reports.md)) | Built and tested; switching on: [setup steps](docs/phase-2-setup.md) |
-| Next | 🪟 **Journey Partner**: enter a train and from → to stations, see sights along the way (rivers, bridges, waterfalls, ghats, forts) with timing and **left/right side**; travellers add and confirm sights | Pilot: Mumbai → Pune via Bhor Ghat |
+| Next | 🪟 **Journey Partner**: enter a train and from → to stations, see sights along the way (rivers, bridges, waterfalls, ghats, forts) with timing and **left/right side**; travellers add and confirm sights | Pilot: Mumbai → Pune via Bhor Ghat ([plan](docs/journey-partner-plan.md)) |
 | Then | 🧭 **Platform & Coach Guide**, 🚕 **Getting In & Out**, ⚠️ **Safety & Scam Alerts** | Inside station pages |
 | Then | ⭐ **Train Reviews**, 💬 **Ask a Traveller** | Inside journey pages and Community |
 | Later | 🍛 **Food on the Line** (famous station foods, stalls, pantry) | Parked until the community is active |
