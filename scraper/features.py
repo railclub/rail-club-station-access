@@ -48,6 +48,19 @@ FEATURES = [
 
 FEATURE_KEYS = [f["key"] for f in FEATURES]
 
+# Amenities: paid services any traveller may want, shown apart from accessibility.
+# The divisions' accessibility lists don't cover them, so each fact comes from
+# data/amenities.json with its own source and the date it was checked. A station
+# without a fact there has no data (never "not available").
+AMENITIES = [
+    {"key": "cloak_room", "label": "Cloak room (left luggage)",
+     "about": "Leave your bags for a fee, at a counter or in lockers"},
+    {"key": "lounge", "label": "Paid lounge",
+     "about": "Executive lounge or AC waiting lounge you pay to use, usually by the hour"},
+]
+
+AMENITY_KEYS = [a["key"] for a in AMENITIES]
+
 # Status values written to the site JSON.
 YES = "yes"                # the official data says the station has it
 NO = "no"                  # the official data explicitly says the station does not have it

@@ -11,11 +11,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from features import FEATURES, FEATURE_KEYS, NOT_LISTED, UNKNOWN, YES  # noqa: E402
+from features import AMENITIES, AMENITY_KEYS, FEATURES, FEATURE_KEYS, NOT_LISTED, UNKNOWN, YES  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 DIVISIONS_DIR = ROOT / "data" / "divisions"
 NAMES_FILE = ROOT / "data" / "station_names.json"
+AMENITIES_FILE = ROOT / "data" / "amenities.json"
 OUT_FILE = ROOT / "site" / "data" / "stations.json"
 COORDS_FILE = ROOT / "data" / "station_coords.json"
 # Phase 2 backend: the stations a visitor can report on, with coordinates for the location check.
@@ -86,7 +87,54 @@ def build_division(div: dict, lookup: dict) -> dict[str, dict]:
     return stations
 
 
-def build(divisions_dir: Path = DIVISIONS_DIR, names_file: Path = NAMES_FILE) -> dict:
+def load_amenities(path: Path, lookup: dict) -> list[dict]:
+    """Read data/amenities.json and return its facts, checked and with sources filled in.
+
+    Each fact: {"station", "division"?, "amenity", "note"?, "sources": [source keys], "checked"}.
+    Anything that doesn't add up (unknown amenity or source, missing date) stops the build,
+    so a typo can't put a mark on the wrong page.
+    """
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    sources = raw.get("sources", {})
+    out = []
+    for i, fact in enumerate(raw.get("facts", [])):
+        where = f"{path.name} fact {i + 1} ({fact.get('station', '?')})"
+        if fact.get("amenity") not in AMENITY_KEYS:
+            raise ValueError(f"{where}: unknown amenity {fact.get('amenity')!r}")
+        if not fact.get("sources"):
+            raise ValueError(f"{where}: no source")
+        missing = [k for k in fact["sources"] if k not in sources]
+        if missing:
+            raise ValueError(f"{where}: unknown source {missing}")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", fact.get("checked", "")):
+            raise ValueError(f"{where}: 'checked' must be a date like 2026-11-17")
+        out.append({
+            "station": canonical(fact["station"], lookup),
+            "division": fact.get("division"),
+            "amenity": fact["amenity"],
+            "item": {
+                "status": YES,
+                **({"note": fact["note"]} if fact.get("note") else {}),
+                "sources": [{"title": sources[k]["title"], "url": sources[k]["url"]} for k in fact["sources"]],
+                "checked": fact["checked"],
+            },
+        })
+    return out
+
+
+def apply_amenities(stations: list[dict], facts: list[dict]) -> None:
+    """Add each fact to its station's "amenities". The station must already be on the site."""
+    for fact in facts:
+        matches = [s for s in stations if s["name"] == fact["station"]
+                   and (not fact["division"] or s["division"] == fact["division"])]
+        if len(matches) != 1:
+            problem = "is not on the site" if not matches else "is in more than one division; add \"division\""
+            raise ValueError(f"amenities: {fact['station']} {problem}")
+        matches[0].setdefault("amenities", {})[fact["amenity"]] = fact["item"]
+
+
+def build(divisions_dir: Path = DIVISIONS_DIR, names_file: Path = NAMES_FILE,
+          amenities_file: Path = AMENITIES_FILE) -> dict:
     canon, lookup = load_names(names_file)
     out_divisions, out_stations = [], []
     seen_ids: set[str] = set()
@@ -116,9 +164,12 @@ def build(divisions_dir: Path = DIVISIONS_DIR, names_file: Path = NAMES_FILE) ->
                 "features": features,
             })
     out_stations.sort(key=lambda s: s["name"])
+    if amenities_file.exists():
+        apply_amenities(out_stations, load_amenities(amenities_file, lookup))
     return {
         "generated": dt.date.today().isoformat(),
         "features": [{"key": f["key"], "label": f["label"]} for f in FEATURES],
+        "amenities": [{"key": a["key"], "label": a["label"], "about": a["about"]} for a in AMENITIES],
         "divisions": out_divisions,
         "stations": out_stations,
     }

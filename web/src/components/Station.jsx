@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { m } from "motion/react";
 import { BANNER, creditLine } from "../photos.js";
 import { pushRecent, useAuth } from "../auth.js";
-import { GROUPS, Legend, STATUS, slug } from "../facilities.jsx";
+import { AMENITY_TITLE, GROUPS, Legend, STATUS, slug } from "../facilities.jsx";
 
 const REPO = "https://github.com/railclub/rail-club-station-access";
 // Phone numbers in notes become tap-to-call links.
@@ -91,6 +91,34 @@ export default function Station({ data, id }) {
           </ul>
         </section>
       ))}
+      {data.amenities?.length > 0 && (
+        <section className="group amenities" aria-labelledby="g-amenities">
+          <h2 id="g-amenities">{AMENITY_TITLE}</h2>
+          <p className="group-lede">Paid services for every traveller. We mark one only when a railway page, news report or map shows it, and say where.</p>
+          <ul className="feat">
+            {data.amenities.map((a) => {
+              const f = st.amenities?.[a.key];
+              const status = f ? f.status : "unknown";
+              const i = row++;
+              return (
+                <m.li key={a.key} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.03, duration: 0.4 }}>
+                  <span className={`mark ${status}`} aria-hidden="true">{STATUS[status].mark}</span>
+                  <div>
+                    <div className="f-label">{a.label}</div>
+                    <div className="f-status">{f ? "Available" : "No information yet"}</div>
+                    {f?.note && <Note text={f.note} />}
+                    {f?.sources?.length > 0 && (
+                      <div className="f-src">
+                        Source: {f.sources.map((x, n) => <span key={x.url}>{n > 0 && "; "}<a href={x.url} target="_blank" rel="noopener">{x.title}</a></span>)}. Checked {f.checked}.
+                      </div>
+                    )}
+                  </div>
+                </m.li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
       <div id="visitor-slot" />
       <a className="report" href={issue} target="_blank" rel="noopener">Something wrong or missing? Tell us</a>
       <p className="src">
