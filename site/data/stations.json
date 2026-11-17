@@ -25736,17 +25736,6 @@
     }
    },
    "amenities": {
-    "lounge": {
-     "status": "yes",
-     "note": "AC waiting lounge, ₹10 an hour; the non-AC waiting rooms stay free.",
-     "sources": [
-      {
-       "title": "Free Press Journal: Central Railway starts new AC waiting lounge at LTT at ₹10 (undated)",
-       "url": "https://www.freepressjournal.in/mumbai/mumbai-central-railway-starts-new-ac-waiting-lounge-at-csmt-at-rs10-for-passengers-waiting-for-long-distance-trains"
-      }
-     ],
-     "checked": "2026-11-17"
-    },
     "cloak_room": {
      "status": "yes",
      "note": "Digital cloak room with self-service lockers (about 100), for a fee (2021 report).",
