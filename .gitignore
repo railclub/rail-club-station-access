@@ -11,3 +11,4 @@ node_modules/
 web/node_modules/
 dist/
 site/data/rail/
+.claude/worktrees/
