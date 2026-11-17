@@ -1,0 +1,159 @@
+{
+ "how_to": "The sights Journey Partner shows, picked by hand from candidates.json: only what can really be seen from a train window. Each pick names one candidate by its osm or wikidata id (tunnels and bridges by kind and km). title and note are what travellers read. season: all year, or the months it is worth looking (waterfalls flow June to September). checked: map until someone confirms it from a train. Run python3 scraper/journey_build.py to place them.",
+ "picks": [
+  {
+   "id": "node/4302253089",
+   "title": "Khada Parsi",
+   "kind": "landmark",
+   "season": "all year",
+   "note": "A Parsi gentleman on a tall cast-iron pillar, standing in the road junction since the 1860s."
+  },
+  {
+   "id": "way/431512593",
+   "title": "Sion Fort",
+   "kind": "fort",
+   "season": "all year",
+   "note": "A small 17th-century British watchtower fort on the hillock just after Sion station."
+  },
+  {
+   "kind": "bridge",
+   "km": 34.2,
+   "title": "Thane Creek",
+   "season": "all year",
+   "note": "The train crosses the creek on leaving Thane, with mangroves along both banks."
+  },
+  {
+   "kind": "tunnel",
+   "km": 36.7,
+   "title": "Parsik Tunnel",
+   "season": "all year",
+   "note": "1.3 km under Parsik hill, one of the oldest railway tunnels in India still in use (1916)."
+  },
+  {
+   "id": "Q112578137",
+   "title": "Mumbra Devi Temple",
+   "kind": "temple",
+   "season": "all year",
+   "note": "The white temple high on the hill above Mumbra, reached by a long flight of steps."
+  },
+  {
+   "id": "Q13118841",
+   "title": "Matheran hills and Peb Fort",
+   "kind": "fort",
+   "season": "all year",
+   "note": "The flat-topped Matheran range rises on the right from Badlapur to Neral. Peb Fort sits on its northern tip."
+  },
+  {
+   "id": "Q7126748",
+   "title": "Palasdari Dam",
+   "kind": "dam",
+   "season": "all year",
+   "note": "The lake close to the line just after Karjat, the last flat stretch before the climb."
+  },
+  {
+   "kind": "tunnel",
+   "km": 102.7,
+   "title": "Bhor Ghat begins",
+   "season": "all year",
+   "note": "The climb of about 550 m up the Sahyadri starts here, through more than 20 tunnels. Have the camera ready from now to Khandala."
+  },
+  {
+   "id": "node/6154707855",
+   "title": "Waterfall",
+   "kind": "waterfall",
+   "season": "Jun–Sep",
+   "note": "One of many falls on the ghat walls in the monsoon."
+  },
+  {
+   "id": "node/9197147725",
+   "title": "Songiri Fort",
+   "kind": "fort",
+   "season": "all year",
+   "note": "A small hill fort guarding the old route up the ghat."
+  },
+  {
+   "id": "node/5910356626",
+   "title": "Waterfall",
+   "kind": "waterfall",
+   "season": "Jun–Sep",
+   "note": "Monsoon falls across the valley."
+  },
+  {
+   "id": "Q7504205",
+   "title": "Rajmachi forts",
+   "kind": "fort",
+   "season": "all year",
+   "note": "Twin forts Shrivardhan and Manaranjan on the ridge across the valley, built to watch over the Bor pass."
+  },
+  {
+   "id": "node/5910356676",
+   "title": "Waterfall",
+   "kind": "waterfall",
+   "season": "Jun–Sep",
+   "note": "Monsoon falls on the far side of the valley."
+  },
+  {
+   "id": "node/1067904284",
+   "title": "Duke's Nose",
+   "kind": "peak",
+   "season": "all year",
+   "note": "The pointed cliff said to look like the Duke of Wellington's nose. A favourite of rock climbers."
+  },
+  {
+   "id": "node/11455663497",
+   "title": "Waterfall",
+   "kind": "waterfall",
+   "season": "Jun–Sep",
+   "note": "Falls just before Khandala in the monsoon."
+  },
+  {
+   "id": "Q38752",
+   "title": "Kune Falls",
+   "kind": "waterfall",
+   "season": "Jun–Sep",
+   "note": "A three-step waterfall of about 200 m, among the highest in India, between Khandala and Lonavala."
+  },
+  {
+   "id": "Q14238582",
+   "title": "Visapur Fort",
+   "kind": "fort",
+   "season": "all year",
+   "note": "The long flat-topped fort on the right after Malavli, built by the Peshwas in the early 1700s."
+  },
+  {
+   "id": "Q6667935",
+   "title": "Lohagad",
+   "kind": "fort",
+   "season": "all year",
+   "note": "The 'iron fort' with its scorpion-tail ridge, just behind Visapur."
+  },
+  {
+   "id": "node/9481240185",
+   "title": "Bhaja Caves",
+   "kind": "cave",
+   "season": "all year",
+   "note": "22 Buddhist rock-cut caves from the 2nd century BC, as small dark openings in the hillside above Bhaja village."
+  },
+  {
+   "id": "Q5556939",
+   "title": "Ghorawadi hill and caves",
+   "kind": "cave",
+   "season": "all year",
+   "note": "A rocky hill with a Shiva temple and Buddhist caves near the top."
+  },
+  {
+   "id": "Q98775174",
+   "title": "Mula River at Dapodi",
+   "kind": "river",
+   "season": "all year",
+   "note": "The train crosses the Mula beside the old stone Harris Bridge."
+  },
+  {
+   "kind": "bridge",
+   "km": 187.3,
+   "title": "Mula–Mutha river",
+   "season": "all year",
+   "note": "The last river crossing, just before Pune Junction."
+  }
+ ]
+}

@@ -201,6 +201,28 @@ def build(pilot=PILOT):
     return route, candidates
 
 
+def resolve_picks(picks, candidates):
+    """Place the hand-picked sights (picks.json) using their candidate's position. Raises
+    ValueError naming any pick that matches no candidate, so a typo can't silently drop one."""
+    out = []
+    for pick in picks:
+        if "id" in pick:
+            found = [c for c in candidates if pick["id"] in (c.get("osm"), c.get("wikidata"))]
+        else:
+            found = [c for c in candidates if c["kind"] == pick["kind"] and abs(c["m"] / 1000 - pick["km"]) < 0.15]
+        if len(found) != 1:
+            raise ValueError(f"Pick {pick['title']!r} matches {len(found)} candidates")
+        c = found[0]
+        sight = {"title": pick["title"], "kind": pick["kind"], "m": c["m"], "side": c["side"],
+                 "off_m": c["off_m"], "season": pick["season"], "note": pick["note"],
+                 "checked": pick.get("checked", "map")}
+        for key in ("lat", "lon", "photo", "wikidata", "osm"):
+            if c.get(key):
+                sight[key] = c[key]
+        out.append(sight)
+    return sorted(out, key=lambda s: s["m"])
+
+
 def hhmm(minute):
     return f"{int(minute) // 60 % 24:02d}:{int(minute) % 60:02d}"
 
@@ -235,6 +257,15 @@ def main():
     print(f"{route['name']}: {route['length_m'] / 1000:.1f} km, {len(route['path'])} points, "
           f"{len(route['stations'])} stations, {len(candidates)} candidates {kinds}")
 
+    picks = json.loads((out / "picks.json").read_text())["picks"]
+    try:
+        sights = resolve_picks(picks, candidates)
+    except ValueError as e:
+        raise SystemExit(f"picks.json: {e}")
+    (out / "sights.json").write_text(json.dumps(sights, ensure_ascii=False, indent=1) + "\n")
+    print(f"  {len(sights)} sights picked: " + ", ".join(
+        f"{n} {k}" for k, n in sorted({s['kind']: sum(x['kind'] == s['kind'] for x in sights) for s in sights}.items())))
+
     # Timetables: the open-data feed, with hand-made fixes replacing a train of the same number.
     fixes = json.loads((out / "timetable-fixes.json").read_text())
     feed = json.loads((out / "timetables.json").read_text())
@@ -258,7 +289,7 @@ def preview(number):
     """Print what one train passes, for checking by eye: python3 scraper/journey_build.py 11007"""
     out = ROOT / "data" / "journey" / PILOT["id"]
     route = json.loads((out / "route.json").read_text())
-    candidates = json.loads((out / "candidates.json").read_text())
+    candidates = [{**s, "name": s["title"]} for s in json.loads((out / "sights.json").read_text())]
     train = next(t for t in json.loads((out / "trains.json").read_text()) if t["number"] == number)
     stops = [{"code": s["code"], "arr": s["arr"], "dep": s["dep"]} for s in train["stops"]]
     view = train_view({**train, "stops": stops}, route, candidates)

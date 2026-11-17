@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scraper"))
 
-from journey_build import merge, on_route, osm_kind, train_view  # noqa: E402
+from journey_build import merge, on_route, osm_kind, resolve_picks, train_view  # noqa: E402
 from journey_geo import clock, daylight, distance_m, effort, locate, passing_time, route_path, timed_stops
 from journey_timetables import trains_on_route  # noqa: E402  # noqa: E402
 
@@ -188,3 +188,19 @@ def test_trains_are_picked_from_open_data_for_this_route():
     assert [t["number"] for t in found] == ["100", "103"]
     assert found[0]["stops"] == [{"code": "A", "dep": "07:05"}, {"code": "C", "arr": "07:50"}]
     assert found[1]["stops"][0] == {"code": "CSMT", "dep": "08:00"}
+
+
+def test_picks_take_their_place_from_the_candidates():
+    cands = [{"name": "Kune", "kind": "waterfall", "m": 122_200, "side": "left", "off_m": 506, "wikidata": "Q38752"},
+             {"name": "", "kind": "tunnel", "m": 36_700, "side": "both", "off_m": 0}]
+    picks = [{"id": "Q38752", "title": "Kune Falls", "kind": "waterfall", "season": "Jun–Sep", "note": "Tall."},
+             {"kind": "tunnel", "km": 36.7, "title": "Parsik Tunnel", "season": "all year", "note": "Old."}]
+    out = resolve_picks(picks, cands)
+    assert [(s["title"], s["m"], s["side"], s["checked"]) for s in out] == \
+        [("Parsik Tunnel", 36_700, "both", "map"), ("Kune Falls", 122_200, "left", "map")]
+    for bad in ({"id": "Q0", "title": "Typo"}, {"kind": "tunnel", "km": 50, "title": "Nowhere"}):
+        try:
+            resolve_picks([{**bad, "season": "", "note": ""}], cands)
+            raise AssertionError("expected a refusal")
+        except ValueError as e:
+            assert bad["title"] in str(e)
