@@ -84,6 +84,16 @@
    "key": "lounge",
    "label": "Paid lounge",
    "about": "Executive lounge or AC waiting lounge you pay to use, usually by the hour"
+  },
+  {
+   "key": "retiring_room",
+   "label": "Retiring rooms",
+   "about": "Railway rooms or dormitory beds at the station, booked by the hour or day"
+  },
+  {
+   "key": "food_plaza",
+   "label": "Food plaza",
+   "about": "Sit-down food plaza or refreshment room run by IRCTC or the railway"
   }
  ],
  "divisions": [
@@ -785,11 +795,15 @@
    "amenities": {
     "lounge": {
      "status": "yes",
-     "note": "IRCTC Executive Lounge on platform 1, booked online by the hour (opened March 2019). A separate AC waiting hall at ₹20 a person opened in late 2025.",
+     "note": "IRCTC Executive Lounge on platform 1, ₹120 for the first hour including tax (IRCTC's page), booked online. OpenStreetMap also shows the 24-hour Kirti Executive Lounge, and a ₹20 AC waiting hall opened in late 2025.",
      "sources": [
       {
-       "title": "IRCTC: Executive Lounge, Ahmedabad, questions and answers (lists IRCTC's operating lounges, including Sealdah)",
+       "title": "IRCTC: Executive Lounge, Ahmedabad, questions and answers (read 17 Nov 2026)",
        "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_ADI.htm"
+      },
+      {
+       "title": "OpenStreetMap: \"Kirti Executive Lounge\" at Ahmedabad station, open 24 hours (node 7274647486)",
+       "url": "https://www.openstreetmap.org/node/7274647486"
       },
       {
        "title": "DeshGujarat: Ahmedabad Railway Station gets AC lounge room (29 Mar 2019)",
@@ -13057,10 +13071,10 @@
    "amenities": {
     "lounge": {
      "status": "yes",
-     "note": "IRCTC Executive Lounge on platform 1, near the main gate and the lift; booked online.",
+     "note": "IRCTC Executive Lounge on platform 1, near the main gate and the lift; about ₹107 plus tax for two hours, booked online (IRCTC's page).",
      "sources": [
       {
-       "title": "IRCTC: Executive Lounge, Dwarka, questions and answers",
+       "title": "IRCTC: Executive Lounge, Dwarka, questions and answers (read 17 Nov 2026)",
        "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_DWK.htm"
       }
      ],
@@ -16709,6 +16723,17 @@
       {
        "title": "LatestLY (ANI): MoS Shantanu Thakur inaugurates rail coach restaurant, executive lounge at Howrah station (Nov 2023)",
        "url": "https://www.latestly.com/agency-news/india-news-mos-shantanu-thakur-inaugurates-rail-coach-restaurant-executive-lounge-at-howrah-station-5554323.html"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "food_plaza": {
+     "status": "yes",
+     "note": "Food plaza run by Araha Hospitality at the station (as mapped on OpenStreetMap).",
+     "sources": [
+      {
+       "title": "OpenStreetMap: \"Food Plaza\" by Araha Hospitality at Howrah station (node 12643614785)",
+       "url": "https://www.openstreetmap.org/node/12643614785"
       }
      ],
      "checked": "2026-11-17"
@@ -30833,6 +30858,19 @@
     "boarding_ramp": {
      "status": "unknown"
     }
+   },
+   "amenities": {
+    "food_plaza": {
+     "status": "yes",
+     "note": "IRCTC Food Plaza on platform 1, west side (opened October 2024).",
+     "sources": [
+      {
+       "title": "The Hitavada: IRCTC Food Plaza opens at Nagpur Railway Station (20 Oct 2024)",
+       "url": "https://www.thehitavada.com/Encyc/2024/10/20/IRCTC-Food-Plaza-opens-at-Nagpur-Railway-Station.html"
+      }
+     ],
+     "checked": "2026-11-17"
+    }
    }
   },
   {
@@ -38993,15 +39031,26 @@
    "amenities": {
     "lounge": {
      "status": "yes",
-     "note": "IRCTC Executive Lounge on the first floor, with its own lift; paid.",
+     "note": "IRCTC Executive Lounge at the main entrance, first floor near the second-class waiting room; ₹50 plus tax for the first hour, booked online (IRCTC's page).",
      "sources": [
       {
-       "title": "IRCTC: Executive Lounge, Ahmedabad, questions and answers (lists IRCTC's operating lounges, including Sealdah)",
-       "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_ADI.htm"
+       "title": "IRCTC: Executive Lounge, Sealdah, questions and answers (read 17 Nov 2026)",
+       "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_SDAH.htm"
       },
       {
        "title": "Millennium Post: Sealdah station gets state's first executive lounge",
        "url": "https://www.millenniumpost.in/kolkata/sealdah-station-gets-states-first-executive-lounge-355873"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "food_plaza": {
+     "status": "yes",
+     "note": "IRCTC restaurant cum food plaza at the station (as mapped on OpenStreetMap).",
+     "sources": [
+      {
+       "title": "OpenStreetMap: \"IRCTC Restaurant cum Food Plaza (Sealdah)\" (node 10091478920)",
+       "url": "https://www.openstreetmap.org/node/10091478920"
       }
      ],
      "checked": "2026-11-17"

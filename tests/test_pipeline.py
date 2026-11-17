@@ -246,14 +246,15 @@ def test_amenities_need_one_station(tmp_path, station, error):
 
 def test_real_amenities():
     data = build()
-    assert [a["key"] for a in data["amenities"]] == ["cloak_room", "lounge"]
+    assert [a["key"] for a in data["amenities"]] == ["cloak_room", "lounge", "retiring_room", "food_plaza"]
     by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar"}
     assert by["Ahmedabad"]["amenities"]["lounge"]["status"] == "yes"
     assert by["Chhatrapati Shivaji Maharaj Terminus"]["amenities"]["cloak_room"]["status"] == "yes"
+    assert by["Nagpur"]["amenities"]["food_plaza"]["status"] == "yes"
     assert "amenities" not in by["Barddhaman"]                          # no source found: left blank
     keys = {f["key"] for f in data["features"]}
     for s in data["stations"]:
-        assert set(s.get("amenities", {})) <= {"cloak_room", "lounge"}
+        assert set(s.get("amenities", {})) <= {"cloak_room", "lounge", "retiring_room", "food_plaza"}
         assert set(s["features"]) == keys                                # amenities stay out of features
         for item in s.get("amenities", {}).values():
             assert item["status"] == "yes" and item["checked"] and item["sources"]

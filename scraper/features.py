@@ -57,6 +57,10 @@ AMENITIES = [
      "about": "Leave your bags for a fee, at a counter or in lockers"},
     {"key": "lounge", "label": "Paid lounge",
      "about": "Executive lounge or AC waiting lounge you pay to use, usually by the hour"},
+    {"key": "retiring_room", "label": "Retiring rooms",
+     "about": "Railway rooms or dormitory beds at the station, booked by the hour or day"},
+    {"key": "food_plaza", "label": "Food plaza",
+     "about": "Sit-down food plaza or refreshment room run by IRCTC or the railway"},
 ]
 
 AMENITY_KEYS = [a["key"] for a in AMENITIES]
