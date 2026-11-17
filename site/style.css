@@ -374,6 +374,9 @@ a.pcard { display: block; color: inherit; text-decoration: none; cursor: pointer
 .f-status { font-size: .92rem; color: var(--muted); }
 .f-note { font-size: .92rem; margin-top: 4px; }
 .f-note a { font-weight: 700; }
+.f-src { font-size: .85rem; margin-top: 6px; color: var(--muted); overflow-wrap: anywhere; }
+.f-src a { color: var(--accent); }
+.group-lede { margin: -4px 0 10px; color: var(--muted); font-size: .92rem; }
 .report { display: block; margin: 26px 0 8px; padding: 14px 16px; text-align: center; font-weight: 700; border: 2px dashed var(--line); border-radius: var(--radius); text-decoration: none; transition: border-color .2s, background .2s; }
 .report:hover { border-color: var(--vb-orange); background: var(--surface); }
 .src { color: var(--muted); font-size: .9rem; }

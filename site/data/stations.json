@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-22",
+ "generated": "2026-11-17",
  "features": [
   {
    "key": "wheelchair",
@@ -72,6 +72,18 @@
   {
    "key": "boarding_ramp",
    "label": "Boarding ramp for coaches"
+  }
+ ],
+ "amenities": [
+  {
+   "key": "cloak_room",
+   "label": "Cloak room (left luggage)",
+   "about": "Leave your bags for a fee, at a counter or in lockers"
+  },
+  {
+   "key": "lounge",
+   "label": "Paid lounge",
+   "about": "Executive lounge or AC waiting lounge you pay to use, usually by the hour"
   }
  ],
  "divisions": [
@@ -768,6 +780,31 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "IRCTC Executive Lounge on platform 1, booked online by the hour (opened March 2019). A separate AC waiting hall at ₹20 a person opened in late 2025.",
+     "sources": [
+      {
+       "title": "IRCTC: Executive Lounge, Ahmedabad, questions and answers (lists IRCTC's operating lounges, including Sealdah)",
+       "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_ADI.htm"
+      },
+      {
+       "title": "DeshGujarat: Ahmedabad Railway Station gets AC lounge room (29 Mar 2019)",
+       "url": "https://www.deshgujarat.com/2019/03/29/ahmedabad-railway-station-gets-ac-lounge-room-with-bathroom-toilet-business-centre-and-other-facilities/"
+      },
+      {
+       "title": "DeshGujarat: New AC waiting hall unveiled at Ahmedabad railway station (26 Nov 2025)",
+       "url": "https://deshgujarat.com/2025/11/26/new-ac-waiting-hall-unveiled-at-ahmedabad-railway-station/"
+      },
+      {
+       "title": "Lokmat Times (ANI): Ahmedabad Junction's ₹20 AC waiting hall sees massive response (Mar 2026)",
+       "url": "https://www.lokmattimes.com/national/gujarat-ahmedabad-junctions-rs20-ac-waiting-hall-sees-massive-response"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -9002,6 +9039,38 @@
     "boarding_ramp": {
      "status": "unknown"
     }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "\"Namah\" AC waiting lounge, ₹10 an hour, in the passage from the main entrance to platforms 14 to 18 (2020 report).",
+     "sources": [
+      {
+       "title": "Lokmat Times: Central Railway launches waiting lounge at CSMT (27 Oct 2020)",
+       "url": "https://www.lokmattimes.com/maharashtra/central-railway-launches-waiting-lounge-at-csmt"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "cloak_room": {
+     "status": "yes",
+     "note": "Digital cloak room with self-service lockers (about 300), for a fee (since August 2021).",
+     "sources": [
+      {
+       "title": "Mumbai Live: Digital smart cloak rooms operational at CSMT, Dadar and LTT (2021)",
+       "url": "https://www.mumbailive.com/en/transport/digital-smart-cloak-rooms-operational-at-these-3-railway-stations-67612"
+      },
+      {
+       "title": "Free Press Journal: Digital smart cloak rooms now operational at CSMT (Aug 2021)",
+       "url": "https://www.freepressjournal.in/mumbai/mumbai-digital-smart-cloak-rooms-now-operational-at-chhatrapati-shivaji-maharaj-terminus"
+      },
+      {
+       "title": "OpenStreetMap: luggage lockers at CSMT (node 14039967119, checked by a mapper 22 Jul 2026)",
+       "url": "https://www.openstreetmap.org/node/14039967119"
+      }
+     ],
+     "checked": "2026-11-17"
+    }
    }
   },
   {
@@ -10182,6 +10251,19 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "cloak_room": {
+     "status": "yes",
+     "note": "Digital cloak room with self-service lockers (about 160), for a fee (2021 report).",
+     "sources": [
+      {
+       "title": "Mumbai Live: Digital smart cloak rooms operational at CSMT, Dadar and LTT (2021)",
+       "url": "https://www.mumbailive.com/en/transport/digital-smart-cloak-rooms-operational-at-these-3-railway-stations-67612"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -12970,6 +13052,19 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "IRCTC Executive Lounge on platform 1, near the main gate and the lift; booked online.",
+     "sources": [
+      {
+       "title": "IRCTC: Executive Lounge, Dwarka, questions and answers",
+       "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_DWK.htm"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -16600,6 +16695,23 @@
     },
     "boarding_ramp": {
      "status": "yes"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "Executive lounges in both the old complex (₹50 an hour) and the new complex (opened November 2023).",
+     "sources": [
+      {
+       "title": "The Statesman: Howrah station gets executive lounge (old complex)",
+       "url": "https://www.thestatesman.com/bengal/howrah-station-gets-executive-lounge-1503086590.html"
+      },
+      {
+       "title": "LatestLY (ANI): MoS Shantanu Thakur inaugurates rail coach restaurant, executive lounge at Howrah station (Nov 2023)",
+       "url": "https://www.latestly.com/agency-news/india-news-mos-shantanu-thakur-inaugurates-rail-coach-restaurant-executive-lounge-at-howrah-station-5554323.html"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -23799,6 +23911,23 @@
     "boarding_ramp": {
      "status": "unknown"
     }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "AC premium lounge on platform 1, ₹30 an hour.",
+     "sources": [
+      {
+       "title": "Millennium Post: Premium lounge set up at Kolkata station",
+       "url": "https://www.millenniumpost.in/kolkata/premium-lounge-set-up-at-kolkata-station-426849"
+      },
+      {
+       "title": "Asianet Newsable: Eastern Railway builds luxurious lounge for commuters at Kolkata railway station (Sep 2020)",
+       "url": "https://newsable.asianetnews.com/india/eastern-railways-build-luxurious-lounge-for-commuters-at-kolkata-railway-station-dbr-qh3vs6"
+      }
+     ],
+     "checked": "2026-11-17"
+    }
    }
   },
   {
@@ -25604,6 +25733,30 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "AC waiting lounge, ₹10 an hour; the non-AC waiting rooms stay free.",
+     "sources": [
+      {
+       "title": "Free Press Journal: Central Railway starts new AC waiting lounge at LTT at ₹10 (undated)",
+       "url": "https://www.freepressjournal.in/mumbai/mumbai-central-railway-starts-new-ac-waiting-lounge-at-csmt-at-rs10-for-passengers-waiting-for-long-distance-trains"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "cloak_room": {
+     "status": "yes",
+     "note": "Digital cloak room with self-service lockers (about 100), for a fee (2021 report).",
+     "sources": [
+      {
+       "title": "Mumbai Live: Digital smart cloak rooms operational at CSMT, Dadar and LTT (2021)",
+       "url": "https://www.mumbailive.com/en/transport/digital-smart-cloak-rooms-operational-at-these-3-railway-stations-67612"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -29809,6 +29962,19 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "Digital lounge and co-working space, ₹200 an hour (opened December 2025).",
+     "sources": [
+      {
+       "title": "Free Press Journal: Western Railway launches Indian Railways' first digital lounge at Mumbai Central (Dec 2025)",
+       "url": "https://www.freepressjournal.in/mumbai/western-railway-launches-indian-railways-first-digital-lounge-at-mumbai-central-station-to-revolutionize-passenger-experience"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -35397,6 +35563,34 @@
     "boarding_ramp": {
      "status": "unknown"
     }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "AC executive lounge with sleeping pods on the first floor of the reservation building, ₹40 an hour (open since March 2026).",
+     "sources": [
+      {
+       "title": "Punekar News: Sleeping pods, AC executive lounge open at Pune railway station (19 Apr 2026)",
+       "url": "https://www.punekarnews.in/?p=233255"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "cloak_room": {
+     "status": "yes",
+     "note": "Digital lockers in three sizes on platform 1 at the Mumbai end, beside the multipurpose stall, for a fee (since December 2025).",
+     "sources": [
+      {
+       "title": "Punekar News: Pune railway station introduces digital locker facility at platform 1 (Dec 2025)",
+       "url": "https://www.punekarnews.in/?p=224524"
+      },
+      {
+       "title": "OpenStreetMap: \"Digital Cloakroom\" luggage lockers at Pune station (node 13958011017)",
+       "url": "https://www.openstreetmap.org/node/13958011017"
+      }
+     ],
+     "checked": "2026-11-17"
+    }
    }
   },
   {
@@ -38805,6 +38999,23 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "IRCTC Executive Lounge on the first floor, with its own lift; paid.",
+     "sources": [
+      {
+       "title": "IRCTC: Executive Lounge, Ahmedabad, questions and answers (lists IRCTC's operating lounges, including Sealdah)",
+       "url": "https://www.irctctourism.com/LoungeHTML/Lounge_FAQS_ADI.htm"
+      },
+      {
+       "title": "Millennium Post: Sealdah station gets state's first executive lounge",
+       "url": "https://www.millenniumpost.in/kolkata/sealdah-station-gets-states-first-executive-lounge-355873"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },
@@ -44974,6 +45185,34 @@
     },
     "boarding_ramp": {
      "status": "unknown"
+    }
+   },
+   "amenities": {
+    "lounge": {
+     "status": "yes",
+     "note": "Digital lounge on platform 1, entry from ₹200 (opened March 2026). The AC waiting room is also paid since July 2026: ₹10 an hour, ₹5 for children.",
+     "sources": [
+      {
+       "title": "DeshGujarat: Vadodara railway station gets airport-like lounge (28 Mar 2026)",
+       "url": "https://deshgujarat.com/2026/03/28/vadodara-station-gets-airport-like-lounge-with-wifi-resting-pods-entry-starts-at-%e2%82%b9200/"
+      },
+      {
+       "title": "DeshGujarat: AC waiting room at Vadodara railway station commercialised (16 Jul 2026)",
+       "url": "https://deshgujarat.com/2026/07/16/ac-waiting-room-at-vadodara-railway-station-commercialized/"
+      }
+     ],
+     "checked": "2026-11-17"
+    },
+    "cloak_room": {
+     "status": "yes",
+     "note": "Cloak room on the ground floor, open 24 hours, for a fee (as mapped on OpenStreetMap).",
+     "sources": [
+      {
+       "title": "OpenStreetMap: \"Cloak Room\" at Vadodara station (way 1530442811)",
+       "url": "https://www.openstreetmap.org/way/1530442811"
+      }
+     ],
+     "checked": "2026-11-17"
     }
    }
   },

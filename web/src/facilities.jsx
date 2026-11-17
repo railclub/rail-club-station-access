@@ -5,6 +5,11 @@ export const GROUPS = [
   { title: "Help on hand", keys: ["wheelchair", "wheelchair_booking", "human_assistance", "help_booth"] },
   { title: "Facilities", keys: ["accessible_toilet", "water_booth", "parking", "low_counter", "tactile_path", "braille_signage", "braille_map"] },
 ];
+// Amenities (cloak room, paid lounge) are kept apart: they aren't in the official accessibility
+// lists, each one has its own source, and a station without one simply has no data yet.
+export const AMENITY_TITLE = "Amenities";
+export const isAmenity = (data, key) => (data.amenities || []).some((a) => a.key === key);
+export const hasAmenity = (st, key) => st.amenities?.[key]?.status === "yes";
 export const STATUS = {
   yes: { mark: "✓", text: "Available" },
   no: { mark: "✕", text: "Not available, according to official data" },

@@ -5,7 +5,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scraper"))
 
-from build import build, build_division, load_names  # noqa: E402
+import pytest  # noqa: E402
+
+from build import apply_amenities, backend_stations, build, build_division, load_amenities, load_names  # noqa: E402
 from parse_pdf import parse_rows, split_stations, stations_in_remark  # noqa: E402
 
 # Rows as pdfplumber's extract_tables() returns them for the real layouts.
@@ -187,3 +189,74 @@ def test_real_build():
     assert by["Asansol"]["features"]["battery_car"]["status"] == "no"
     assert by["Sealdah"]["features"]["battery_car"]["status"] == "yes"
     assert json.dumps(data)
+
+
+# Amenities: data/amenities.json, one fact per station and amenity, each with sources and a date
+AMENITY_SOURCES = {"irctc": {"title": "IRCTC lounge page", "url": "https://example.org/lounge"},
+                   "osm": {"title": "OpenStreetMap node", "url": "https://example.org/node/1"}}
+AMENITY_STATIONS = [
+    {"name": "Barddhaman", "division": "Howrah"},
+    {"name": "Madhavnagar", "division": "Pune"},
+    {"name": "Madhavnagar", "division": "Jabalpur"},
+]
+
+
+def amenity_file(tmp_path, facts):
+    path = tmp_path / "amenities.json"
+    path.write_text(json.dumps({"sources": AMENITY_SOURCES, "facts": facts}), encoding="utf-8")
+    return path
+
+
+def test_amenities_merge(tmp_path):
+    _, lookup = load_names()
+    facts = load_amenities(amenity_file(tmp_path, [
+        {"station": "Burdwan", "amenity": "cloak_room", "note": "Platform 1", "sources": ["osm", "irctc"], "checked": "2026-11-17"},
+        {"station": "Madhavnagar", "division": "Pune", "amenity": "lounge", "sources": ["irctc"], "checked": "2026-11-17"},
+    ]), lookup)
+    stations = [dict(s) for s in AMENITY_STATIONS]
+    apply_amenities(stations, facts)
+    bwn, mdvr, mdrr = stations
+    assert bwn["amenities"]["cloak_room"] == {                       # alias resolved, sources in order
+        "status": "yes", "note": "Platform 1", "checked": "2026-11-17",
+        "sources": [AMENITY_SOURCES["osm"], AMENITY_SOURCES["irctc"]]}
+    assert "lounge" not in bwn["amenities"]                          # no fact: no mark, not "no"
+    assert mdvr["amenities"]["lounge"]["status"] == "yes" and "amenities" not in mdrr
+
+
+@pytest.mark.parametrize("fact, error", [
+    ({"station": "Barddhaman", "amenity": "wifi", "sources": ["osm"], "checked": "2026-11-17"}, "unknown amenity"),
+    ({"station": "Barddhaman", "amenity": "lounge", "sources": [], "checked": "2026-11-17"}, "no source"),
+    ({"station": "Barddhaman", "amenity": "lounge", "sources": ["blog"], "checked": "2026-11-17"}, "unknown source"),
+    ({"station": "Barddhaman", "amenity": "lounge", "sources": ["osm"], "checked": "Nov 2026"}, "checked"),
+])
+def test_amenities_reject_bad_facts(tmp_path, fact, error):
+    _, lookup = load_names()
+    with pytest.raises(ValueError, match=error):
+        load_amenities(amenity_file(tmp_path, [fact]), lookup)
+
+
+@pytest.mark.parametrize("station, error", [("Atlantis", "not on the site"), ("Madhavnagar", "more than one division")])
+def test_amenities_need_one_station(tmp_path, station, error):
+    _, lookup = load_names()
+    facts = load_amenities(amenity_file(tmp_path, [
+        {"station": station, "amenity": "lounge", "sources": ["irctc"], "checked": "2026-11-17"}]), lookup)
+    with pytest.raises(ValueError, match=error):
+        apply_amenities([dict(s) for s in AMENITY_STATIONS], facts)
+
+
+def test_real_amenities():
+    data = build()
+    assert [a["key"] for a in data["amenities"]] == ["cloak_room", "lounge"]
+    by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar"}
+    assert by["Ahmedabad"]["amenities"]["lounge"]["status"] == "yes"
+    assert by["Chhatrapati Shivaji Maharaj Terminus"]["amenities"]["cloak_room"]["status"] == "yes"
+    assert "amenities" not in by["Barddhaman"]                          # no source found: left blank
+    keys = {f["key"] for f in data["features"]}
+    for s in data["stations"]:
+        assert set(s.get("amenities", {})) <= {"cloak_room", "lounge"}
+        assert set(s["features"]) == keys                                # amenities stay out of features
+        for item in s.get("amenities", {}).values():
+            assert item["status"] == "yes" and item["checked"] and item["sources"]
+            assert all(x["url"].startswith("https://") and x["title"] for x in item["sources"])
+    # a lounge isn't an officially confirmed accessibility feature for visitor reports
+    assert "lounge" not in backend_stations(data)["ahmedabad"]["official_yes"]
