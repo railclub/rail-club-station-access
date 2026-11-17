@@ -5,21 +5,19 @@
 // station the train passes, taken from the timetable the site publishes (scraper/rail_data.py),
 // never from what the browser sends. Each stretch between two stations is looked up once and
 // kept in journey_segments, so popular lines cost OpenStreetMap nothing after the first visitor.
-// A long journey may take more than one call: the answer says "done": false until every
-// stretch has been looked up, and the page asks again.
+// OpenStreetMap's Overpass server refuses Edge Functions but answers the database's own HTTP
+// client, so the database fetches (journey_fetch) and a later call collects the answer
+// (journey_result). The answer says "done": false until every stretch has been looked up, and
+// the page keeps asking every few seconds, showing what has arrived so far.
 import { adminClient, preflight, reply } from "../_shared/server.ts";
 import { type Point, overpassQuery, segKey, type Sight, sightsByStretch, uncachedRuns } from "../_shared/sights.ts";
 
 const RAIL = Deno.env.get("RAIL_URL") ?? "https://railclub.github.io/rail-club-station-access/data/rail/";
 const UA = "RailClub-JourneyPartner/1.0 (railclub.support@gmail.com)";
-// The main Overpass server first, then public mirrors; each answers some networks and not others.
-const OVERPASS = (Deno.env.get("OVERPASS_URLS") ??
-  "https://overpass-api.de/api/interpreter,https://overpass.private.coffee/api/interpreter,https://overpass.kumi.systems/api/interpreter")
-  .split(",");
 const KEEP_DAYS = 120;
 const PER_HOUR = Number(Deno.env.get("JOURNEY_STRETCHES_PER_HOUR") ?? "3000"); // fair use of OpenStreetMap
-// The function may run for 150 s; stop well before, and give each OpenStreetMap request what's left.
-const BUDGET_MS = 110_000;
+const IN_FLIGHT = 2; // Overpass gives each address two query slots at a time
+const WAIT_MS = 100_000; // a request with no answer by then is dropped and asked again later
 
 type Stations = Record<string, [string, number | null, number | null]>;
 let stations: Stations | null = null;
@@ -31,25 +29,7 @@ async function getJson<T>(url: string): Promise<T> {
   return await res.json();
 }
 
-async function overpass(query: string, deadline: number): Promise<{ elements: never[] }> {
-  const errors: string[] = [];
-  for (const url of OVERPASS) {
-    const left = deadline - Date.now();
-    if (left < 8_000) break;
-    try {
-      // GET: overpass-api.de answers 406 to this function's POSTs but accepts the same query as a GET.
-      const res = await fetch(`${url}?data=${encodeURIComponent(query)}`, {
-        headers: { "accept": "application/json", "user-agent": UA },
-        signal: AbortSignal.timeout(Math.min(left - 3_000, 60_000)),
-      });
-      if (res.ok) return await res.json();
-      errors.push(`${new URL(url).host} ${res.status}`); // 429/502/504: busy, try the next server
-    } catch (e) {
-      errors.push(`${new URL(url).host} ${(e as Error).name}`);
-    }
-  }
-  throw new Error(errors.join(", ") || "out of time");
-}
+const runKey = (run: Point[]) => `${run[0].code}>${run.at(-1)!.code}#${run.length}`;
 
 /** English names and one-line descriptions from Wikidata, for the sights that have an id. */
 async function describe(sights: Sight[]) {
@@ -75,7 +55,6 @@ async function describe(sights: Sight[]) {
 Deno.serve(async (req) => {
   const early = preflight(req);
   if (early) return early;
-  const started = Date.now();
   const body = await req.json().catch(() => ({}));
   const { train, from, to } = body ?? {};
   if (!/^\d{5}$/.test(train ?? "") || !/^[A-Z]{1,5}$/.test(from ?? "") || !/^[A-Z]{1,5}$/.test(to ?? "")) {
@@ -105,41 +84,67 @@ Deno.serve(async (req) => {
       for (const row of data ?? []) found.set(row.key, row.sights as Sight[]);
     }
 
-    let done = true;
     const runs = uncachedRuns(points, new Set(found.keys()));
     if (runs.length) {
-      const { count } = await admin.from("journey_segments").select("key", { count: "exact", head: true })
-        .gte("fetched_at", new Date(Date.now() - 3_600_000).toISOString());
-      if ((count ?? 0) > PER_HOUR) {
-        done = false; // busy hour: show what we have, the page tries again later
-      } else {
-        for (const run of runs) {
-          let answer;
-          try {
-            answer = await overpass(overpassQuery(run), started + BUDGET_MS);
-          } catch (e) {
-            // Busy or out of time: keep what we have; the page asks again for the rest.
-            console.error("journey-sights overpass", (e as Error).message);
-            done = false;
-            break;
-          }
-          const filed = sightsByStretch(run, answer.elements);
-          await describe([...filed.values()].flat());
-          const now = new Date().toISOString();
-          await admin.from("journey_segments").upsert(
-            [...filed].map(([key, sights]) => ({ key, sights, fetched_at: now })),
-          );
-          for (const [key, sights] of filed) found.set(key, sights);
+      const { data: pending } = await admin.from("journey_requests").select("run_key, request_id, created_at")
+        .in("run_key", runs.map(runKey));
+      const asked = new Map((pending ?? []).map((p) => [p.run_key as string, p]));
+
+      // Collect answers that have arrived.
+      for (const run of runs) {
+        const p = asked.get(runKey(run));
+        if (!p) continue;
+        const { data } = await admin.rpc("journey_result", { p_id: p.request_id });
+        const r = data?.[0];
+        const stale = Date.now() - Date.parse(p.created_at) > WAIT_MS;
+        if (!r && !stale) continue; // still on its way
+        await admin.from("journey_requests").delete().eq("run_key", p.run_key);
+        asked.delete(p.run_key);
+        if (!r || r.status_code !== 200 || !r.content) {
+          console.error("journey-sights overpass", r ? `${r.status_code} ${r.error_msg ?? ""} ${(r.content ?? "").slice(0, 120)}` : "no answer");
+          continue; // asked again below or on a later call
         }
+        let answer;
+        try {
+          answer = JSON.parse(r.content);
+        } catch {
+          continue;
+        }
+        const filed = sightsByStretch(run, answer.elements ?? []);
+        await describe([...filed.values()].flat());
+        const now = new Date().toISOString();
+        await admin.from("journey_segments").upsert([...filed].map(([key, sights]) => ({ key, sights, fetched_at: now })));
+        for (const [key, sights] of filed) found.set(key, sights);
+      }
+
+      // Ask for more, within OpenStreetMap's limits.
+      const recent = new Date(Date.now() - WAIT_MS).toISOString();
+      const [{ count: flying }, { count: lastHour }] = await Promise.all([
+        admin.from("journey_requests").select("run_key", { count: "exact", head: true }).gte("created_at", recent),
+        admin.from("journey_segments").select("key", { count: "exact", head: true })
+          .gte("fetched_at", new Date(Date.now() - 3_600_000).toISOString()),
+      ]);
+      let slots = (lastHour ?? 0) > PER_HOUR ? 0 : IN_FLIGHT - (flying ?? 0);
+      for (const run of runs) {
+        if (slots <= 0) break;
+        const stillNeeded = run.slice(1).some((p, n) => !found.has(segKey(run[n].code, p.code)));
+        if (asked.has(runKey(run)) || !stillNeeded) continue;
+        const { data: id, error } = await admin.rpc("journey_fetch", { p_query: overpassQuery(run) });
+        if (error) {
+          console.error("journey-sights fetch", error.message);
+          break;
+        }
+        await admin.from("journey_requests").upsert({ run_key: runKey(run), request_id: id, run, created_at: new Date().toISOString() });
+        slots--;
       }
     }
 
     const seen = new Set<string>();
     const sights = keys.flatMap((k) => found.get(k) ?? []).filter((s) => !seen.has(s.id) && seen.add(s.id));
     const missing = keys.filter((k) => !found.has(k)).length;
-    return reply(req, { sights, done: done && missing === 0, stretches: keys.length, missing });
+    return reply(req, { sights, done: missing === 0, stretches: keys.length, missing });
   } catch (e) {
     console.error("journey-sights", (e as Error).message);
-    return reply(req, { error: "Couldn't reach OpenStreetMap just now. Please try again in a minute." }, 502);
+    return reply(req, { error: "Couldn't look up the sights just now. Please try again in a minute." }, 502);
   }
 });

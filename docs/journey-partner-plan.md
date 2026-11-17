@@ -6,7 +6,11 @@
 >    every station each train passes) into small files under `site/data/rail/`. CI rebuilds them
 >    on every deploy from a pinned copy of that data.
 > 2. The page draws the line through every station the train passes.
-> 3. The `journey-sights` Edge Function asks OpenStreetMap (Overpass) what lies along that line:
+> 3. The `journey-sights` Edge Function finds what lies along that line in OpenStreetMap
+>    (Overpass). Overpass refuses requests from Supabase's function servers (HTTP 406), so the
+>    database makes the requests (`journey_fetch`, via pg_net) and the function collects the
+>    answers on the page's next check; at most two requests at a time, as Overpass asks. Each
+>    request is a small box (about 40 km) around a piece of line. What it finds:
 >    waterfalls, forts, peaks, caves, dams, lakes, viewpoints, river crossings, tunnels. English
 >    names and one-line descriptions come from Wikidata. Each stretch between two stations is
 >    looked up once and kept in the `journey_segments` table, so OpenStreetMap is asked about a

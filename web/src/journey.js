@@ -135,6 +135,15 @@ export function placeSights(path, sights, curated = [], month = new Date().getMo
   }
   placed.sort((a, b) => a.m - b.m);
 
+  // The map often has the same place twice (a point and an outline): keep one per name nearby.
+  for (let i = placed.length - 1; i > 0; i--) {
+    const twin = placed.slice(0, i).findLast((p) => placed[i].m - p.m < 1500 && p.title.toLowerCase() === placed[i].title.toLowerCase() && p.kind === placed[i].kind);
+    if (twin && placed[i].kind !== "waterfall" && placed[i].kind !== "tunnel") {
+      if (placed[i].score > twin.score || (placed[i].desc && !twin.desc)) Object.assign(twin, { ...placed[i], m: twin.m });
+      placed.splice(i, 1);
+    }
+  }
+
   // Tunnels within 2 km of each other: one entry, "6 tunnels, 2.4 km in all".
   const merged = [];
   for (const s of placed) {
@@ -171,12 +180,13 @@ export function bestSide(sights) {
   return { left, right, best: left === right ? null : left > right ? "left" : "right" };
 }
 
-/** Ask the server for the sights along a journey. Long journeys are looked up in parts, so it
- * asks again while the server says it isn't done; onPart shows what has arrived so far. */
+/** Ask the server for the sights along a journey. A line nobody has looked at yet is looked up
+ * piece by piece, so it asks again every few seconds while the server says it isn't done;
+ * onPart shows what has arrived so far. Gives up after four minutes with what it has. */
 export async function fetchSights(train, from, to, onPart) {
   const { CONFIG } = await import(/* @vite-ignore */ new URL("config.js", document.baseURI).href);
-  let sights = [], waited = 0, ready = -1;
-  for (let attempt = 0; attempt < 10; attempt++) {
+  const started = Date.now();
+  for (;;) {
     const res = await fetch(`${CONFIG.supabaseUrl}/functions/v1/journey-sights`, {
       method: "POST",
       headers: { "content-type": "application/json", apikey: CONFIG.supabaseKey },
@@ -184,13 +194,8 @@ export async function fetchSights(train, from, to, onPart) {
     });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(body.error || "Couldn't look up the sights just now.");
-    sights = body.sights;
-    onPart?.(sights, body.done, body.stretches - body.missing, body.stretches);
-    if (body.done) return sights;
-    // Nothing new this time means OpenStreetMap is busy: wait longer before asking again.
-    waited = body.stretches - body.missing > ready ? 1500 : Math.min(waited * 2 || 4000, 30000);
-    ready = body.stretches - body.missing;
-    await new Promise((r) => setTimeout(r, waited));
+    onPart?.(body.sights, body.done, body.stretches - body.missing, body.stretches);
+    if (body.done || Date.now() - started > 240_000) return { sights: body.sights, done: body.done };
+    await new Promise((r) => setTimeout(r, 3000));
   }
-  return sights;
 }

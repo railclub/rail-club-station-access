@@ -123,6 +123,7 @@ function Result({ train, path }) {
     let live = true;
     loadCurated().then((c) => live && setCurated(c));
     fetchSights(train[0], from.code, to.code, (s, done, ready, total) => { if (live) { setRaw(s); setProgress(done ? null : [ready, total]); } })
+      .then((r) => { if (live && !r.done) setProgress("partial"); })
       .catch((e) => live && setError(e.message));
     return () => { live = false; };
   }, [train[0], from.code, to.code]);
@@ -138,8 +139,8 @@ function Result({ train, path }) {
       <m.section className={`jp-summary ${raw ? best ?? "even" : "wait"}`} {...rise(0.05)} aria-live="polite">
         {error ? (
           <><p className="jp-sit">Couldn't find the sights</p><p>{error}</p></>
-        ) : !raw ? (
-          <><p className="jp-sit">Looking along the line…</p><p>Checking OpenStreetMap for waterfalls, forts, rivers and tunnels along {km} km of track. The first look at a long line can take up to a minute.</p></>
+        ) : !raw || (!raw.length && Array.isArray(progress)) ? (
+          <><p className="jp-sit">Looking along the line…</p><p>Checking OpenStreetMap for waterfalls, forts, rivers and tunnels along {km} km of track. The first look at a line can take a minute or two; after that it's instant for everyone.</p></>
         ) : best ? (
           <><p className="jp-sit">Sit on the <b>{best.toUpperCase()}</b></p><p>{Math.max(left, right)} of {left + right} sights you can see today are on the {best} side, facing the way the train goes.</p></>
         ) : left + right ? (
@@ -147,7 +148,8 @@ function Result({ train, path }) {
         ) : (
           <><p className="jp-sit">A quiet stretch</p><p>We found nothing marked on the map to look out for in daylight on this journey{sights.length ? ", apart from the river crossings and tunnels below" : ""}.</p></>
         )}
-        {progress && <p className="jp-meta">Still looking: {progress[0]} of {progress[1]} stretches of line checked…</p>}
+        {Array.isArray(progress) && <p className="jp-meta">Still looking: {progress[0]} of {progress[1]} stretches of line checked. Sights appear as they're found.</p>}
+        {progress === "partial" && <p className="jp-meta">Part of the line couldn't be checked just now. Open this journey again later to see the rest.</p>}
         <p className="jp-meta">{train[0]} {train[1]} · {from.name} {hhmm(from.dep)} → {to.name} {when(to.arr, from.dep)} · {km} km</p>
       </m.section>
 
