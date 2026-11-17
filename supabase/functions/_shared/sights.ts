@@ -20,53 +20,65 @@ export type Sight = {
 /** The cache key for the line between two stations; the same both ways. */
 export const segKey = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
-/** Runs of consecutive stations whose stretches aren't cached yet, at most `max` stations each
- * (so one OpenStreetMap query stays a sensible size). */
-export function uncachedRuns(points: Point[], cached: Set<string>, max = 60): Point[][] {
+// A run's box may be at most this many degrees tall or wide (about 40 km), so each query is small.
+const MAX_SPAN = 0.36;
+// How far from the line each kind is still worth a look (metres). OpenStreetMap is asked for a
+// box around the line; anything further than this from the line itself is dropped here.
+export const REACH: Record<string, number> = {
+  waterfall: 2500, fort: 4000, peak: 5000, cave: 2000, dam: 2000, lake: 1500,
+  viewpoint: 1000, temple: 800, landmark: 800, tunnel: 800,
+};
+
+/** Runs of consecutive stations whose stretches aren't cached yet, each small enough for one
+ * quick OpenStreetMap query (at most `max` stations and about 40 km across). */
+export function uncachedRuns(points: Point[], cached: Set<string>, max = 15): Point[][] {
   const runs: Point[][] = [];
   let run: Point[] = [];
+  const tooBig = (r: Point[]) => {
+    const lats = r.map((p) => p.lat), lons = r.map((p) => p.lon);
+    return Math.max(...lats) - Math.min(...lats) > MAX_SPAN || Math.max(...lons) - Math.min(...lons) > MAX_SPAN;
+  };
   for (let i = 0; i < points.length - 1; i++) {
     if (cached.has(segKey(points[i].code, points[i + 1].code))) {
       if (run.length) runs.push(run);
       run = [];
       continue;
     }
-    if (!run.length) run.push(points[i]);
-    run.push(points[i + 1]);
-    if (run.length >= max) {
+    if (run.length >= 2 && (run.length >= max || tooBig([...run, points[i + 1]]))) {
       runs.push(run);
       run = [];
     }
+    if (!run.length) run.push(points[i]);
+    run.push(points[i + 1]);
   }
   if (run.length) runs.push(run);
   return runs;
 }
 
-/** One Overpass query for everything worth seeing near a run of stations. */
+/** The box around a run, with room for the furthest sights: [south, west, north, east]. */
+export function box(run: Point[]): [number, number, number, number] {
+  const pad = 0.05; // about 5 km
+  const lats = run.map((p) => p.lat), lons = run.map((p) => p.lon);
+  const r = (v: number) => Math.round(v * 1e4) / 1e4;
+  return [r(Math.min(...lats) - pad), r(Math.min(...lons) - pad), r(Math.max(...lats) + pad), r(Math.max(...lons) + pad)];
+}
+
+/** One Overpass query for everything worth seeing in the box around a run of stations.
+ * A plain box is far quicker for the servers than "near this line"; distance is checked after. */
 export function overpassQuery(run: Point[]): string {
-  const line = run.map((p) => `${p.lat},${p.lon}`).join(",");
-  const near = (filter: string, m: number) => `nwr${filter}(around:${m},${line});`;
-  return `[out:json][timeout:100];
+  const bb = box(run).join(",");
+  return `[out:json][timeout:55][bbox:${bb}];
 (
-${near('["waterway"="waterfall"]', 2500)}
-${near('["natural"="waterfall"]', 2500)}
-${near('["historic"~"^(fort|castle)$"]', 4000)}
-${near('["natural"="peak"]["wikidata"]', 5000)}
-${near('["natural"="cave_entrance"]["name"]', 2000)}
-${near('["historic"="archaeological_site"]["wikidata"]', 2000)}
-${near('["tourism"="viewpoint"]["name"]', 1000)}
-${near('["waterway"="dam"]["name"]', 2000)}
-${near('["natural"="water"]["wikidata"]', 1500)}
-${near('["historic"="monument"]["wikidata"]', 800)}
-${near('["tourism"="attraction"]["wikidata"]', 800)}
-${near('["amenity"="place_of_worship"]["wikidata"]', 800)}
+nwr["waterway"="waterfall"];nwr["natural"="waterfall"];
+nwr["historic"~"^(fort|castle)$"];node["natural"="peak"]["wikidata"];
+nwr["natural"="cave_entrance"]["name"];nwr["historic"="archaeological_site"]["wikidata"];
+nwr["tourism"="viewpoint"]["name"];nwr["waterway"="dam"]["name"];
+nwr["natural"="water"]["wikidata"];nwr["historic"="monument"]["wikidata"];
+nwr["tourism"="attraction"]["wikidata"];nwr["amenity"="place_of_worship"]["wikidata"];
 )->.p;
 .p out center tags;
-(
-way["railway"="rail"]["tunnel"="yes"](around:800,${line});
-way["waterway"="river"]["name"](around:20,${line});
-)->.g;
-.g out geom tags;`;
+(way["railway"="rail"]["tunnel"="yes"];way["waterway"="river"]["name"];)->.g;
+.g out tags geom(${bb});`;
 }
 
 type Tags = Record<string, string>;
@@ -136,8 +148,18 @@ export function crossings(run: Point[], river: { lat: number; lon: number }[]): 
 
 type Element = {
   type: string; id: number; tags?: Tags; lat?: number; lon?: number;
-  center?: { lat: number; lon: number }; geometry?: { lat: number; lon: number }[];
+  center?: { lat: number; lon: number }; geometry?: ({ lat: number; lon: number } | null)[];
 };
+
+/** A way's geometry cut to the query box has gaps (null) where it leaves the box: the unbroken pieces. */
+export function pieces(g: ({ lat: number; lon: number } | null)[]): { lat: number; lon: number }[][] {
+  const out: { lat: number; lon: number }[][] = [[]];
+  for (const p of g) {
+    if (p) out.at(-1)!.push(p);
+    else if (out.at(-1)!.length) out.push([]);
+  }
+  return out.filter((piece) => piece.length >= 2);
+}
 
 const metres = (g: { lat: number; lon: number }[]) =>
   g.slice(1).reduce((sum, p, i) => sum + Math.hypot(...xy(p.lat, p.lon, g[i].lat, g[i].lon)), 0);
@@ -157,22 +179,27 @@ export function sightsByStretch(run: Point[], elements: Element[]): Map<string, 
     seen.add(id);
     const name = tags["name:en"] || tags.name || "";
     if (tags.waterway === "river" && el.geometry) {
-      crossings(run, el.geometry).forEach((c, n) =>
+      pieces(el.geometry).flatMap((piece) => crossings(run, piece)).forEach((c, n) =>
         file(c.seg, { id: `river/${el.id}/${n}`, name: name || "River", kind: "river", lat: round(c.lat), lon: round(c.lon), score: 4 + (tags.wikidata ? 1 : 0), ...(tags.wikidata ? { wikidata: tags.wikidata } : {}) })
       );
       continue;
     }
     if (tags.railway === "rail" && tags.tunnel === "yes" && el.geometry?.length) {
-      const g = el.geometry, mid = g[Math.floor(g.length / 2)], length = Math.round(metres(g));
-      if (length < 60) continue;
-      file(nearestSegment(run, mid.lat, mid.lon)[0], { id, name: tags["tunnel:name"] || "", kind: "tunnel", lat: round(mid.lat), lon: round(mid.lon), score: length >= 500 ? 3 : 2, length_m: length });
+      const g = pieces(el.geometry).sort((a, b) => b.length - a.length)[0];
+      if (!g) continue;
+      const mid = g[Math.floor(g.length / 2)], length = Math.round(metres(g));
+      const [seg, off] = nearestSegment(run, mid.lat, mid.lon);
+      if (length < 60 || off > REACH.tunnel) continue;
+      file(seg, { id, name: tags["tunnel:name"] || "", kind: "tunnel", lat: round(mid.lat), lon: round(mid.lon), score: length >= 500 ? 3 : 2, length_m: length });
       continue;
     }
     const what = classify(tags);
     const at = el.center ?? (el.lat !== undefined ? { lat: el.lat, lon: el.lon! } : null);
     if (!what || !at) continue;
     if (!name && what.kind !== "waterfall") continue;
-    file(nearestSegment(run, at.lat, at.lon)[0], {
+    const [seg, off] = nearestSegment(run, at.lat, at.lon);
+    if (off > REACH[what.kind]) continue;
+    file(seg, {
       id, name: name || "Waterfall", kind: what.kind, lat: round(at.lat), lon: round(at.lon), score: what.score,
       ...(tags.wikidata ? { wikidata: tags.wikidata } : {}),
     });

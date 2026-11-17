@@ -175,8 +175,8 @@ export function bestSide(sights) {
  * asks again while the server says it isn't done; onPart shows what has arrived so far. */
 export async function fetchSights(train, from, to, onPart) {
   const { CONFIG } = await import(/* @vite-ignore */ new URL("config.js", document.baseURI).href);
-  let sights = [];
-  for (let attempt = 0; attempt < 8; attempt++) {
+  let sights = [], waited = 0, ready = -1;
+  for (let attempt = 0; attempt < 10; attempt++) {
     const res = await fetch(`${CONFIG.supabaseUrl}/functions/v1/journey-sights`, {
       method: "POST",
       headers: { "content-type": "application/json", apikey: CONFIG.supabaseKey },
@@ -187,7 +187,10 @@ export async function fetchSights(train, from, to, onPart) {
     sights = body.sights;
     onPart?.(sights, body.done, body.stretches - body.missing, body.stretches);
     if (body.done) return sights;
-    await new Promise((r) => setTimeout(r, 1500));
+    // Nothing new this time means OpenStreetMap is busy: wait longer before asking again.
+    waited = body.stretches - body.missing > ready ? 1500 : Math.min(waited * 2 || 4000, 30000);
+    ready = body.stretches - body.missing;
+    await new Promise((r) => setTimeout(r, waited));
   }
   return sights;
 }

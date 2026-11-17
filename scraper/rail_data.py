@@ -22,6 +22,16 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 RENAMED = {"CSTM": "CSMT", "KJMG": "KJRD", "BGW": "BGWI"}  # codes changed since 2016
 
 
+# Abbreviations in the source's station names, spelled out (or kept as capitals) for travellers.
+WORDS = {"Jn": "Junction", "Rd": "Road", "Cant": "Cantonment", "Cantt": "Cantonment", "Cst": "CSMT",
+         "Csmt": "CSMT", "Ltt": "LTT", "Ph": "Halt", "P.H.": "Halt", "Bg": "BG", "Mg": "MG", "Ng": "NG"}
+
+
+def tidy(name):
+    """ "MUMBAI CST" -> "Mumbai CSMT", "PUNE JN" -> "Pune Junction"."""
+    return " ".join(WORDS.get(w, w) for w in " ".join(name.split()).title().split())
+
+
 def minutes(text, day):
     if not text or text == "None":
         return None
@@ -35,7 +45,7 @@ def build(source: pathlib.Path, out: pathlib.Path):
         p, g = f["properties"], f.get("geometry") or {}
         lon, lat = (g.get("coordinates") or [None, None])[:2]
         code = RENAMED.get(p["code"], p["code"])
-        stations[code] = [" ".join((p.get("name") or code).split()).title(),
+        stations[code] = [tidy(p.get("name") or code),
                           round(lat, 5) if lat is not None else None, round(lon, 5) if lon is not None else None]
 
     by_train = collections.defaultdict(list)
@@ -61,7 +71,7 @@ def build(source: pathlib.Path, out: pathlib.Path):
                     last = v
                     arr, dep = (v, dep) if t == "arr" else (arr, v)
             timetable.append([code, arr, dep])
-            stations.setdefault(code, [" ".join((r.get("station_name") or code).split()).title(), None, None])
+            stations.setdefault(code, [tidy(r.get("station_name") or code), None, None])
         shards[number[:2]][number] = timetable
         index.append([number, " ".join(rows[0]["train_name"].split()), timetable[0][0], timetable[-1][0]])
 

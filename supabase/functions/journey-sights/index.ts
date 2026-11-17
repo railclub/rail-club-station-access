@@ -18,7 +18,8 @@ const OVERPASS = (Deno.env.get("OVERPASS_URLS") ??
   .split(",");
 const KEEP_DAYS = 120;
 const PER_HOUR = Number(Deno.env.get("JOURNEY_STRETCHES_PER_HOUR") ?? "3000"); // fair use of OpenStreetMap
-const WORK_MS = 80_000; // stop starting new lookups after this, well inside the function's time limit
+// The function may run for 150 s; stop well before, and give each OpenStreetMap request what's left.
+const BUDGET_MS = 110_000;
 
 type Stations = Record<string, [string, number | null, number | null]>;
 let stations: Stations | null = null;
@@ -30,22 +31,24 @@ async function getJson<T>(url: string): Promise<T> {
   return await res.json();
 }
 
-async function overpass(query: string): Promise<{ elements: never[] }> {
+async function overpass(query: string, deadline: number): Promise<{ elements: never[] }> {
   const errors: string[] = [];
   for (const url of OVERPASS) {
+    const left = deadline - Date.now();
+    if (left < 8_000) break;
     try {
-      const res = await fetch(url, {
-        method: "POST", body: "data=" + encodeURIComponent(query),
-        headers: { "content-type": "application/x-www-form-urlencoded", "user-agent": UA },
-        signal: AbortSignal.timeout(110_000),
+      // GET: overpass-api.de answers 406 to this function's POSTs but accepts the same query as a GET.
+      const res = await fetch(`${url}?data=${encodeURIComponent(query)}`, {
+        headers: { "accept": "application/json", "user-agent": UA },
+        signal: AbortSignal.timeout(Math.min(left - 3_000, 60_000)),
       });
       if (res.ok) return await res.json();
-      errors.push(`${new URL(url).host} ${res.status}`);
+      errors.push(`${new URL(url).host} ${res.status}`); // 429/502/504: busy, try the next server
     } catch (e) {
       errors.push(`${new URL(url).host} ${(e as Error).name}`);
     }
   }
-  throw new Error(errors.join(", "));
+  throw new Error(errors.join(", ") || "out of time");
 }
 
 /** English names and one-line descriptions from Wikidata, for the sights that have an id. */
@@ -111,11 +114,15 @@ Deno.serve(async (req) => {
         done = false; // busy hour: show what we have, the page tries again later
       } else {
         for (const run of runs) {
-          if (Date.now() - started > WORK_MS) {
+          let answer;
+          try {
+            answer = await overpass(overpassQuery(run), started + BUDGET_MS);
+          } catch (e) {
+            // Busy or out of time: keep what we have; the page asks again for the rest.
+            console.error("journey-sights overpass", (e as Error).message);
             done = false;
             break;
           }
-          const answer = await overpass(overpassQuery(run));
           const filed = sightsByStretch(run, answer.elements);
           await describe([...filed.values()].flat());
           const now = new Date().toISOString();

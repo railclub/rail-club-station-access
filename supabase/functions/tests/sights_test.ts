@@ -1,6 +1,6 @@
 // deno test supabase/functions/tests/
 import { assert, assertEquals } from "jsr:@std/assert@1.0.13";
-import { classify, crossings, nearestSegment, overpassQuery, segKey, sightsByStretch, uncachedRuns } from "../_shared/sights.ts";
+import { box, classify, pieces, crossings, nearestSegment, overpassQuery, segKey, sightsByStretch, uncachedRuns } from "../_shared/sights.ts";
 
 // Three stations on a line heading north, then east.
 const A = { code: "AAA", lat: 18.0, lon: 73.0 }, B = { code: "BBB", lat: 18.1, lon: 73.0 }, C = { code: "CCC", lat: 18.1, lon: 73.1 };
@@ -18,10 +18,14 @@ Deno.test("only stretches not looked up yet are queried, in runs", () => {
   assertEquals(uncachedRuns([A, B, C, D], new Set(), 3).map((r) => r.map((p) => p.code)), [["AAA", "BBB", "CCC"], ["CCC", "DDD"]]); // capped runs share their end station
 });
 
-Deno.test("the query follows the line", () => {
+Deno.test("the query asks for a padded box around the line, and long runs are split", () => {
+  assertEquals(box([A, B, C]), [17.95, 72.95, 18.15, 73.15]);
   const q = overpassQuery([A, B]);
-  assert(q.includes("(around:2500,18,73,18.1,73)"));
-  assert(q.includes('way["waterway"="river"]["name"](around:20,18,73,18.1,73)'));
+  assert(q.includes("[bbox:17.95,72.95,18.15,73.05]"));
+  assert(q.includes(".g out tags geom(17.95,72.95,18.15,73.05);"));
+  // Stations 0.15 degrees apart heading north: a run stops before it spans more than about 40 km.
+  const line = Array.from({ length: 6 }, (_, n) => ({ code: `S${n}`, lat: 18 + n * 0.15, lon: 73 }));
+  assertEquals(uncachedRuns(line, new Set()).map((r) => r.map((p) => p.code)), [["S0", "S1", "S2"], ["S2", "S3", "S4"], ["S4", "S5"]]);
 });
 
 Deno.test("what counts as a sight", () => {
@@ -48,6 +52,7 @@ Deno.test("an Overpass answer is filed by stretch, with every stretch present", 
     { type: "node", id: 1, lat: 18.05, lon: 73.01, tags: { waterway: "waterfall" } }, // unnamed waterfall: kept
     { type: "node", id: 2, lat: 18.11, lon: 73.05, tags: { historic: "fort", name: "Hill Fort", wikidata: "Q9" } },
     { type: "node", id: 3, lat: 18.11, lon: 73.06, tags: { natural: "peak", wikidata: "Q8" } }, // no name: dropped
+    { type: "node", id: 6, lat: 18.05, lon: 73.04, tags: { amenity: "place_of_worship", name: "Far Temple", wikidata: "Q7" } }, // 4 km off: dropped
     { type: "way", id: 4, tags: { waterway: "river", name: "Big River" }, geometry: [{ lat: 18.05, lon: 72.95 }, { lat: 18.05, lon: 73.05 }] },
     { type: "way", id: 5, tags: { railway: "rail", tunnel: "yes" }, geometry: [{ lat: 18.1, lon: 73.02 }, { lat: 18.1, lon: 73.03 }] },
     { type: "node", id: 1, lat: 18.05, lon: 73.01, tags: { waterway: "waterfall" } }, // listed twice: once
@@ -58,4 +63,13 @@ Deno.test("an Overpass answer is filed by stretch, with every stretch present", 
   assertEquals(second.map((s) => s.kind), ["fort", "tunnel"]);
   assert(second[1].length_m! > 1000 && second[1].length_m! < 1100);
   assertEquals(sightsByStretch([A, B], []).get("AAA|BBB"), []);
+});
+
+Deno.test("ways cut at the box edge are used piece by piece", () => {
+  const p = (lat: number) => ({ lat, lon: 73 });
+  assertEquals(pieces([null, p(1), p(2), null, p(3), null, p(4), p(5), null]), [[p(1), p(2)], [p(4), p(5)]]);
+  // A river whose middle is outside the box still counts where it crosses inside.
+  const filed = sightsByStretch([A, B], [{ type: "way", id: 7, tags: { waterway: "river", name: "Cut River" },
+    geometry: [{ lat: 18.05, lon: 72.95 }, { lat: 18.05, lon: 73.05 }, null, { lat: 18.5, lon: 73.5 }, { lat: 18.6, lon: 73.5 }] }]);
+  assertEquals(filed.get("AAA|BBB")!.map((s) => s.name), ["Cut River"]);
 });

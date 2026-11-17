@@ -204,3 +204,11 @@ def test_picks_take_their_place_from_the_candidates():
             raise AssertionError("expected a refusal")
         except ValueError as e:
             assert bad["title"] in str(e)
+
+
+def test_station_names_are_tidied():
+    from rail_data import tidy
+    assert tidy("MUMBAI CST") == "Mumbai CSMT"
+    assert tidy("PUNE  JN") == "Pune Junction"
+    assert tidy("KALYAN JN") == "Kalyan Junction"
+    assert tidy("DELHI CANTT") == "Delhi Cantonment"
