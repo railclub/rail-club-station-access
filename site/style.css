@@ -564,3 +564,4 @@ a.btn { text-decoration: none; }
 }
 .journey .jp-picker { max-width: none; }
 .jp-stop b small { font: 400 .85rem system-ui, sans-serif; color: var(--muted); margin-left: 6px; }
+.jp-summary.wait { background: linear-gradient(135deg, #3b3f45, #5a5e64); }

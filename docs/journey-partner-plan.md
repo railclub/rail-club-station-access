@@ -1,5 +1,23 @@
 # Journey Partner: build plan
 
+> **Update, 17 November 2026: any train, on request.** The owner asked for Journey Partner to work
+> for any train, not one hand-made route. It now does:
+> 1. `scraper/rail_data.py` turns the open timetable (datameet/railways, CC0, 2016, 5,139 trains,
+>    every station each train passes) into small files under `site/data/rail/`. CI rebuilds them
+>    on every deploy from a pinned copy of that data.
+> 2. The page draws the line through every station the train passes.
+> 3. The `journey-sights` Edge Function asks OpenStreetMap (Overpass) what lies along that line:
+>    waterfalls, forts, peaks, caves, dams, lakes, viewpoints, river crossings, tunnels. English
+>    names and one-line descriptions come from Wikidata. Each stretch between two stations is
+>    looked up once and kept in the `journey_segments` table, so OpenStreetMap is asked about a
+>    stretch only once; a cap per hour keeps us within its fair-use rules.
+> 4. `web/src/journey.js` places each sight: distance along the line, LEFT/RIGHT, and when the
+>    train passes it.
+>
+> The Mumbai–Pune pilot below still matters: its hand-written notes replace the automatic ones
+> wherever the same place comes up. Known limits: the line is straight from station to station,
+> so in the hills a side can be wrong; and the timetable's clock times date from 2016.
+
 Goal: a traveller enters a train number, where they board and where they get off, and sees
 the sights on the way (waterfalls, rivers, forts, bridges) in order, with roughly when they pass
 each one and whether to look LEFT or RIGHT in the direction of travel.

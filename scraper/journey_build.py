@@ -288,7 +288,8 @@ def main():
     web = {"id": route["id"], "name": route["name"], "length_m": route["length_m"], "slow": route["slow"],
            "credits": [route["credit"], f"Timetables: {feed['source']}"],
            "stations": [{"code": x["code"], "name": x["name"], "m": x["m"]} for x in route["stations"]],
-           "sights": [{k: x[k] for k in ("title", "kind", "m", "side", "season", "note", "checked")} for x in sights],
+           "sights": [{k: x[k] for k in ("title", "kind", "m", "side", "season", "note", "checked", "osm", "wikidata") if x.get(k)}
+                      for x in sights],
            "trains": [{"number": t["number"], "name": t["name"],
                        "stops": [[x["code"], x["arr"], x["dep"]] for x in t["stops"]]} for t in views]}
     site = ROOT / "site" / "data" / "journey"

@@ -11,7 +11,7 @@ export function useRoute() {
   if (b) return { page: "browse", focus: b[1] };
   const f = hash.match(/^#\/facilities(?:\/([a-z_]+))?$/);
   if (f) return f[1] ? { page: "browse", feature: f[1] } : { page: "facilities" };
-  const j = hash.match(/^#\/journeys\/(\d{5})\/([A-Z]{1,5})\/([A-Z]{1,5})$/);
+  const j = hash.match(/^#\/journeys\/(\d{5})(?:\/([A-Z]{1,5})\/([A-Z]{1,5}))?$/);
   if (j) return { page: "journeys", train: j[1], from: j[2], to: j[3] };
   const page = { "#/me": "me", "#/journeys": "journeys", "#/contribute": "contribute" }[hash];
   return { page: page || "home" };

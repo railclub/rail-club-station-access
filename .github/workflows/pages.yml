@@ -28,6 +28,12 @@ jobs:
       - name: Test Phase 2 server rules (Supabase Edge Functions)
         run: npx -y deno@2.9.6 test supabase/functions/tests/ && npx -y deno@2.9.6 check supabase/functions/*/index.ts
       - run: python scraper/build.py
+      - name: Timetables for Journey Partner (open data from datameet/railways, CC0)
+        run: |
+          git init -q "$RUNNER_TEMP/datameet"
+          git -C "$RUNNER_TEMP/datameet" fetch -q --depth 1 https://github.com/datameet/railways e0c538a1e41ae5eace454d2818902e1065608e16
+          git -C "$RUNNER_TEMP/datameet" checkout -q FETCH_HEAD
+          python scraper/rail_data.py "$RUNNER_TEMP/datameet"
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
