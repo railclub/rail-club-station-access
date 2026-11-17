@@ -135,9 +135,13 @@ export function placeSights(path, sights, curated = [], month = new Date().getMo
   }
   placed.sort((a, b) => a.m - b.m);
 
-  // The map often has the same place twice (a point and an outline): keep one per name nearby.
+  // The map often has the same place twice (a point and an outline, or a fort mapped as a peak
+  // too), and a winding river can cross a straight station-to-station line several times:
+  // keep one per Wikidata id or per name nearby (5 km for rivers).
+  const same = (a, b) => (a.wikidata && a.wikidata === b.wikidata) ||
+    (a.title.toLowerCase() === b.title.toLowerCase() && (a.kind === b.kind) && b.m - a.m < (a.kind === "river" ? 5000 : 1500));
   for (let i = placed.length - 1; i > 0; i--) {
-    const twin = placed.slice(0, i).findLast((p) => placed[i].m - p.m < 1500 && p.title.toLowerCase() === placed[i].title.toLowerCase() && p.kind === placed[i].kind);
+    const twin = placed.slice(0, i).findLast((p) => same(p, placed[i]));
     if (twin && placed[i].kind !== "waterfall" && placed[i].kind !== "tunnel") {
       if (placed[i].score > twin.score || (placed[i].desc && !twin.desc)) Object.assign(twin, { ...placed[i], m: twin.m });
       placed.splice(i, 1);
