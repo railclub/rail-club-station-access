@@ -284,6 +284,18 @@ def main():
     (out / "trains.json").write_text(json.dumps(views, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"  {len(views)} trains with timetables ({len(fixes['trains'])} fixed by hand)")
 
+    # Everything the Journey page needs, in one small file the site loads.
+    web = {"id": route["id"], "name": route["name"], "length_m": route["length_m"], "slow": route["slow"],
+           "credits": [route["credit"], f"Timetables: {feed['source']}"],
+           "stations": [{"code": x["code"], "name": x["name"], "m": x["m"]} for x in route["stations"]],
+           "sights": [{k: x[k] for k in ("title", "kind", "m", "side", "season", "note", "checked")} for x in sights],
+           "trains": [{"number": t["number"], "name": t["name"],
+                       "stops": [[x["code"], x["arr"], x["dep"]] for x in t["stops"]]} for t in views]}
+    site = ROOT / "site" / "data" / "journey"
+    site.mkdir(parents=True, exist_ok=True)
+    (site / f"{route['id']}.json").write_text(json.dumps(web, ensure_ascii=False, separators=(",", ":")) + "\n")
+    print(f"  site/data/journey/{route['id']}.json: {len(json.dumps(web)) // 1024} KB")
+
 
 def preview(number):
     """Print what one train passes, for checking by eye: python3 scraper/journey_build.py 11007"""

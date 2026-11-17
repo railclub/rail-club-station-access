@@ -129,11 +129,11 @@ export default function Home({ data }) {
           <m.a className="pcard" href="#/journeys" onPointerMove={spot} {...inView(0.08)} whileTap={{ scale: 0.985 }}>
             <div className="pcard-img"><img src={CARDS.journey.small} alt="" loading="lazy" decoding="async" style={{ objectPosition: CARDS.journey.pos }} /></div>
             <div className="pcard-body">
-              <span className="tag soon">Coming soon</span>
+              <span className="tag new">Pilot</span>
               <p className="kicker hi" lang="hi">यात्रा साथी</p>
               <h3>Journey Partner</h3>
-              <p>Enter your train and see waterfalls, rivers and forts on the way, with the time and which side to look.</p>
-              <span className="pcard-cta">See what's coming <span aria-hidden="true">→</span></span>
+              <p>Enter your train and see waterfalls, rivers and forts on the way, with the time and which side to look. Now on Mumbai → Pune.</p>
+              <span className="pcard-cta">Plan your window seat <span aria-hidden="true">→</span></span>
             </div>
           </m.a>
           <m.a className="pcard" href="#/contribute" onPointerMove={spot} {...inView(0.16)} whileTap={{ scale: 0.985 }}>

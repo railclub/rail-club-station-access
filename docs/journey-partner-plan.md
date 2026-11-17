@@ -122,10 +122,17 @@ Agreed on 15 November 2026. Work through the steps **in this order**.
      GPS and time on the phone. Anyone can use it (the owner if a trip happens, a friend, or
      early travellers), and each recording corrects the data.
    - Until a sight is seen from a train, the page says the side is worked out from the map.
-7. **The Journey page** (Claude). Train number, then from/to limited to that train's stops.
-   Animated vertical timeline: photo, time relative to the last stop, a big LEFT/RIGHT badge,
-   season tag, "passes in the dark" flag. Summary card ("Sit on the LEFT: 7 of 9 sights").
-   Works offline once loaded (poor signal in the ghats).
+7. **The Journey page.** **Pilot live, 17 November 2026** at `#/journeys`. Pick a train (search
+   by number or name, or one of five popular day trains), then from/to limited to its stops;
+   the address (`#/journeys/11007/CSMT/PUNE`) can be shared. Shows "Sit on the LEFT/RIGHT" with
+   the count, then a timeline of stops and sights: approximate time, minutes after the last
+   stop, a big LEFT/RIGHT badge, the note, "dry now" for out-of-season waterfalls, "passes in
+   the dark", and "side worked out from the map". "How accurate is this?" explains the 2016
+   timetable and credits OpenStreetMap, datameet and Wikidata.
+   - Data: `scraper/journey_build.py` writes `site/data/journey/csmt-pune.json` (25 KB).
+   - The page's maths (`web/src/journey.js`) mirrors `scraper/journey_geo.py`; keep them in step.
+   - **Still to do:** works offline once loaded (a service worker), photos for each sight
+     (needs per-photo credits), and the reverse direction (Pune → Mumbai swaps the sides).
 8. **Travellers add and confirm sights** (Claude). Signed-in users add a sight from the train
    (GPS + time, side worked out automatically) or confirm/flag existing ones. New sights go
    through review like video reports; confirmed after a few independent confirmations. New

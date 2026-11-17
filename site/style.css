@@ -500,3 +500,67 @@ a.btn { text-decoration: none; }
   .slide img { transform: none; }
   .js .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Journey Partner ---------- */
+.journey .jp-picker { margin: 18px 0 0; }
+.jp-input { width: 100%; box-sizing: border-box; font: inherit; font-size: 1.05rem; padding: 15px 18px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); }
+.jp-input:focus { outline: 3px solid var(--focus); outline-offset: 1px; border-color: transparent; }
+.jp-matches { list-style: none; margin: 6px 0 0; padding: 6px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-lg); position: absolute; left: 0; right: 0; z-index: 5; max-height: 320px; overflow: auto; }
+.jp-matches button { display: grid; gap: 2px; width: 100%; text-align: left; font: inherit; color: var(--ink); background: none; border: 0; border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+.jp-matches button:hover, .jp-matches button:focus-visible { background: color-mix(in srgb, var(--vb-orange) 12%, var(--surface)); }
+.jp-matches span { color: var(--muted); font-size: .88rem; }
+.jp-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+.jp-chips .chip { font: inherit; font-size: .9rem; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
+.jp-chips .chip:hover { border-color: var(--vb-orange); transform: translateY(-1px); }
+.jp-fromto { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 14px 0 0; }
+.jp-fromto label { display: grid; gap: 4px; flex: 1 1 140px; font-size: .85rem; color: var(--muted); font-weight: 600; }
+.jp-fromto select { font: inherit; font-size: 1rem; padding: 11px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); }
+.jp-fromto > span { padding-bottom: 12px; color: var(--muted); }
+.jp-summary { margin: 22px 0 8px; padding: 22px 24px; border-radius: 24px; color: #fff; background: linear-gradient(135deg, #1d3a4a, #0b5c7a); box-shadow: var(--shadow-lg); }
+.jp-summary.left { background: linear-gradient(135deg, #7a2a12, #f47a20); }
+.jp-summary.right { background: linear-gradient(135deg, #123f2a, #1d6b3a); }
+.jp-summary p { margin: 0 0 6px; color: rgb(255 255 255 / 90%); }
+.jp-sit { font: 600 clamp(1.5rem, 5vw, 2.1rem)/1.1 Poppins, system-ui, sans-serif; color: #fff !important; }
+.jp-sit b { letter-spacing: .04em; }
+.jp-meta { font-size: .88rem; opacity: .85; margin: 8px 0 0 !important; }
+.jp-line { list-style: none; margin: 18px 0 0; padding: 0; position: relative; }
+.jp-line::before { content: ""; position: absolute; left: 70px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: linear-gradient(var(--vb-orange), var(--accent)); opacity: .5; }
+.jp-line li { display: grid; grid-template-columns: 56px 32px 1fr; gap: 0 12px; align-items: start; position: relative; }
+.jp-line time { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; padding-top: 3px; color: var(--muted); font-size: .92rem; }
+.jp-dot { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line); font-size: 15px; z-index: 1; }
+.jp-stop { margin: 10px 0; }
+.jp-stop .jp-dot { width: 18px; height: 18px; margin: 4px 7px; border: 4px solid var(--kumkum); }
+.jp-stop b { font: 600 1.05rem Poppins, system-ui, sans-serif; padding-top: 2px; }
+.jp-stop time { color: var(--ink); }
+.jp-sight { margin: 8px 0 12px; }
+.jp-card { padding: 14px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-left: 5px solid var(--accent); }
+.jp-sight.left .jp-card { border-left-color: var(--vb-orange); }
+.jp-sight.right .jp-card { border-left-color: var(--yes); }
+.jp-sight.off .jp-card, .jp-sight.dark .jp-card { opacity: .62; }
+.jp-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.jp-side { font: 700 .82rem/1 Poppins, system-ui, sans-serif; letter-spacing: .08em; padding: 6px 10px; border-radius: 8px; color: #fff; background: var(--accent); }
+.jp-side.left { background: var(--vb-orange); }
+.jp-side.right { background: var(--yes); }
+:root[data-theme="dark"] .jp-side.right { color: #0d1a12; }
+.jp-after { color: var(--muted); font-size: .88rem; }
+.jp-card h3 { margin: 8px 0 4px; font: 600 1.1rem/1.25 Poppins, system-ui, sans-serif; }
+.jp-card p { margin: 0; color: var(--muted); font-size: .95rem; }
+.jp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0 !important; }
+.jp-tags span { font-size: .76rem; padding: 3px 9px; border-radius: 999px; background: var(--unk-bg); color: var(--unk); }
+.jp-tags .in { background: var(--yes-bg); color: var(--yes); }
+.jp-tags .out { background: var(--x-bg); color: var(--x); }
+.jp-tags .map { background: var(--no-bg); color: var(--no); }
+.jp-about { margin: 22px 0 0; padding: 16px 18px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.jp-about summary { cursor: pointer; font-weight: 600; }
+.jp-about ul { margin: 12px 0; padding-left: 20px; color: var(--muted); }
+.jp-about li { margin: 0 0 6px; }
+.jp-credit { margin: 0; font-size: .8rem; color: var(--muted); }
+@media (max-width: 520px) {
+  .jp-line::before { left: 58px; }
+  .jp-line li { grid-template-columns: 46px 28px 1fr; gap: 0 9px; }
+  .jp-dot { width: 28px; height: 28px; font-size: 13px; }
+  .jp-stop .jp-dot { margin: 4px 5px; }
+  .jp-summary { padding: 18px; }
+}
+.journey .jp-picker { max-width: none; }
+.jp-stop b small { font: 400 .85rem system-ui, sans-serif; color: var(--muted); margin-left: 6px; }

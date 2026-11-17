@@ -64,7 +64,7 @@ export default function App() {
             ) : route.page === "facilities" && data ? (
               <m.section key="facilities" className="view" {...page}><Facilities data={data} /></m.section>
             ) : route.page === "journeys" ? (
-              <m.section key="journeys" className="view" {...page}><Journeys /></m.section>
+              <m.section key="journeys" className="view" {...page}><Journeys train={route.train} from={route.from} to={route.to} /></m.section>
             ) : route.page === "contribute" ? (
               <m.section key="contribute" className="view" {...page}><Contribute /></m.section>
             ) : (
