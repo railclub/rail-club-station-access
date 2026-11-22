@@ -1,6 +1,6 @@
 // deno test supabase/functions/tests/
 import { assert, assertEquals } from "jsr:@std/assert@1.0.13";
-import { box, classify, pieces, crossings, nearestSegment, overpassQuery, segKey, sightsByStretch, uncachedRuns } from "../_shared/sights.ts";
+import { box, classify, pieces, crossings, nearestSegment, overpassQuery, segKey, sightsByStretch, uncachedRuns, warmOrder } from "../_shared/sights.ts";
 
 // Three stations on a line heading north, then east.
 const A = { code: "AAA", lat: 18.0, lon: 73.0 }, B = { code: "BBB", lat: 18.1, lon: 73.0 }, C = { code: "CCC", lat: 18.1, lon: 73.1 };
@@ -72,4 +72,12 @@ Deno.test("ways cut at the box edge are used piece by piece", () => {
   const filed = sightsByStretch([A, B], [{ type: "way", id: 7, tags: { waterway: "river", name: "Cut River" },
     geometry: [{ lat: 18.05, lon: 72.95 }, { lat: 18.05, lon: 73.05 }, null, { lat: 18.5, lon: 73.5 }, { lat: 18.6, lon: 73.5 }] }]);
   assertEquals(filed.get("AAA|BBB")!.map((s) => s.name), ["Cut River"]);
+});
+
+Deno.test("warmOrder: suggestions first, then superfast and express trains, then the rest", () => {
+  const out = warmOrder(["59001", "12951", "11007", "06001", "22691", "12123", "11007"]);
+  assertEquals(out.slice(0, 2), ["11007", "12123"]);
+  assertEquals(out.slice(2, 4), ["12951", "22691"]);
+  assertEquals(new Set(out.slice(4)), new Set(["59001", "06001"]));
+  assertEquals(out.length, 6);
 });

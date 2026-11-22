@@ -208,3 +208,17 @@ export function sightsByStretch(run: Point[], elements: Element[]): Map<string, 
 }
 
 const round = (v: number) => Math.round(v * 1e5) / 1e5;
+
+// Trains people are likely to plan first: the site's suggestions, then superfast and express
+// trains, then everything else. The warm-up job looks up their lines in this order.
+const FIRST = ["11007", "12123", "12051", "10103", "12779", "16525"];
+const BAND = ["12", "22", "20", "11", "16", "17", "18", "13", "14", "15", "19", "10"];
+export function warmOrder(numbers: string[]): string[] {
+  const rank = (n: string) => {
+    const f = FIRST.indexOf(n);
+    if (f >= 0) return f;
+    const b = BAND.indexOf(n.slice(0, 2));
+    return FIRST.length + (b >= 0 ? b : BAND.length);
+  };
+  return [...new Set(numbers)].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+}
