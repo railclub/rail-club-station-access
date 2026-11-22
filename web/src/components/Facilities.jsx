@@ -22,13 +22,13 @@ export default function Facilities({ data }) {
   const amenities = data.amenities || [];
   const counts = useMemo(() => {
     const c = {};
-    for (const s of data.stations) {
+    for (const s of data.stations.filter((x) => !x.basic)) {
       for (const [k, f] of Object.entries(s.features)) if (f.status === "yes") c[k] = (c[k] || 0) + 1;
       for (const a of data.amenities || []) if (hasAmenity(s, a.key)) c[a.key] = (c[a.key] || 0) + 1;
     }
     return c;
   }, [data]);
-  const total = data.stations.length;
+  const total = data.stations.filter((s) => !s.basic).length;
   useEffect(() => { document.title = "Facilities we track · Rail Club"; window.scrollTo({ top: 0 }); }, []);
   let row = 0;
 

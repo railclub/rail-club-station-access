@@ -59,7 +59,7 @@ export default function Browse({ data, focus, feature }) {
           {amenity
             ? <>{amenity.about}. <b>{total}</b> station{total === 1 ? "" : "s"} marked so far, in {divCount} division{divCount === 1 ? "" : "s"}.</>
             : feature
-              ? <><b>{total}</b> of {data.stations.length} stations have this marked as available, in {divCount} division{divCount === 1 ? "" : "s"}. Check at the station before you rely on it.</>
+              ? <><b>{total}</b> of {data.stations.filter((s) => !s.basic).length} stations have this marked as available, in {divCount} division{divCount === 1 ? "" : "s"}. Check at the station before you rely on it.</>
               : <><b>{total}</b> stations in <b>{divCount}</b> railway divisions. Open a division to see its stations and the document its facts come from.</>}
         </p>
       </m.div>

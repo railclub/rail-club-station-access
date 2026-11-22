@@ -203,7 +203,16 @@ function stepLocation() {
       document.getElementById("l-retry").onclick = stepLocation;
       return;
     }
-    stepRecord();
+    wrongPlace(current.station.id, best).then((wrong) => {
+      if (!wrong) return stepRecord();
+      const n = wrong.nearest;
+      show(`<h3 tabindex="-1">You're not at ${esc(current.station.name)}</h3>
+        <p>${esc(wrong.message)} Videos only count when they're filmed at the station they're for, so please send it from where you are.</p>
+        ${n ? `<p>It looks like you're at <b>${esc(n.name)}</b>${n.code ? ` (${esc(n.code)})` : ""}.</p>
+          <a class="btn" href="#/s/${encodeURIComponent(n.id)}">Open ${esc(n.name)} instead</a> ` : ""}
+        <button type="button" class="${n ? "link" : "btn"}" id="l-retry">Check my location again</button>`);
+      document.getElementById("l-retry").onclick = stepLocation;
+    });
   };
   const watch = navigator.geolocation.watchPosition((p) => {
     const fix = { lat: p.coords.latitude, lon: p.coords.longitude, accuracy_m: p.coords.accuracy };
@@ -213,6 +222,42 @@ function stepLocation() {
     if (fix.accuracy_m <= 30) finish();
   }, () => finish(), { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 });
   const timer = setTimeout(finish, 20000);
+}
+
+// ---------- are you at this station? ----------
+// The same idea as the server's location gate (supabase/functions/_shared/rules.ts), a little more
+// lenient: the server decides, this only stops people filming at the wrong station for nothing.
+const NEAR_M = 400, BIG_STATION_M = 700, NO_STATION_NEAR_M = 2000;
+let allStations = null;
+const loadAll = () => (allStations ??= fetch("data/backend-stations.json").then((r) => r.json()).catch(() => null));
+
+function metres(aLat, aLon, bLat, bLon) {
+  const r = Math.PI / 180;
+  const h = Math.sin((bLat - aLat) * r / 2) ** 2 + Math.cos(aLat * r) * Math.cos(bLat * r) * Math.sin((bLon - aLon) * r / 2) ** 2;
+  return 2 * 6371000 * Math.asin(Math.sqrt(h));
+}
+
+/** null when it looks fine, else {message, nearest: {id, name, code, m} | null}. */
+async function wrongPlace(stationId, fix) {
+  const all = await loadAll();
+  if (!all) return null; // can't tell here; the server still checks
+  const slack = Math.min(fix.accuracy_m, GOOD_ACCURACY_M);
+  let nearest = null;
+  for (const [id, st] of Object.entries(all)) {
+    if (id === stationId || st.lat === undefined) continue;
+    const d = metres(fix.lat, fix.lon, st.lat, st.lon);
+    if (!nearest || d < nearest.m) nearest = { id, name: st.name, code: st.code, m: d };
+  }
+  const here = all[stationId];
+  const atOther = nearest && nearest.m - slack <= NEAR_M && nearest.name !== here?.name ? nearest : null;
+  if (here?.lat !== undefined) {
+    const d = metres(fix.lat, fix.lon, here.lat, here.lon);
+    if (d - slack <= BIG_STATION_M) return null;
+    return { message: `You're about ${d >= 1000 ? `${(d / 1000).toFixed(1)} km` : `${Math.round(d)} m`} from ${here.name}.`, nearest: atOther };
+  }
+  if (atOther) return { message: `We can't see you at ${here?.name ?? "this station"}.`, nearest: atOther };
+  if (!nearest || nearest.m - slack > NO_STATION_NEAR_M) return { message: "You don't seem to be at a railway station.", nearest: null };
+  return null;
 }
 
 // ---------- camera ----------

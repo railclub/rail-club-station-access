@@ -23,7 +23,8 @@ Deno.serve(async (req) => {
 
   const input = parseInput(await req.json().catch(() => null), user.id);
   if (typeof input === "string") return reply(req, { error: input }, 400);
-  const station = (await loadStations())[input.station_id];
+  const stations = await loadStations();
+  const station = stations[input.station_id];
   if (!station) return reply(req, { error: "Unknown station" }, 400);
 
   const limits = await loadLimits(admin);
@@ -64,7 +65,7 @@ Deno.serve(async (req) => {
   r = stopAt(gateLimits(userToday ?? 0, stationToday ?? 0, limits));
   if (r) return r;
 
-  const loc = gateLocation(input.station_id, station, input.lat, input.lon, input.accuracy_m, limits);
+  const loc = gateLocation(input.station_id, station, input.lat, input.lon, input.accuracy_m, limits, stations);
   r = stopAt(loc, { distance_m: loc.distance_m });
   if (r) return r;
   const located = { distance_m: loc.distance_m };

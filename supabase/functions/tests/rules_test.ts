@@ -51,6 +51,31 @@ Deno.test("location: inside, outside, big-station radius, weak GPS, no coordinat
   assert(Math.abs(distanceM(19.2357, 73.1297, 19.2406, 73.1297) - 545) < 10);
 });
 
+Deno.test("location: the wrong station is named, and no coordinates is no free pass", () => {
+  const st = (name: string, code: string, lat?: number, lon?: number): Station =>
+    ({ name, code, division: "", aliases: [], official_yes: [], lat, lon });
+  const all: Record<string, Station> = {
+    "chhatrapati-shivaji-maharaj-terminus": st("Chhatrapati Shivaji Maharaj Terminus", "CSMT", 18.94448, 72.8369),
+    "mahalakshmi": st("Mahalakshmi", "MX", 18.9821, 72.82391),
+    "mumbai-central": st("Mumbai Central", "MMCT", 18.97067, 72.81938),
+    "nowhere": st("Nowhere Halt", "NWH"),
+  };
+  // The real report of 22 Nov 2026: CSMT chosen, filmed at Mahalaxmi
+  const wrong = gateLocation("chhatrapati-shivaji-maharaj-terminus", all["chhatrapati-shivaji-maharaj-terminus"], 18.9828, 72.8244, 23, L, all);
+  assertEquals(wrong.ok, false);
+  assert(!wrong.ok && wrong.status === "rejected" && wrong.reason.includes("Mahalakshmi (MX)") && wrong.reason.includes("km away"));
+  // the right station passes
+  assert(gateLocation("mahalakshmi", all["mahalakshmi"], 18.9828, 72.8244, 23, L, all).ok);
+  // a station we can't place: at another station -> rejected, naming it
+  const atMx = gateLocation("nowhere", all["nowhere"], 18.9828, 72.8244, 23, L, all);
+  assert(!atMx.ok && atMx.reason.includes("Mahalakshmi"));
+  // ... far from every station -> rejected
+  assert(!gateLocation("nowhere", all["nowhere"], 19.5, 73.5, 23, L, all).ok);
+  // ... near a station but not inside another's radius -> only a reviewer can publish it
+  const unsure = gateLocation("nowhere", all["nowhere"], 18.9900, 72.8244, 23, L, all);
+  assert(unsure.ok && !unsure.has_coords);
+});
+
 Deno.test("recording must be fresh and the right length", () => {
   const now = new Date("2026-10-22T05:03:00Z");
   assert(gateRecording(25, "2026-10-22T05:00:00Z", "2026-10-22T05:01:00Z", now, L).ok);

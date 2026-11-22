@@ -31,7 +31,7 @@ export default function Station({ data, id }) {
   if (!st) return <div className="wrap"><a className="back" href="#/">← Search another station</a><h1>Station not found</h1><p>It may not be covered yet.</p></div>;
 
   const counts = { yes: 0, not_listed: 0, unknown: 0 };
-  Object.values(st.features).forEach((f) => counts[f.status === "no" ? "not_listed" : f.status]++);
+  data.features.forEach(({ key }) => { const f = st.features[key]; counts[!f ? "unknown" : f.status === "no" ? "not_listed" : f.status]++; });
   const issue = `${REPO}/issues/new?title=${encodeURIComponent(`Correction: ${st.name}`)}&body=${encodeURIComponent(`Station: ${st.name}${st.code ? ` (${st.code})` : ""}\n\nWhat is wrong or missing?\n\n`)}`;
   let row = 0;
 
@@ -51,9 +51,18 @@ export default function Station({ data, id }) {
         <p className="credit"><a href={BANNER.page} target="_blank" rel="noopener">{creditLine(BANNER)}</a></p>
       </div>
       <p className="st-sub">
-        <a href={`#/browse/${slug(st.division)}`}>{st.division} division</a>
-        <a href={`#/browse/${slug(st.zone)}`}>{st.zone}</a>
+        {st.basic ? (
+          <>{st.state && <span>{st.state}</span>}<span>{st.zone || "Indian Railways"}</span></>
+        ) : (
+          <><a href={`#/browse/${slug(st.division)}`}>{st.division} division</a><a href={`#/browse/${slug(st.zone)}`}>{st.zone}</a></>
+        )}
       </p>
+      {st.basic && (
+        <div className="caveat basic">
+          <p><strong>No accessibility details for {st.name} yet.</strong> Indian Railways hasn't published a station-by-station list that covers it, so every facility below shows “no data yet”. Call 139 or the station before you travel.</p>
+          <p>Are you at {st.name}? Add a short video below of a lift, ramp or other facility. It's checked against your location, so it only counts when you're really here.</p>
+        </div>
+      )}
       {st.notes && <p className="st-note">{st.notes}</p>}
       {div.method === "secondary" && (
         <div className="caveat">
@@ -121,11 +130,13 @@ export default function Station({ data, id }) {
       )}
       <div id="visitor-slot" />
       <a className="report" href={issue} target="_blank" rel="noopener">Something wrong or missing? Tell us</a>
-      <p className="src">
+      {st.basic ? (
+        <p className="src">Station name, code and location: <a href="https://github.com/datameet/railways" target="_blank" rel="noopener">datameet/railways</a> open data (CC0), gathered in 2016.</p>
+      ) : <p className="src">
         Source: <a href={div.source_url || "#"} target="_blank" rel="noopener">{div.source_title || "Indian Railways"}</a>, checked {div.retrieved || ""}.{" "}
         {Object.values(st.features).some((f) => f.status === "unknown") && "“No data yet” means this division hasn't published that detail by station. "}
         {div.method !== "secondary" && div.method_note}
-      </p>
+      </p>}
     </div>
   );
 }

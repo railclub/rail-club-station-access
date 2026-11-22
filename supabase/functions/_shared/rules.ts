@@ -129,21 +129,54 @@ export function distanceM(aLat: number, aLon: number, bLat: number, bLon: number
 
 export type LocationCheck = Outcome & { distance_m: number | null; has_coords: boolean };
 
+/** The station nearest a point, among those with coordinates (optionally leaving one out). */
+export function nearestStation(all: Record<string, Station>, lat: number, lon: number, except?: string):
+  { id: string; station: Station; distance_m: number } | null {
+  let best: { id: string; station: Station; distance_m: number } | null = null;
+  for (const [id, st] of Object.entries(all)) {
+    if (id === except || st.lat === undefined || st.lon === undefined) continue;
+    // cheap box test first: 0.05° is over 5 km anywhere in India
+    if (best && (Math.abs(st.lat - lat) > 0.05 || Math.abs(st.lon - lon) > 0.05)) continue;
+    const d = distanceM(lat, lon, st.lat, st.lon);
+    if (!best || d < best.distance_m) best = { id, station: st, distance_m: d };
+  }
+  return best;
+}
+
+// With no coordinates for the station itself, the visitor must at least be near some station.
+export const NO_STATION_NEAR_M = 2000;
+
 export function gateLocation(stationId: string, station: Station, lat: number, lon: number, accuracy: number,
-  limits: Limits): LocationCheck {
+  limits: Limits, all: Record<string, Station> = {}): LocationCheck {
+  const hasCoords = station.lat !== undefined && station.lon !== undefined;
   if (accuracy > limits.max_accuracy_m) {
     return { ...stop("rejected", "location", "Your location wasn't precise enough. Step outside the building and try again"),
-      distance_m: null, has_coords: station.lat !== undefined };
+      distance_m: null, has_coords: hasCoords };
   }
-  if (station.lat === undefined || station.lon === undefined) {
-    // We can't check, so this report can only ever be published by a reviewer (see decide()).
+  // GPS error counts in the visitor's favour, but only up to the accuracy limit
+  const slack = Math.min(accuracy, limits.max_accuracy_m);
+  const radius = (id: string) => limits.radius_overrides_m[id] ?? limits.radius_m;
+  const other = nearestStation(all, lat, lon, stationId);
+  const elsewhere = other && other.distance_m - slack <= radius(other.id) && other.station.name !== station.name
+    ? ` It looks like you're at ${other.station.name}${other.station.code ? ` (${other.station.code})` : ""}: open that station's page to send your video there.`
+    : "";
+
+  if (!hasCoords) {
+    if (elsewhere) {
+      return { ...stop("rejected", "location", `You don't seem to be at ${station.name}.${elsewhere}`), distance_m: null, has_coords: false };
+    }
+    if (Object.keys(all).length && (!other || other.distance_m - slack > NO_STATION_NEAR_M)) {
+      return { ...stop("rejected", "location", `You don't seem to be at a railway station. Please film at ${station.name} itself.`),
+        distance_m: null, has_coords: false };
+    }
+    // Near a station we can't place: only a reviewer can publish this one (see decide()).
     return { ...pass, distance_m: null, has_coords: false };
   }
-  const d = distanceM(lat, lon, station.lat, station.lon);
-  const radius = limits.radius_overrides_m[stationId] ?? limits.radius_m;
-  // GPS error counts in the visitor's favour, but only up to the accuracy limit
-  if (d - Math.min(accuracy, limits.max_accuracy_m) > radius) {
-    return { ...stop("rejected", "location", `You don't seem to be at ${station.name}`), distance_m: Math.round(d), has_coords: true };
+  const d = distanceM(lat, lon, station.lat!, station.lon!);
+  if (d - slack > radius(stationId)) {
+    const km = d >= 1000 ? `${(d / 1000).toFixed(1)} km` : `${Math.round(d)} m`;
+    return { ...stop("rejected", "location", `You don't seem to be at ${station.name}: you're about ${km} away.${elsewhere}`),
+      distance_m: Math.round(d), has_coords: true };
   }
   return { ...pass, distance_m: Math.round(d), has_coords: true };
 }

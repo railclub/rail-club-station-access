@@ -17,9 +17,9 @@ export default function Search({ stations }) {
   };
 
   const status = !stations ? "Loading stations…"
-    : !query.trim() ? `${stations.length} stations so far`
+    : !query.trim() ? `${stations.length.toLocaleString("en-IN")} stations across India, ${stations.filter((s) => !s.basic).length} with facility details`
     : results.length ? `${results.length} match${results.length > 1 ? "es" : ""}. Use arrow keys and Enter to open.`
-    : "No station found. We only cover some divisions so far.";
+    : "No station found. Try the station code, or another spelling.";
 
   return (
     <div className="search-card">
@@ -41,9 +41,9 @@ export default function Search({ stations }) {
                 onMouseEnter={() => setActive(i)} onClick={() => open(s)}>
                 <span>
                   <span className="r-name">{s.name}</span>{s.code && <> <span className="r-code">{s.code}</span></>}
-                  <br /><span className="r-meta">{s.division} division · {s.zone}</span>
+                  <br /><span className="r-meta">{s.basic ? [s.state, s.zone].filter(Boolean).join(" · ") || "Indian Railways" : `${s.division} division · ${s.zone}`}</span>
                 </span>
-                <span className="r-score">{countYes(s)} facilities</span>
+                <span className={`r-score${s.basic ? " none" : ""}`}>{s.basic ? "No details yet" : `${countYes(s)} facilities`}</span>
               </m.li>
             ))}
           </AnimatePresence>

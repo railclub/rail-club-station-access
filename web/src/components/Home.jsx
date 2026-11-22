@@ -79,7 +79,7 @@ function ForYou({ user, stations }) {
 
 export default function Home({ data }) {
   const { user } = useAuth();
-  const stations = data?.stations || [];
+  const stations = (data?.stations || []).filter((s) => !s.basic);
   const picks = POPULAR.map((c) => stations.find((s) => s.code === c)).filter(Boolean);
   for (const s of [...stations].sort((a, b) => countYes(b) - countYes(a))) {
     if (picks.length >= 8) break;
@@ -106,7 +106,7 @@ export default function Home({ data }) {
 
       {data && (
         <m.section className="stats" aria-label="Coverage so far" {...inView()}>
-          <Stat value={data.stations.length} href="#/browse">stations covered</Stat>
+          <Stat value={stations.length} href="#/browse">stations with facility details</Stat>
           <Stat value={data.divisions.length} href="#/browse">railway divisions <span className="hi" lang="hi">मंडल</span></Stat>
           <Stat value={data.features.length} href="#/facilities">facilities tracked</Stat>
         </m.section>

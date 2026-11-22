@@ -7,7 +7,7 @@ sys.path.insert(0, str(ROOT / "scraper"))
 
 import pytest  # noqa: E402
 
-from build import apply_amenities, backend_stations, build, build_division, load_amenities, load_names  # noqa: E402
+from build import apply_amenities, backend_stations, build, build_division, load_amenities, load_names, soft  # noqa: E402
 from parse_pdf import parse_rows, split_stations, stations_in_remark  # noqa: E402
 
 # Rows as pdfplumber's extract_tables() returns them for the real layouts.
@@ -158,9 +158,9 @@ def test_real_build():
     data = build()
     ids = [s["id"] for s in data["stations"]]
     assert len(ids) == len(set(ids))
-    pairs = [(s["name"], s["division"]) for s in data["stations"]]
+    pairs = [(s["name"], s["division"]) for s in data["stations"] if not s.get("basic")]
     assert len(pairs) == len(set(pairs))
-    by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar"}
+    by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar" and not s.get("basic")}
     assert {s["code"] for s in data["stations"] if s["name"] == "Madhavnagar"} == {"MDVR", "MDRR"}
     assert by["Malda Town"]["features"]["ramp_second"]["status"] == "yes"      # "Malda." alias
     assert by["Sainagar Shirdi"]["code"] == "SNSI"
@@ -189,6 +189,29 @@ def test_real_build():
     assert by["Asansol"]["features"]["battery_car"]["status"] == "no"
     assert by["Sealdah"]["features"]["battery_car"]["status"] == "yes"
     assert json.dumps(data)
+
+
+def test_every_station_has_a_page():
+    data = build()
+    st = {s["id"]: s for s in data["stations"]}
+    assert len(st) > 9000 and sum(1 for s in st.values() if not s.get("basic")) == 688
+    mx = st["mahalaxmi"]
+    assert mx["basic"] and mx["code"] == "MX" and mx["features"] == {} and mx["zone"] == "Western Railway"
+    # the same station isn't added twice under an old or goods code
+    codes = [s["code"] for s in st.values() if s["code"]]
+    assert len(codes) == len(set(codes))
+    assert not any(s.get("basic") and s["code"] in ("BCT", "KJRD", "ADIJ", "AJNI") for s in st.values())
+    back = backend_stations(data)
+    assert len(back) == len(st)
+    assert back["chhatrapati-shivaji-maharaj-terminus"]["lat"] == pytest.approx(18.9445, abs=1e-3)
+    assert back["mumbai-central"]["lat"] == pytest.approx(18.9707, abs=1e-3)   # MMCT, placed via old code BCT
+    assert back["mahalaxmi"]["lon"] == pytest.approx(72.8239, abs=1e-3)
+
+
+def test_soft_names():
+    assert soft("Mahalaxmi") == soft("Mahalakshmi") == soft("Mahaluxmi".replace("u", "a"))
+    assert soft("Kalyan Junction") == soft("Kalyan Jn") == soft("Kalyan")
+    assert soft("Wadi") == soft("Vadi")
 
 
 # Amenities: data/amenities.json, one fact per station and amenity, each with sources and a date
@@ -247,7 +270,7 @@ def test_amenities_need_one_station(tmp_path, station, error):
 def test_real_amenities():
     data = build()
     assert [a["key"] for a in data["amenities"]] == ["cloak_room", "lounge", "retiring_room", "food_plaza"]
-    by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar"}
+    by = {s["name"]: s for s in data["stations"] if s["name"] != "Madhavnagar" and not s.get("basic")}
     assert by["Ahmedabad"]["amenities"]["lounge"]["status"] == "yes"
     assert by["Chhatrapati Shivaji Maharaj Terminus"]["amenities"]["cloak_room"]["status"] == "yes"
     assert by["Nagpur"]["amenities"]["food_plaza"]["status"] == "yes"
@@ -255,7 +278,7 @@ def test_real_amenities():
     keys = {f["key"] for f in data["features"]}
     for s in data["stations"]:
         assert set(s.get("amenities", {})) <= {"cloak_room", "lounge", "retiring_room", "food_plaza"}
-        assert set(s["features"]) == keys                                # amenities stay out of features
+        assert set(s["features"]) == (set() if s.get("basic") else keys)  # amenities stay out of features
         for item in s.get("amenities", {}).values():
             assert item["status"] == "yes" and item["checked"] and item["sources"]
             assert all(x["url"].startswith("https://") and x["title"] for x in item["sources"])
