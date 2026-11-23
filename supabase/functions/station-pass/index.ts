@@ -2,11 +2,15 @@
 // A signed-in visitor asks to join a station's chat. Their live location is checked against the
 // station with the same rules as video reports (_shared/rules.ts gateLocation); if they're there,
 // they get a short pass (chat_passes) that the chat functions and the live rooms check. The page
-// asks again every few minutes, so leaving the station ends the pass. Only the station and the
-// distance are kept, never the location itself.
+// asks again every few minutes, so leaving the station ends the pass (it's deleted here at once).
+// Only the station and the distance are kept, never the location itself. An account can join
+// at most MAX_STATIONS_A_DAY different stations a day, so one faked location can't roam India.
 import { gateLocation, nearestStation } from "../_shared/rules.ts";
 import { type ChatSettings, parsePassInput, tooFast } from "../_shared/chat.ts";
 import { adminClient, currentUser, loadLimits, loadStations, preflight, reply } from "../_shared/server.ts";
+
+const MAX_STATIONS_A_DAY = 10;
+const istDay = (d: Date) => new Date(d.getTime() + 5.5 * 3600_000).toISOString().slice(0, 10);
 
 Deno.serve(async (req) => {
   const early = preflight(req);
@@ -45,6 +49,8 @@ Deno.serve(async (req) => {
       const other = nearestStation(stations, input.lat, input.lon, input.station_id);
       const near = other && other.distance_m <= (limits.radius_overrides_m[other.id] ?? limits.radius_m) + input.accuracy_m
         ? { id: other.id, name: other.station.name, code: other.station.code } : null;
+      // they've left (or were never there): end any pass for this station now, not in 20 minutes
+      await admin.from("chat_passes").delete().eq("user_id", user.id).eq("station_id", input.station_id);
       return reply(req, { error: loc.reason, nearest: near }, 403);
     }
 
@@ -55,6 +61,16 @@ Deno.serve(async (req) => {
       tooFast({ lat: before.lat, lon: before.lon }, { lat: station.lat, lon: station.lon }, new Date(last!.updated_at), now)) {
       console.error("station-pass too fast", last!.station_id, "->", input.station_id);
       return reply(req, { error: "Your location changed faster than a train can travel. Please try again in a few minutes." }, 429);
+    }
+
+    const day = istDay(now);
+    const { data: today } = await admin.from("chat_pass_log").select("station_id").eq("user_id", user.id).eq("day", day);
+    const seen = new Set((today ?? []).map((r) => r.station_id as string));
+    if (!seen.has(input.station_id) && seen.size >= MAX_STATIONS_A_DAY) {
+      return reply(req, { error: "You've joined chats at a lot of stations today. Please try again tomorrow." }, 429);
+    }
+    if (!seen.has(input.station_id)) {
+      await admin.from("chat_pass_log").upsert({ user_id: user.id, station_id: input.station_id, day }, { ignoreDuplicates: true });
     }
 
     const expires = new Date(now.getTime() + chat.pass_minutes * 60_000).toISOString();

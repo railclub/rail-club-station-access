@@ -671,6 +671,7 @@ a.btn { text-decoration: none; }
 .chat-msg p { margin: 2px 0 0; overflow-wrap: anywhere; white-space: pre-wrap; }
 .chat-meta { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); }
 .chat-meta b { color: var(--ink); }
+.chat-tag { font-size: .72rem; opacity: .7; }
 .chat-more { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 0 2px; }
 .chat-menu { display: grid; gap: 4px; margin-top: 6px; }
 .chat-menu button { font: inherit; font-size: .82rem; text-align: left; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }

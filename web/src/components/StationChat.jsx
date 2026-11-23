@@ -61,8 +61,8 @@ export default function StationChat({ station }) {
   const [room, setRoom] = useState("open");
   const [rooms, setRooms] = useState([]); // friends' rooms: { room, code, expires_at }
 
-  // a different station page: start again
-  useEffect(() => { setPhase("idle"); setPass(null); setRoom("open"); setRooms([]); setError(null); }, [station.id]);
+  // a different station page, or signed out: start again
+  useEffect(() => { setPhase("idle"); setPass(null); setRoom("open"); setRooms([]); setError(null); }, [station.id, user?.id]);
 
   const join = async () => {
     if (!store.get(RULES_KEY, false)) return setPhase("rules");
@@ -112,7 +112,7 @@ export default function StationChat({ station }) {
       <h2 id="chat-title">💬 Station chat <span className="chat-new">New</span></h2>
       {phase === "idle" && (
         <>
-          <p className="group-lede">Talk live with people at {station.name} right now: is the train late, which platform, has anyone found a lost bag? Only people at the station can join, and messages vanish after 2 hours.</p>
+          <p className="group-lede">Talk live with people at {station.name} right now: is the train late, which platform, has anyone found a lost bag? Chat checks your phone's location to keep each room to people at the station, and messages vanish after 2 hours.</p>
           {!ready ? null : user
             ? <button type="button" className="btn" onClick={join}>Join {station.name} chat</button>
             : <button type="button" className="btn" onClick={signIn}>Sign in with Google to join</button>}
@@ -144,6 +144,7 @@ function Rules({ onOk, onCancel }) {
         <li>Be kind. Abuse, harassment and scams get people banned.</li>
         <li>Never share phone numbers, links or personal details with strangers. Chat won't send them.</li>
         <li>You appear only by a nickname. Messages vanish after 2 hours.</li>
+        <li>Phone locations can be faked. Don't trust someone just because they say they're here, never hand over money or tickets, and don't go off to meet a stranger.</li>
         <li>We check your location only to let you in. We keep which station you joined, never where you are.</li>
         <li>Emergency? Call <a href="tel:139">139</a> (Rail Madad), or tell the RPF on the platform.</li>
       </ul>
@@ -164,34 +165,52 @@ function Room({ station, pass, setPass, room, setRoom, rooms, setRooms, onLeave 
   const list = useRef(null);
   const topic = `chat:${station.id}:${room}`;
 
-  // Load the last messages, then listen on the room's private channel over the WebSocket.
+  // Load the last messages, then listen on the room's private channel over the WebSocket. If the
+  // live connection isn't up (weak signal, or Realtime unavailable), fetch new messages every
+  // 5 seconds instead; even when it is, fetch every 30 seconds in case something was missed.
+  const liveRef = useRef(false);
   useEffect(() => {
-    let channel = null, stopped = false;
+    let channel = null, stopped = false, poll = null, ticks = 0;
     setMessages([]);
     setLive(false);
+    liveRef.current = false;
     (async () => {
       const c = await (await supa()).client();
       const load = async () => {
         const { data, error } = await c.rpc("chat_recent", { p_station: station.id, p_room: room });
+        if (stopped) return;
         if (error) return setNote(rpcError(error));
-        if (!stopped) {
-          for (const m of data) if (m.mine) mineIds.add(m.id);
-          setMessages(data);
-        }
+        for (const m of data) if (m.mine) mineIds.add(m.id);
+        setMessages(data);
       };
+      await load();
+      poll = setInterval(() => { ticks++; if (!liveRef.current || ticks % 6 === 0) load(); }, 5000);
+      // A channel for this room may still be closing (quick room switches, React StrictMode):
+      // the client would hand it back and the new subscription would never start.
+      const old = c.getChannels().find((ch) => ch.topic === `realtime:${topic}`);
+      if (old) await c.removeChannel(old);
+      if (stopped) return;
       const { data: { session } } = await c.auth.getSession();
       if (session) c.realtime.setAuth(session.access_token);
       channel = c.channel(topic, { config: { private: true } })
-        .on("broadcast", { event: "message" }, ({ payload }) =>
-          setMessages((ms) => (ms.some((m) => m.id === payload.id) ? ms : [...ms, payload].slice(-200))))
-        .on("broadcast", { event: "delete" }, ({ payload }) => setMessages((ms) => ms.filter((m) => m.id !== payload.id)))
+        .on("broadcast", { event: "message" }, ({ payload }) => {
+          if (!stopped) setMessages((ms) => (ms.some((m) => m.id === payload.id) ? ms : [...ms, payload].slice(-200)));
+        })
+        .on("broadcast", { event: "delete" }, ({ payload }) => {
+          if (!stopped) setMessages((ms) => ms.filter((m) => m.id !== payload.id));
+        })
         .subscribe((status) => {
           if (stopped) return;
-          setLive(status === "SUBSCRIBED");
-          if (status === "SUBSCRIBED") load(); // also after a reconnect, to catch up
+          liveRef.current = status === "SUBSCRIBED";
+          setLive(liveRef.current);
+          if (liveRef.current) load(); // also after a reconnect, to catch up
         });
     })();
-    return () => { stopped = true; if (channel) supa().then((m) => m.client()).then((c) => c.removeChannel(channel)); };
+    return () => {
+      stopped = true;
+      clearInterval(poll);
+      if (channel) supa().then((m) => m.client()).then((c) => c.removeChannel(channel));
+    };
   }, [topic]);
 
   // keep the newest message in view, unless they've scrolled up to read
@@ -242,6 +261,7 @@ function Room({ station, pass, setPass, room, setRoom, rooms, setRooms, onLeave 
   const joinRoom = async (code) => {
     try {
       const [r] = await call("chat_join_room", { p_station: station.id, p_code: code });
+      if (!r) return setNote(`No room with that code here. Check the code, and that you're both at ${station.name}.`);
       setRooms((rs) => (rs.some((x) => x.room === r.room) ? rs : [...rs, r]));
       setRoom(r.room);
       setNote("");
@@ -257,7 +277,7 @@ function Room({ station, pass, setPass, room, setRoom, rooms, setRooms, onLeave 
   return (
     <div className="chat-room">
       <div className="chat-bar">
-        <span className={`chat-live ${live ? "on" : ""}`}>{live ? "Live" : "Connecting…"}</span>
+        <span className={`chat-live ${live ? "on" : ""}`} title={live ? "Messages arrive instantly" : "Checking for new messages every few seconds"}>{live ? "Live" : "Updating"}</span>
         <Nick name={pass.nickname} onSave={rename} />
         <button type="button" className="link" onClick={onLeave}>Leave</button>
       </div>
@@ -289,7 +309,7 @@ function Message({ m, mine, onReport, onBlock }) {
   const [menu, setMenu] = useState(false);
   return (
     <li className={`chat-msg${mine ? " mine" : ""}`}>
-      <div className="chat-meta"><b>{mine ? "You" : m.nickname}</b> <time>{clock(m.created_at)}</time>
+      <div className="chat-meta"><b>{mine ? "You" : m.nickname}</b>{!mine && m.author && <span className="chat-tag" title="Changes each day and at each station">#{m.author.slice(0, 4)}</span>} <time>{clock(m.created_at)}</time>
         {!mine && <button type="button" className="chat-more" aria-expanded={menu} aria-label={`Report or block ${m.nickname}`} onClick={() => setMenu(!menu)}>⋯</button>}
       </div>
       <p>{m.body}</p>
