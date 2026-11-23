@@ -29,6 +29,62 @@ async function main() {
   $("who").innerHTML = `Signed in as ${esc(data.session.user.email)} · <button type="button" class="link" id="out">Sign out</button>`;
   $("out").onclick = async () => { await sb.auth.signOut(); location.reload(); };
   await load();
+  await loadChat();
+}
+
+// ---------- station chat: usage, switches and reported messages ----------
+// Everything goes through chat_admin_* database functions, which check the account is an admin.
+
+async function rpc(fn, args = {}) {
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function loadChat() {
+  let o;
+  try {
+    o = await rpc("chat_admin_overview");
+  } catch {
+    return; // not an admin, or chat not set up: leave the section hidden
+  }
+  $("chat-admin").hidden = false;
+  const s = o.settings, closed = s.closed_stations || [];
+  const busiest = (o.busiest || []).map((b) => `${esc(b.station_id)} (${b.people})`).join(", ") || "nobody right now";
+  $("chat-panel").innerHTML = `
+    <p class="chat-admin-stats"><b>${o.in_chat_now}</b> people in chat now, at <b>${o.stations_now}</b> station${o.stations_now === 1 ? "" : "s"} · <b>${o.messages_24h}</b> messages in the last 24 hours<br>
+      <span class="hint">Busiest: ${busiest}. The free Supabase plan allows 200 people connected at once across the site.</span></p>
+    <div class="actions">
+      <button type="button" class="btn ${s.enabled ? "danger" : ""}" id="chat-toggle">${s.enabled ? "Switch chat off everywhere" : "Switch chat back on"}</button>
+      <input type="text" id="chat-station" placeholder="Station id, e.g. santa-cruz" aria-label="Station id to close or reopen">
+      <button type="button" class="btn ghost" id="chat-close">Close this station</button>
+      <button type="button" class="btn ghost" id="chat-open">Reopen</button>
+    </div>
+    <p class="hint">${s.enabled ? "Chat is on." : "<strong>Chat is OFF everywhere.</strong>"} Closed stations: ${closed.length ? closed.map(esc).join(", ") : "none"}.</p>
+    <h2>Reported messages</h2>
+    ${o.reports.length ? o.reports.map((r) => `<article class="card">
+      <p><b>${esc(r.nickname)}</b> at ${esc(r.station_id)}, ${esc(new Date(r.created_at).toLocaleString("en-IN"))}${r.banned ? " · <strong>already banned</strong>" : ""}</p>
+      <blockquote>${esc(r.body)}</blockquote>
+      <p class="hint">Reported for: ${esc(r.reason)} · this person has ${r.author_reports} report${r.author_reports === 1 ? "" : "s"} in all</p>
+      <div class="actions">
+        <button type="button" class="btn ghost" data-r="${r.id}" data-a="dismiss">Keep it</button>
+        <button type="button" class="btn" data-r="${r.id}" data-a="delete">Delete message</button>
+        <button type="button" class="btn danger" data-r="${r.id}" data-a="ban">Delete and ban</button>
+      </div></article>`).join("") : "<p>No reports. 🎉</p>"}`;
+  const act = async (fn, args, confirmText) => {
+    if (confirmText && !confirm(confirmText)) return;
+    try { await rpc(fn, args); } catch (e) { alert(e.message); }
+    await loadChat();
+  };
+  $("chat-toggle").onclick = () => act("chat_admin_switch", { p_enabled: !s.enabled },
+    s.enabled ? "Switch station chat off for everyone, everywhere?" : null);
+  const station = () => $("chat-station").value.trim().toLowerCase();
+  $("chat-close").onclick = () => station() && act("chat_admin_switch", { p_enabled: null, p_station: station(), p_closed: true });
+  $("chat-open").onclick = () => station() && act("chat_admin_switch", { p_enabled: null, p_station: station(), p_closed: false });
+  for (const b of $("chat-panel").querySelectorAll("button[data-r]")) {
+    b.onclick = () => act("chat_admin_act", { p_report: Number(b.dataset.r), p_action: b.dataset.a },
+      b.dataset.a === "ban" ? "Ban this person from chat and video reports, and delete all their messages?" : null);
+  }
 }
 
 async function load() {

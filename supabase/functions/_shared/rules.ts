@@ -158,7 +158,7 @@ export function gateLocation(stationId: string, station: Station, lat: number, l
   const radius = (id: string) => limits.radius_overrides_m[id] ?? limits.radius_m;
   const other = nearestStation(all, lat, lon, stationId);
   const elsewhere = other && other.distance_m - slack <= radius(other.id) && other.station.name !== station.name
-    ? ` It looks like you're at ${other.station.name}${other.station.code ? ` (${other.station.code})` : ""}: open that station's page to send your video there.`
+    ? ` It looks like you're at ${other.station.name}${other.station.code ? ` (${other.station.code})` : ""}: open that station's page instead.`
     : "";
 
   if (!hasCoords) {

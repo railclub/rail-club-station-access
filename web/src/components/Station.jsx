@@ -3,6 +3,7 @@ import { m } from "motion/react";
 import { BANNER, creditLine } from "../photos.js";
 import { pushRecent, useAuth } from "../auth.js";
 import { AMENITY_TITLE, GROUPS, Legend, STATUS, slug } from "../facilities.jsx";
+import StationChat from "./StationChat.jsx";
 
 const REPO = "https://github.com/railclub/rail-club-station-access";
 // Phone numbers in notes become tap-to-call links.
@@ -129,6 +130,7 @@ export default function Station({ data, id }) {
         </section>
       )}
       <div id="visitor-slot" />
+      <StationChat station={st} />
       <a className="report" href={issue} target="_blank" rel="noopener">Something wrong or missing? Tell us</a>
       {st.basic ? (
         <p className="src">Station name, code and location: <a href="https://github.com/datameet/railways" target="_blank" rel="noopener">datameet/railways</a> open data (CC0), gathered in 2016.</p>
