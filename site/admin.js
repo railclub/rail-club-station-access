@@ -65,9 +65,9 @@ async function loadChat() {
     ${o.reports.length ? o.reports.map((r) => `<article class="card">
       <p><b>${esc(r.nickname)}</b> at ${esc(r.station_id)}, ${esc(new Date(r.created_at).toLocaleString("en-IN"))}${r.banned ? " · <strong>already banned</strong>" : ""}</p>
       <blockquote>${esc(r.body)}</blockquote>
-      <p class="hint">Reported for: ${esc(r.reason)} · this person has ${r.author_reports} report${r.author_reports === 1 ? "" : "s"} in all</p>
+      <p class="hint">Reported for: ${esc(r.reason)} · ${r.reports_on_message} report${r.reports_on_message === 1 ? "" : "s"} on this message · this person has ${r.author_reports} in all · ${r.hidden ? "<strong>hidden from the room now</strong>" : "still showing in the room"}</p>
       <div class="actions">
-        <button type="button" class="btn ghost" data-r="${r.id}" data-a="dismiss">Keep it</button>
+        <button type="button" class="btn ghost" data-r="${r.id}" data-a="dismiss">${r.hidden ? "Keep it (show it again)" : "Keep it"}</button>
         <button type="button" class="btn" data-r="${r.id}" data-a="delete">Delete message</button>
         <button type="button" class="btn danger" data-r="${r.id}" data-a="ban">Delete and ban</button>
       </div></article>`).join("") : "<p>No reports. 🎉</p>"}`;

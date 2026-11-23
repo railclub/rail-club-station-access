@@ -167,7 +167,7 @@ function Room({ station, pass, setPass, room, setRoom, rooms, setRooms, onLeave 
 
   // Load the last messages, then listen on the room's private channel over the WebSocket. If the
   // live connection isn't up (weak signal, or Realtime unavailable), fetch new messages every
-  // 5 seconds instead; even when it is, fetch every 30 seconds in case something was missed.
+  // 5 seconds instead; even when it is, fetch every 10 seconds in case something was missed.
   const liveRef = useRef(false);
   useEffect(() => {
     let channel = null, stopped = false, poll = null, ticks = 0;
@@ -184,7 +184,10 @@ function Room({ station, pass, setPass, room, setRoom, rooms, setRooms, onLeave 
         setMessages(data);
       };
       await load();
-      poll = setInterval(() => { ticks++; if (!liveRef.current || ticks % 6 === 0) load(); }, 5000);
+      if (stopped) return; // left during the first fetch: don't start a timer nobody will clear
+      // every 5 s without a live connection; every 10 s with one, in case it says it's connected
+      // but messages don't come through
+      poll = setInterval(() => { ticks++; if (!liveRef.current || ticks % 2 === 0) load(); }, 5000);
       // A channel for this room may still be closing (quick room switches, React StrictMode):
       // the client would hand it back and the new subscription would never start.
       const old = c.getChannels().find((ch) => ch.topic === `realtime:${topic}`);
