@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { AnimatePresence, LazyMotion, MotionConfig, m } from "motion/react";
 import { useRoute, useStations } from "./hooks.js";
 import Header from "./components/Header.jsx";
-import Hero from "./components/Hero.jsx";
-import Highlights from "./components/Highlights.jsx";
 import Home from "./components/Home.jsx";
 import Station from "./components/Station.jsx";
 import Footer from "./components/Footer.jsx";
@@ -33,7 +31,13 @@ export default function App() {
       if ((e.key === "/" && !typing) || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         if (route.page !== "home") location.hash = "#/";
-        setTimeout(() => { const q = document.getElementById("q"); q?.focus(); q?.scrollIntoView({ block: "center", behavior: "smooth" }); }, 60);
+        // Coming from another page, the search box appears only once the page change has finished, so keep trying briefly.
+        let tries = 0;
+        const go = () => {
+          const q = document.getElementById("q");
+          if (q) { q.focus(); q.scrollIntoView({ block: "center", behavior: "smooth" }); } else if (++tries < 20) setTimeout(go, 50);
+        };
+        setTimeout(go, 60);
       }
     };
     addEventListener("keydown", onKey);
@@ -41,7 +45,11 @@ export default function App() {
   }, [route.page]);
 
   useEffect(() => { startAuth(); }, []);
-  useEffect(() => { if (route.page === "home") document.title = "Rail Club · Station Access Guide"; }, [route.page]);
+  useEffect(() => {
+    if (route.page === "home") document.title = "Rail Club · Station Access Guide";
+    // The home page is dark and full height; the header floats over its photos and the footer turns dark to match.
+    document.documentElement.classList.toggle("on-home", route.page === "home");
+  }, [route.page]);
 
   return (
     <LazyMotion features={loadFeatures} strict>
@@ -69,8 +77,6 @@ export default function App() {
               <m.section key="contribute" className="view" {...page}><Contribute /></m.section>
             ) : (
               <m.section key="home" className="view" {...page}>
-                <Hero stations={data?.stations} />
-                <Highlights />
                 <Home data={data} />
               </m.section>
             )}

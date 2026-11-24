@@ -3,7 +3,8 @@ import { AnimatePresence, m } from "motion/react";
 import { countYes, search } from "../util.js";
 
 // Accessible combobox: type, arrow keys to move, Enter to open, Escape to clear.
-export default function Search({ stations }) {
+// "glass" is the home page version: see-through over the hero photos, with a Search button.
+export default function Search({ stations, glass = false }) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const results = useMemo(() => (stations ? search(stations, query) : []), [stations, query]);
@@ -22,15 +23,18 @@ export default function Search({ stations }) {
     : "No station found. Try the station code, or another spelling.";
 
   return (
-    <div className="search-card">
+    <div className={glass ? "search-card glass" : "search-card"}>
       <div className="search" role="search">
-        <label htmlFor="q" className="search-label">Find a station <span className="hi" lang="hi">स्टेशन खोजें</span></label>
+        <label htmlFor="q" className={glass ? "visually-hidden" : "search-label"}>Find a station <span className="hi" lang="hi">स्टेशन खोजें</span></label>
         <div className="search-box">
           <svg className="search-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5 21 21" /></svg>
-          <input id="q" type="search" autoComplete="off" spellCheck="false" placeholder="Name or code, e.g. Howrah, HWH"
+          <input id="q" type="search" autoComplete="off" spellCheck="false" placeholder={glass ? "Name or code, e.g. STC" : "Name or code, e.g. Howrah, HWH"}
             role="combobox" aria-expanded={results.length > 0} aria-controls="results" aria-autocomplete="list"
             aria-activedescendant={results.length ? `opt-${active}` : undefined}
             value={query} onChange={(e) => { setQuery(e.target.value); setActive(0); }} onKeyDown={onKey} />
+          {glass && (
+            <button type="button" className="search-go" onClick={() => (results.length ? open(results[active]) : document.getElementById("q")?.focus())}>Search</button>
+          )}
         </div>
         <ul id="results" role="listbox" aria-label="Matching stations">
           <AnimatePresence initial={false}>

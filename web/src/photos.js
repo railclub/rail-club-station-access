@@ -1,5 +1,5 @@
 // Every photo on the site: real, openly licensed pictures from Wikimedia Commons.
-// The footer lists these credits; each hero photo also shows its own.
+// The footer's "Photo credits" lists every one of them; the photos themselves carry no caption.
 export const PHOTOS = {
   sleeperFront: {
     src: "img/sleeper-front.jpg",
@@ -34,13 +34,112 @@ export const PHOTOS = {
     page: "https://commons.wikimedia.org/wiki/File:Dhoodh_Sagar_falls.jpg",
     pos: "45% 60%",
   },
+  pamban: {
+    src: "img/pamban.jpg",
+    w: 1280,
+    small: "img/pamban-960.jpg",
+    title: "A train crossing the Pamban bridge to Rameswaram",
+    author: "Shaswat Nimesh",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Pamban_Bridge_Train_Passing.jpg",
+    pos: "50% 55%",
+  },
+  chenab: {
+    src: "img/chenab.jpg",
+    w: 1280,
+    small: "img/chenab-960.jpg",
+    title: "Chenab rail bridge, Reasi district, Jammu and Kashmir",
+    author: "Konkan Railway Corporation Limited",
+    license: "GODL-India",
+    licenseUrl: "https://www.data.gov.in/Godl",
+    page: "https://commons.wikimedia.org/wiki/File:Chenab_Rail_Bridge,_Reasi_district,_Jammu_and_Kashmir,_India.jpg",
+    pos: "50% 50%",
+  },
+  dudhsagarTall: {
+    src: "img/dudhsagar-tall.jpg",
+    w: 1080,
+    small: "img/dudhsagar-tall-720.jpg",
+    sw: 720,
+    title: "Dudhsagar Falls, Goa",
+    author: "Hsp wiki",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Doodhsagar_Fall.jpg",
+    pos: "50% 40%",
+  },
+  mumbaiLocal: {
+    src: "img/mumbai-local.jpg",
+    w: 1280,
+    small: "img/mumbai-local-960.jpg",
+    title: "Western Railway Medha EMU, a Mumbai local train",
+    author: "Anonymousboii",
+    license: "CC BY-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Western-Railway-Medha-EMU.jpg",
+    pos: "50% 50%",
+  },
+  csmt: {
+    src: "img/csmt.jpg",
+    w: 1280,
+    small: "img/csmt-960.jpg",
+    title: "Chhatrapati Shivaji Terminus, Mumbai",
+    author: "Sailko",
+    license: "CC BY 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/3.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Chhatrapati_shivaji_terminus,_esterno_01.jpg",
+    pos: "50% 50%",
+  },
+  matheran: {
+    src: "img/matheran.jpg",
+    w: 1280,
+    small: "img/matheran-960.jpg",
+    title: "The toy train to Matheran",
+    author: "Nilesh.shintre",
+    license: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Train_to_Matheran.JPG",
+    pos: "50% 50%",
+  },
+  nilgiri: {
+    src: "img/nilgiri.jpg",
+    w: 1280,
+    small: "img/nilgiri-960.jpg",
+    title: "Nilgiri Mountain Railway train at Ketti",
+    author: "A.M.Hurrell",
+    license: "CC BY 2.5",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.5/",
+    page: "https://commons.wikimedia.org/wiki/File:NMR_train_at_Ketti_05-02-26_75.jpeg",
+    pos: "50% 50%",
+  },
+  godavari: {
+    src: "img/godavari.jpg",
+    w: 1280,
+    small: "img/godavari-960.jpg",
+    title: "Godavari arch bridge, Rajahmundry",
+    author: "Tatiraju.rishabh",
+    license: "CC BY-SA 3.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
+    page: "https://commons.wikimedia.org/wiki/File:Archbridgegodavari.JPG",
+    pos: "50% 50%",
+  },
 };
 
-// Hero slideshow, in order.
-export const SLIDES = [PHOTOS.sleeperFront, PHOTOS.dudhsagar, PHOTOS.sleeperYard];
+// Home page hero, in order (a slow crossfade).
+export const SLIDES = [PHOTOS.pamban, PHOTOS.chenab, PHOTOS.dudhsagar, PHOTOS.mumbaiLocal];
 // Photo behind every station board.
 export const BANNER = PHOTOS.sleeperYard;
-// "What Rail Club does" cards.
-export const CARDS = { station: PHOTOS.sleeperYard, journey: PHOTOS.dudhsagar, travellers: PHOTOS.sleeperFront };
+// "India's most beautiful lines" on the home page.
+export const GALLERY = [
+  { p: PHOTOS.dudhsagarTall, name: "Dudhsagar, Goa", cls: "tall" },
+  { p: PHOTOS.pamban, name: "Pamban Bridge, Rameswaram", cls: "wide" },
+  { p: PHOTOS.nilgiri, name: "Nilgiri mountain line" },
+  { p: PHOTOS.matheran, name: "Matheran" },
+  { p: PHOTOS.godavari, name: "Godavari bridge" },
+  { p: PHOTOS.chenab, name: "Chenab, Kashmir", cls: "wide" },
+];
+
+// srcset for a photo: the small copy and the full one.
+export const srcSet = (p) => `${p.small} ${p.sw || 960}w, ${p.src} ${p.w}w`;
 
 export const creditLine = (p) => `${p.title} · Photo: ${p.author}, ${p.license}`;
