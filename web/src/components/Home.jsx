@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { m } from "motion/react";
-import { REDUCED } from "../util.js";
-import { BANNER, GALLERY, PHOTOS, srcSet } from "../photos.js";
+import { BANNER, LINES, PHOTOS, srcSet } from "../photos.js";
 import { useCountUp } from "../hooks.js";
 import Hero from "./Hero.jsx";
 import { getRecent, profile, signIn, useAuth, useMyReports } from "../auth.js";
@@ -83,138 +81,132 @@ const TIMELINE = [
   ["≈09:55", "green", "Lohagad Fort", "RIGHT"],
 ];
 
-const CHAT = [
-  ["Priya #a1b2", "gold", "Is the 8:15 fast to Churchgate running late?"],
-  ["Ravi #c9d0", "blue", "About 10 min, it just left Vile Parle"],
-  [null, "me", "Thanks! Which platform for slow trains?"],
-  ["Anil #77f2", "green", "PF 2, near the lift at the north end"],
+// How station chat works, as shown under the hero (checked against StationChat.jsx and the chat migrations).
+const STEPS = [
+  ["Be at the station", "Open the station's page, or tap “Find my station's chat”. Sign in with Google."],
+  ["Let your phone check", "Your location is checked against the station once, then every few minutes. It's never shown or kept."],
+  ["Say hello", "You chat under a nickname you can change. Ask, answer, or open a private room for your group."],
+];
+const SAFE = [
+  "Links and phone numbers are blocked",
+  "Messages vanish after 2 hours",
+  "Report or block anyone from any message",
 ];
 
 function Num({ value, children }) {
   const [ref, v] = useCountUp(value);
-  return <div className="ha-num" ref={ref}><b>{v.toLocaleString("en-IN")}</b><span>{children}</span></div>;
+  return <div className="hb-num" ref={ref}><b>{v.toLocaleString("en-IN")}</b><span>{children}</span></div>;
 }
 
 export default function Home({ data }) {
   const { user } = useAuth();
   const all = data?.stations || [];
   const full = all.filter((s) => !s.basic);
-  const [paused, setPaused] = useState(REDUCED);
+  const toSearch = (e) => { e.preventDefault(); const q = document.getElementById("q"); q?.scrollIntoView({ block: "center", behavior: "smooth" }); q?.focus({ preventScroll: true }); };
 
   return (
-    <div className={paused ? "ha paused" : "ha"}>
-      <Hero stations={data?.stations} paused={paused} setPaused={setPaused} />
+    <div className="hb">
+      <Hero stations={data?.stations} />
 
-      {user && data && <div className="ha-foryou"><div className="ha-in"><ForYou user={user} stations={full} /></div></div>}
+      {user && data && <div className="hb-foryou"><div className="hb-in"><ForYou user={user} stations={full} /></div></div>}
 
-      <section id="guide" className="ha-sec" aria-labelledby="guide-title">
-        <div className="ha-in ha-two">
-          <m.div className="ha-tile ha-tall" {...inView()}>
-            <img className="ha-kb" src={BANNER.src} srcSet={srcSet(BANNER)} sizes="(max-width: 900px) 100vw, 50vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: BANNER.pos }} />
-          </m.div>
-          <div className="ha-col">
-            <m.p className="ha-eyebrow" {...inView()}>Station guide</m.p>
-            <m.h2 id="guide-title" className="ha-h2" {...inView(0.05)}>Know the station before you step onto it.</m.h2>
-            <m.p className="ha-lede" {...inView(0.1)}>Mostly from the railways' own lists: which stations have lifts, ramps, wheelchairs and accessible toilets, plus paid lounges and cloak rooms where a railway page, news report or map shows one.</m.p>
-            <div className="ha-facs">
+      <section className="hb-sec hb-how" aria-labelledby="how-title">
+        <div className="hb-in hb-two">
+          <div>
+            <m.p className="hb-kicker" {...inView()}>Station chat</m.p>
+            <m.h2 id="how-title" className="hb-h2" {...inView(0.05)}>Only people at the station can join.</m.h2>
+            <ol className="hb-steps">
+              {STEPS.map(([t, d], n) => (
+                <m.li key={t} {...inView(0.08 * n)}><span className="hb-step-n">{n + 1}</span><div><b>{t}</b><p>{d}</p></div></m.li>
+              ))}
+            </ol>
+            <ul className="hb-safe">{SAFE.map((t) => <li key={t}>{t}</li>)}</ul>
+          </div>
+          <m.figure className="hb-photo hb-photo-tall" {...inView(0.1)}>
+            <img src={PHOTOS.mumbaiLocal.small} srcSet={srcSet(PHOTOS.mumbaiLocal)} sizes="(max-width: 900px) 100vw, 45vw" alt="" loading="lazy" decoding="async" />
+            <figcaption>Somebody on your platform probably knows the answer.</figcaption>
+          </m.figure>
+        </div>
+      </section>
+
+      <section id="guide" className="hb-sec hb-guide" aria-labelledby="guide-title">
+        <div className="hb-in hb-two">
+          <div className="hb-collage">
+            <m.img className="hb-c1" src={BANNER.small} srcSet={srcSet(BANNER)} sizes="(max-width: 900px) 90vw, 40vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: BANNER.pos }} {...inView()} />
+            <m.img className="hb-c2" src={PHOTOS.csmt.small} srcSet={srcSet(PHOTOS.csmt)} sizes="(max-width: 900px) 60vw, 26vw" alt="" loading="lazy" decoding="async" {...inView(0.12)} />
+            {data && <m.p className="hb-chip" {...inView(0.2)}><b>{full.length.toLocaleString("en-IN")}</b> stations with full facility lists</m.p>}
+          </div>
+          <div>
+            <m.p className="hb-kicker" {...inView()}>Station guide</m.p>
+            <m.h2 id="guide-title" className="hb-h2" {...inView(0.05)}>Know the station before you step onto it.</m.h2>
+            <m.p className="hb-lede" {...inView(0.1)}>Mostly from the railways' own lists: which stations have lifts, ramps, wheelchairs and accessible toilets, plus paid lounges and cloak rooms where a railway page, news report or map shows one.</m.p>
+            <div className="hb-facs">
               {FACS.map(([key, icon, label, sub], n) => (
-                <m.a key={key} className="ha-fac" href={`#/facilities/${key}`} {...inView(0.04 * n)}>
-                  <span className="ha-fic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{ICON[icon]}</svg></span>
-                  <span><b>{label}</b><small>{sub}</small></span>
+                <m.a key={key} className="hb-fac" href={`#/facilities/${key}`} {...inView(0.04 * n)}>
+                  <span className="hb-fic"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">{ICON[icon]}</svg></span>
+                  <b>{label}</b><small>{sub}</small>
                 </m.a>
               ))}
             </div>
-            {data && (
-              <p className="ha-count"><b>{full.length.toLocaleString("en-IN")}</b> stations with full facility lists · <b>{all.length.toLocaleString("en-IN")}</b> to search</p>
-            )}
           </div>
         </div>
       </section>
 
-      <section id="journey" className="ha-sec ha-photo" aria-labelledby="journey-title">
-        <img className="ha-bg ha-kb" src={PHOTOS.dudhsagarTall.src} srcSet={srcSet(PHOTOS.dudhsagarTall)} sizes="100vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: PHOTOS.dudhsagarTall.pos }} />
-        <div className="ha-shade-left" aria-hidden="true" />
-        <div className="ha-in ha-two">
-          <div>
-            <m.p className="ha-eyebrow" {...inView()}>Journey Partner</m.p>
-            <m.h2 id="journey-title" className="ha-h2" {...inView(0.05)}>Know which window to look out of.</m.h2>
-            <m.p className="ha-lede" {...inView(0.1)}>Pick your train and where you get on and off. We follow the line and tell you when each waterfall, fort, river and tunnel comes, and on which side.</m.p>
-            <m.a className="ha-btn" href="#/journeys" {...inView(0.15)}>Plan my journey</m.a>
-          </div>
-          <m.a className="ha-card ha-tl" href="#/journeys/11007/CSMT/PUNE" {...inView(0.1)}>
-            <p className="ha-tl-head">Example · 11007 Deccan Express · Mumbai CSMT → Pune</p>
-            <p className="ha-tl-big">Sit on the <span>RIGHT</span></p>
-            <ol>
-              {TIMELINE.map(([t, dot, name, side]) => (
-                <li key={name}>
-                  <time>{t}</time><i className={`ha-dot ${dot}`} />
-                  <span><b>{name}</b>{side && (/^(LEFT|RIGHT)$/.test(side) ? <em className="ha-side">{side}</em> : <small> {side}</small>)}</span>
-                </li>
-              ))}
-            </ol>
-            <span className="ha-tl-go">See every sight on this line <span aria-hidden="true">→</span></span>
-          </m.a>
-        </div>
-      </section>
-
-      <section id="chat" className="ha-sec ha-alt" aria-labelledby="chat-title">
-        <div className="ha-in ha-two">
-          <m.div className="ha-chat" {...inView()}>
-            <img src={PHOTOS.mumbaiLocal.small} alt="" loading="lazy" decoding="async" />
-            <div className="ha-chat-in" aria-label="An example conversation" role="img">
-              <p className="ha-live"><i className="ha-pulse" />Example: live at Santa Cruz</p>
-              {CHAT.map(([who, tone, text], n) => (
-                <m.p key={n} className={`ha-bub ${tone}`} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -15% 0px" }} transition={{ duration: 0.6, delay: 0.3 + 0.6 * n }}>{who && <><b>{who}</b><br /></>}{text}</m.p>
-              ))}
+      <section id="journey" className="hb-sec hb-journey" aria-labelledby="journey-title">
+        <div className="hb-in">
+          <div className="hb-journey-head">
+            <div>
+              <m.p className="hb-kicker" {...inView()}>Journey Partner</m.p>
+              <m.h2 id="journey-title" className="hb-h2" {...inView(0.05)}>Know which window to look out of.</m.h2>
             </div>
-          </m.div>
-          <div>
-            <m.p className="ha-eyebrow" {...inView()}>Station chat</m.p>
-            <m.h2 id="chat-title" className="ha-h2" {...inView(0.05)}>Ask the people on your platform.</m.h2>
-            <m.p className="ha-lede" {...inView(0.1)}>A live room for every station, open only to people who are there. Is the train late? Which platform? Has anyone seen a lost bag?</m.p>
-            <ul className="ha-points">
-              <li>Your phone's location lets you in, and is never shared</li>
-              <li>Nicknames only; links and phone numbers are blocked</li>
-              <li>Messages vanish after 2 hours</li>
-            </ul>
-            <m.a className="ha-btn" href="#/s/santa-cruz" {...inView(0.15)}>Open a station chat</m.a>
+            <m.div {...inView(0.1)}>
+              <p className="hb-lede">Pick your train and where you get on and off. We follow the line and tell you when each waterfall, fort, river and tunnel comes, and on which side.</p>
+              <a className="hb-btn" href="#/journeys">Plan my journey</a>
+            </m.div>
           </div>
-        </div>
-      </section>
-
-      <section className="ha-sec" aria-labelledby="lines-title">
-        <div className="ha-in">
-          <m.p className="ha-eyebrow ha-c" {...inView()}>Journeys worth the window seat</m.p>
-          <m.h2 id="lines-title" className="ha-h2 ha-c" {...inView(0.05)}>India's most beautiful lines</m.h2>
-          <ul className="ha-gallery">
-            {GALLERY.map(({ p, name, cls }, n) => (
-              <m.li key={name} className={`ha-tile${cls ? ` ${cls}` : ""}`} {...inView(0.05 * n)}>
-                <a href="#/journeys">
-                  <img src={p.small} srcSet={srcSet(p)} sizes="(max-width: 900px) 100vw, 40vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: p.pos }} />
-                  <span>{name}</span>
-                </a>
-              </m.li>
+          <div className="hb-jgrid">
+            <m.a className="hb-tl" href="#/journeys/11007/CSMT/PUNE" {...inView()}>
+              <p className="hb-tl-head">Example · 11007 Deccan Express · Mumbai CSMT → Pune</p>
+              <p className="hb-tl-big">Sit on the <span>RIGHT</span></p>
+              <ol>
+                {TIMELINE.map(([t, dot, name, side]) => (
+                  <li key={name}>
+                    <time>{t}</time><i className={`hb-tdot ${dot}`} />
+                    <span><b>{name}</b>{side && (/^(LEFT|RIGHT)$/.test(side) ? <em className="hb-side">{side}</em> : <small> {side}</small>)}</span>
+                  </li>
+                ))}
+              </ol>
+              <span className="hb-tl-go">See every sight on this line <span aria-hidden="true">→</span></span>
+            </m.a>
+            {LINES.map(({ p, name, cls }, n) => (
+              <m.a key={name} className={`hb-line${cls ? ` ${cls}` : ""}`} href="#/journeys" {...inView(0.06 * n)}>
+                <img src={p.small} srcSet={srcSet(p)} sizes="(max-width: 900px) 100vw, 30vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: p.pos }} />
+                <span>{name}</span>
+              </m.a>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      <section className="ha-sec ha-photo ha-end" aria-labelledby="end-title">
-        <img className="ha-bg ha-dim" src={PHOTOS.csmt.small} srcSet={srcSet(PHOTOS.csmt)} sizes="100vw" alt="" loading="lazy" decoding="async" />
-        <div className="ha-in">
-          {data && (
-            <div className="ha-nums">
-              <Num value={all.length}>stations</Num>
-              <div className="ha-num"><b>5,000+</b><span>trains</span></div>
-              <Num value={full.length}>full facility lists</Num>
-              <div className="ha-num"><b>₹0</b><span>always free</span></div>
+      <section className="hb-sec hb-end" aria-labelledby="end-title">
+        <div className="hb-in">
+          <div className="hb-banner">
+            <img src={PHOTOS.sleeperFront.small} srcSet={srcSet(PHOTOS.sleeperFront)} sizes="100vw" alt="" loading="lazy" decoding="async" style={{ objectPosition: PHOTOS.sleeperFront.pos }} />
+            <div className="hb-banner-in">
+              {data && (
+                <div className="hb-nums">
+                  <Num value={all.length}>stations</Num>
+                  <div className="hb-num"><b>5,000+</b><span>trains</span></div>
+                  <Num value={full.length}>full facility lists</Num>
+                  <div className="hb-num"><b>₹0</b><span>always free</span></div>
+                </div>
+              )}
+              <m.h2 id="end-title" className="hb-h2" {...inView()}>Your next journey starts at the station.</m.h2>
+              <div className="hb-btns">
+                <a className="hb-btn" href="#/" onClick={toSearch}>Find my station</a>
+                {!user && <button type="button" className="hb-btn ghost" onClick={() => signIn().catch(() => {})}>Sign in with Google</button>}
+              </div>
             </div>
-          )}
-          <m.h2 id="end-title" className="ha-h2" {...inView()}>Your next journey starts at the station.</m.h2>
-          <div className="ha-btns">
-            <a className="ha-btn" href="#/" onClick={(e) => { e.preventDefault(); const q = document.getElementById("q"); q?.scrollIntoView({ block: "center", behavior: "smooth" }); q?.focus({ preventScroll: true }); }}>Find my station</a>
-            {!user && <button type="button" className="ha-btn ghost" onClick={() => signIn().catch(() => {})}>Sign in with Google</button>}
           </div>
         </div>
       </section>

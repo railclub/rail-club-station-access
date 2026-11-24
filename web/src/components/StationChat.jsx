@@ -22,7 +22,7 @@ const store = {
 const clock = (iso) => new Date(iso).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
 /** The best location the phone can give within `ms` (stops early once it's within 30 m). */
-function locate(ms = 15000) {
+export function locate(ms = 15000) {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) return reject(new Error("This browser can't share your location."));
     let best = null;
@@ -63,6 +63,14 @@ export default function StationChat({ station }) {
 
   // a different station page, or signed out: start again
   useEffect(() => { setPhase("idle"); setPass(null); setRoom("open"); setRooms([]); setError(null); }, [station.id, user?.id]);
+
+  // Arriving from the home page's "Find my station's chat" (#/s/<id>/chat): bring the chat into view.
+  const box = useRef(null);
+  useEffect(() => {
+    if (!location.hash.endsWith("/chat")) return;
+    const t = setTimeout(() => { box.current?.scrollIntoView({ block: "start", behavior: "smooth" }); box.current?.focus({ preventScroll: true }); }, 500);
+    return () => clearTimeout(t);
+  }, [station.id]);
 
   const join = async () => {
     if (!store.get(RULES_KEY, false)) return setPhase("rules");
@@ -108,7 +116,7 @@ export default function StationChat({ station }) {
   }, [phase, pass?.expires_at, station.id]);
 
   return (
-    <section className="group chat" aria-labelledby="chat-title">
+    <section className="group chat" aria-labelledby="chat-title" id="chat" ref={box} tabIndex={-1}>
       <h2 id="chat-title">💬 Station chat <span className="chat-new">New</span></h2>
       {phase === "idle" && (
         <>

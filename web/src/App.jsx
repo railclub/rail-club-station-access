@@ -45,11 +45,7 @@ export default function App() {
   }, [route.page]);
 
   useEffect(() => { startAuth(); }, []);
-  useEffect(() => {
-    if (route.page === "home") document.title = "Rail Club · Station Access Guide";
-    // The home page is dark and full height; the header floats over its photos and the footer turns dark to match.
-    document.documentElement.classList.toggle("on-home", route.page === "home");
-  }, [route.page]);
+  useEffect(() => { if (route.page === "home") document.title = "Rail Club · Station chat, station guide and Journey Partner"; }, [route.page]);
 
   return (
     <LazyMotion features={loadFeatures} strict>

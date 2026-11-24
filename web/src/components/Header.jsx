@@ -63,18 +63,8 @@ function Account() {
 }
 
 export default function Header({ page }) {
-  // On the home page the header floats over the hero photos, and gets a dark glass background once you scroll.
-  const home = page === "home";
-  const [solid, setSolid] = useState(false);
-  useEffect(() => {
-    if (!home) return;
-    const on = () => setSolid(scrollY > 40);
-    on();
-    addEventListener("scroll", on, { passive: true });
-    return () => removeEventListener("scroll", on);
-  }, [home]);
   return (
-    <header className={home ? `top over${solid ? " solid" : ""}` : "top"}>
+    <header className="top">
       <div className="wrap top-in">
         <a className="brand" href="#/" aria-label="Rail Club, home">
           <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">

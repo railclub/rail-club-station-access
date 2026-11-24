@@ -7,7 +7,7 @@ sys.path.insert(0, str(ROOT / "scraper"))
 
 import pytest  # noqa: E402
 
-from build import apply_amenities, backend_stations, build, build_division, load_amenities, load_names, soft  # noqa: E402
+from build import apply_amenities, backend_stations, build, station_points, build_division, load_amenities, load_names, soft  # noqa: E402
 from parse_pdf import parse_rows, split_stations, stations_in_remark  # noqa: E402
 
 # Rows as pdfplumber's extract_tables() returns them for the real layouts.
@@ -284,3 +284,13 @@ def test_real_amenities():
             assert all(x["url"].startswith("https://") and x["title"] for x in item["sources"])
     # a lounge isn't an officially confirmed accessibility feature for visitor reports
     assert "lounge" not in backend_stations(data)["ahmedabad"]["official_yes"]
+
+
+def test_station_points_match_backend_coordinates():
+    back = backend_stations(build())
+    pts = station_points(back)
+    placed = {k for k, v in back.items() if v.get("lat") is not None and v.get("lon") is not None}
+    assert set(pts) == placed and len(pts) > 8000
+    for sid in ("mumbai-central", "pune"):
+        if sid in back:
+            assert pts[sid] == [round(back[sid]["lat"], 5), round(back[sid]["lon"], 5)]

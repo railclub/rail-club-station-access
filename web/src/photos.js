@@ -1,6 +1,17 @@
 // Every photo on the site: real, openly licensed pictures from Wikimedia Commons.
 // The footer's "Photo credits" lists every one of them; the photos themselves carry no caption.
 export const PHOTOS = {
+  lead: {
+    src: "img/batasia-loop.jpg",
+    w: 1600,
+    small: "img/batasia-loop-960.jpg",
+    title: "Darjeeling Himalayan Railway steam train at Batasia Loop",
+    author: "DEB ANUTOSH",
+    license: "CC BY 2.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+    page: "https://commons.wikimedia.org/wiki/File:BATASIA_LOOP.jpg",
+    pos: "38% 55%",
+  },
   sleeperFront: {
     src: "img/sleeper-front.jpg",
     w: 1920,
@@ -33,17 +44,6 @@ export const PHOTOS = {
     licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
     page: "https://commons.wikimedia.org/wiki/File:Dhoodh_Sagar_falls.jpg",
     pos: "45% 60%",
-  },
-  pamban: {
-    src: "img/pamban.jpg",
-    w: 1280,
-    small: "img/pamban-960.jpg",
-    title: "A train crossing the Pamban bridge to Rameswaram",
-    author: "Shaswat Nimesh",
-    license: "CC BY-SA 4.0",
-    licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
-    page: "https://commons.wikimedia.org/wiki/File:Pamban_Bridge_Train_Passing.jpg",
-    pos: "50% 55%",
   },
   chenab: {
     src: "img/chenab.jpg",
@@ -112,31 +112,17 @@ export const PHOTOS = {
     page: "https://commons.wikimedia.org/wiki/File:NMR_train_at_Ketti_05-02-26_75.jpeg",
     pos: "50% 50%",
   },
-  godavari: {
-    src: "img/godavari.jpg",
-    w: 1280,
-    small: "img/godavari-960.jpg",
-    title: "Godavari arch bridge, Rajahmundry",
-    author: "Tatiraju.rishabh",
-    license: "CC BY-SA 3.0",
-    licenseUrl: "https://creativecommons.org/licenses/by-sa/3.0/",
-    page: "https://commons.wikimedia.org/wiki/File:Archbridgegodavari.JPG",
-    pos: "50% 50%",
-  },
 };
 
-// Home page hero, in order (a slow crossfade).
-export const SLIDES = [PHOTOS.pamban, PHOTOS.chenab, PHOTOS.dudhsagar, PHOTOS.mumbaiLocal];
+// Home page hero photos, in order (a slow crossfade).
+export const SLIDES = [PHOTOS.lead, PHOTOS.chenab, PHOTOS.dudhsagar];
 // Photo behind every station board.
 export const BANNER = PHOTOS.sleeperYard;
-// "India's most beautiful lines" on the home page.
-export const GALLERY = [
+// Famous lines next to the Journey Partner example on the home page.
+export const LINES = [
   { p: PHOTOS.dudhsagarTall, name: "Dudhsagar, Goa", cls: "tall" },
-  { p: PHOTOS.pamban, name: "Pamban Bridge, Rameswaram", cls: "wide" },
   { p: PHOTOS.nilgiri, name: "Nilgiri mountain line" },
   { p: PHOTOS.matheran, name: "Matheran" },
-  { p: PHOTOS.godavari, name: "Godavari bridge" },
-  { p: PHOTOS.chenab, name: "Chenab, Kashmir", cls: "wide" },
 ];
 
 // srcset for a photo: the small copy and the full one.

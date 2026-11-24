@@ -26,6 +26,14 @@ ALL_FILE = ROOT / "data" / "all_stations.json"
 # Phase 2 backend: the stations a visitor can report on, with coordinates for the location check.
 # Published with the site; the Supabase functions fetch it (see supabase/functions/_shared/server.ts).
 BACKEND_FILE = ROOT / "site" / "data" / "backend-stations.json"
+# The same coordinates, small, for the home page's "Find my station's chat" (worked out in the browser).
+POINTS_FILE = ROOT / "site" / "data" / "station-points.json"
+
+
+def station_points(backend: dict) -> dict:
+    """Station id -> [lat, lon] for every station the server can place (the ones with coordinates)."""
+    return {sid: [round(s["lat"], 5), round(s["lon"], 5)] for sid, s in backend.items()
+            if s.get("lat") is not None and s.get("lon") is not None}
 
 
 def _key(name: str) -> str:
@@ -279,7 +287,9 @@ def main() -> int:
     OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     OUT_FILE.write_text(json.dumps(data, separators=(",", ":"), ensure_ascii=False) + "\n", encoding="utf-8")
     BACKEND_FILE.parent.mkdir(parents=True, exist_ok=True)
-    BACKEND_FILE.write_text(json.dumps(backend_stations(data), ensure_ascii=False) + "\n", encoding="utf-8")
+    backend = backend_stations(data)
+    BACKEND_FILE.write_text(json.dumps(backend, ensure_ascii=False) + "\n", encoding="utf-8")
+    POINTS_FILE.write_text(json.dumps(station_points(backend), separators=(",", ":")) + "\n", encoding="utf-8")
     detailed = sum(1 for s in data["stations"] if not s.get("basic"))
     print(f"Wrote {OUT_FILE.relative_to(ROOT)}: {len(data['stations'])} stations, {detailed} with facility data "
           f"from {len(data['divisions'])} division(s)")

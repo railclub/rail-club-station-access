@@ -88,7 +88,7 @@ Rail Club
 | Now | 💬 **Station chat**: a live room per station, open only to people whose phone location puts them there | Live, in testing |
 | Next | 🧠 **Retrieval-augmented video checks**: before Gemini checks a video, retrieve the station's known facts (official facility list, past approved visitor reports) and short guides to what each facility looks like, from a pgvector store with Gemini embeddings, and give them to Gemini as context; save which notes it matched so reviewers can see why | Planned |
 | Next | 📊 **Model evals on the review page**: compare Gemini's verdicts with reviewers' final decisions (agreement, false approvals and rejections, accuracy per facility, cost and time), and with and without retrieval | Planned; needs reviewed reports to measure |
-| Now | 🏠 **New home page**: full-height, photo-led design ("Night express", chosen from the design rounds) | Live |
+| Now | 🏠 **New home page**: station chat first ("Find my station's chat" finds the nearest station on the phone), then search, the station guide and Journey Partner; full height, photo-led, light and dark | Live |
 | Then | 🧭 **Platform & Coach Guide**, 🚕 **Getting In & Out**, ⚠️ **Safety & Scam Alerts** | Inside station pages |
 | Then | ⭐ **Train Reviews**, 💬 **Ask a Traveller** | Inside journey pages and Community |
 | Later | 🍛 **Food on the Line** (famous station foods, stalls, pantry) | Parked until the community is active |
