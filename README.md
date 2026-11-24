@@ -82,9 +82,13 @@ Rail Club
 
 | Order | Section | Status |
 |---|---|---|
-| Now | 🚉 **Stations**: accessibility from official lists | Live: 688 stations, 16 divisions |
-| Next | 🚉 **Stations**: visitor video reports, checked by Gemini ([plan](docs/phase-2-video-reports.md)) | Built and tested; switching on: [setup steps](docs/phase-2-setup.md) |
-| Next | 🪟 **Journey Partner**: enter a train and from → to stations, see sights along the way (rivers, bridges, waterfalls, ghats, forts) with timing and **left/right side**; travellers add and confirm sights | Pilot: Mumbai → Pune via Bhor Ghat ([plan](docs/journey-partner-plan.md)) |
+| Now | 🚉 **Stations**: accessibility from official lists, and a page for every station in India | Live: 9,107 stations searchable, 688 with official facility lists from 16 divisions |
+| Now | 🚉 **Stations**: visitor video reports, checked by Gemini against the visitor's location ([plan](docs/phase-2-video-reports.md)) | Live, in testing: [setup steps](docs/phase-2-setup.md) |
+| Now | 🪟 **Journey Partner**: enter any train and from → to stations, see sights along the way (rivers, bridges, waterfalls, ghats, forts) with timing and **left/right side**, with real photos | Live for 5,139 trains; lines looked up ahead of time ([plan](docs/journey-partner-plan.md)) |
+| Now | 💬 **Station chat**: a live room per station, open only to people whose phone location puts them there | Live, in testing |
+| Next | 🧠 **Retrieval-augmented video checks**: before Gemini checks a video, retrieve the station's known facts (official facility list, past approved visitor reports) and short guides to what each facility looks like, from a pgvector store with Gemini embeddings, and give them to Gemini as context; save which notes it matched so reviewers can see why | Planned |
+| Next | 📊 **Model evals on the review page**: compare Gemini's verdicts with reviewers' final decisions (agreement, false approvals and rejections, accuracy per facility, cost and time), and with and without retrieval | Planned; needs reviewed reports to measure |
+| Next | 🏠 **New home page**: full-height, photo-led design ("Night express", chosen from the design rounds) | Designed, to build |
 | Then | 🧭 **Platform & Coach Guide**, 🚕 **Getting In & Out**, ⚠️ **Safety & Scam Alerts** | Inside station pages |
 | Then | ⭐ **Train Reviews**, 💬 **Ask a Traveller** | Inside journey pages and Community |
 | Later | 🍛 **Food on the Line** (famous station foods, stalls, pantry) | Parked until the community is active |
